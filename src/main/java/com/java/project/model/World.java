@@ -23,6 +23,12 @@ public class World //Info: Singleton
 	
 	// *** METHODS *** //
 
+	/**
+	 * Build correspondances in the graph accordingly to the model of the world.
+	 * <p>
+	 * @param graph Graph which needs to get the correspondances
+	 * @author Tchong-Kite Huam
+	 */
 	public static void buildCorrespondances(Graph graph)
 	{
 		try
@@ -42,6 +48,12 @@ public class World //Info: Singleton
 		catch(Exception e) {App.logger.error(e);}
 	}
 	
+	/**
+	 * Build stations in the graph accordingly to the model of the world.
+	 * <p>
+	 * @param graph Graph which needs to get the stations
+	 * @author Tchong-Kite Huam
+	 */
 	public static void buildStations(Graph graph)
 	{
 		try
@@ -56,6 +68,13 @@ public class World //Info: Singleton
         catch(Exception e) {App.logger.error(e);}
 	}
 	
+	/**
+	 * Build required lines in the graph accordingly to the model of the world.
+	 * <p>
+	 * @param graph Graph which needs to get the lines
+	 * @param lignes Lines to add to the graph. If lignes is null, all the available lines will be added.
+	 * @author Tchong-Kite Huam
+	 */
 	public static void buildLignes(Graph graph, ArrayList<String> lignes)
 	{
 		if(lignes == null)

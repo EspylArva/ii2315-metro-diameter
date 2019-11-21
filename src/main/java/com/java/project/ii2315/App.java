@@ -18,7 +18,6 @@ import com.google.gson.JsonParser;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
-import com.java.project.model.Correspondance;
 import com.java.project.model.Ligne;
 import com.java.project.model.Route;
 import com.java.project.model.Station;
@@ -57,7 +56,6 @@ public class App
 		// *** BUILDING MODEL *** //
         Graph graph = buildSimpleWorld();
 //        Graph graph = buildSimplePartialWorld("B", "A");
-        
         
         // *** GRAPHICAL CONFIGURATION *** //
 		configureGraphUI(graph);
@@ -101,6 +99,7 @@ public class App
 	 * <p>
 	 * @param args  Lines that should be built
 	 * @return graph Graph built according to the model and limited to the parameters
+	 * @author Tchong-Kite Huam
 	 */
     private static Graph buildSimplePartialWorld(String... args )
     {
@@ -130,7 +129,8 @@ public class App
 	 * <p>
 	 * @return graph Graph built according to the model
 	 */
-	private static Graph buildSimpleWorld() {		
+	private static Graph buildSimpleWorld()
+	{		
         Graph graph = new MultiGraph("Plan du Métro");
         World.buildStations(graph);
         World.buildCorrespondances(graph);
@@ -248,6 +248,7 @@ public class App
 	 */
 	private static Graph removeLoneNode(Graph graph)
 	{
+		//FIXME correspondances...
 		ArrayList<String> toRemove = new ArrayList<String>();
 		for(Node n : graph.getNodeSet())
 		{
