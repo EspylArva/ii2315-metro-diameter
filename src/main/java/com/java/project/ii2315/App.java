@@ -51,18 +51,18 @@ public class App
     	PropertyConfigurator.configure(Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\log4j.properties");
                 
         // *** PARSAGE *** //
-        parseWorld(args[0]);
+    	
+        parseWorld(Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\reseau.json");
         
 		// *** BUILDING MODEL *** //
-        Graph graph = buildSimpleWorld(World.getInstance());
-//        Graph graph = buildSimplePartialWorld();
-        
-        graph = removeLoneNode(graph);
+//        Graph graph = buildSimpleWorld();
+        Graph graph = buildSimplePartialWorld("B", "A");
         
         // *** GRAPHICAL CONFIGURATION *** //
 		configureGraphUI(graph);
         
         // *** DISPLAY GRAPH *** //
+		logger.info("Displaying graph");
         Viewer viewer = graph.display();
      }
 
@@ -76,19 +76,80 @@ public class App
      */
 	private static void configureGraphUI(Graph graph) {
 		// Setting up the .css file for GraphStream implementation
-		// Necessary for dynamic coloring
-		//TODO faire les logs
-		
+		// Necessary for dynamic coloring		
 		graph.addAttribute("ui.stylesheet", String.format("url('%s')", Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\graph-style.css"));
 		
 		graph.addAttribute("ui.quality");
         graph.addAttribute("ui.antialias");
     	graph.addAttribute("layout.weight", 100);
+    	
+    	logger.info("Successfully upgraded graphical display of the map");
 	}
 	
-    private static Graph buildSimplePartialWorld() {
-		// TODO Auto-generated method stub
-		return null;
+
+	/**
+	 * Building a simple transportation map, limited to parameters.
+	 * <p>
+	 * Vertices are stations. Edges represent a connection between two stations, using any mean of
+	 * transportation. Several connections between two vertices will not show; as this is a simple representation, only one connection is needed, thus represented.
+	 * <p>
+	 * The representation is said "simple" because all edges are considered the same weight-wise. This means that two connected stations are always considered to be at the same distance -- regardless of the real distance between them.
+	 * <p>
+	 * @param args  Lines that should be built
+	 * @return graph Graph built according to the model and limited to the parameters
+	 */
+    private static Graph buildSimplePartialWorld(String... args )
+    {
+    	ArrayList<String> partialWorldSetup = new ArrayList<String>();
+    	for(String s : args)
+    	{
+    		partialWorldSetup.add(s);
+    	}
+    	Graph graph = new MultiGraph("Plan du Métro");
+		try
+        {
+    		for(Station station : World.getInstance().getStations())
+    		{
+    			Node n = graph.addNode(station.getNum());
+    			n.addAttribute("ui.label", station.getNom());
+//    			n.addAttribute("ui.label", station.num);
+    		}
+        }
+        catch(Exception e) {logger.error(e);}
+        
+        try
+        {
+        	for(Ligne line : World.getInstance().getLignes())
+	        {
+        		if(partialWorldSetup.contains(line.getNum()))
+        		{
+        			logger.info(String.format("Building %s %s, going to %s", line.getType(), line.getNum() , line.getName()));
+		        	for(ArrayList<String> branch : line.getArrets())
+		        	{
+		        		logger.trace(String.format("Switching branch in %s %s", line.getType(), line.getNum()));
+			        	for(int i=0 ; i<branch.size()-1 ; i++)
+			        	{
+			        		if(graph.getEdge(branch.get(i) + "-" + branch.get(i+1)) == null)
+			        		{			
+			        			graph.addEdge(branch.get(i) + "-" + branch.get(i+1),
+			        				branch.get(i), branch.get(i+1));
+			        			// Colorizing the branch
+			        			graph.getEdge(branch.get(i) + "-" + branch.get(i+1))
+			        				.addAttribute("ui.class", "C"+line.getNum());
+			        			logger.trace(String.format("Successfully linked %s to %s", branch.get(i), branch.get(i+1)));
+			        		}
+			        	}
+		        	}
+        		}
+        		else
+        		{
+        			logger.info(String.format("Line %s %s is not to be built", line.getType(), line.getNum()));
+        		}
+	        }
+        }
+        catch(Exception e){System.out.println(e);}
+        // Clean the graph of useless stations
+        return removeLoneNode(graph);
 	}
 
 
@@ -100,19 +161,16 @@ public class App
 	 * <p>
 	 * The representation is said "simple" because all edges are considered the same weight-wise. This means that two connected stations are always considered to be at the same distance -- regardless of the real distance between them.
 	 * <p>
-	 * @param world Model representing the world
 	 * @return graph Graph built according to the model
 	 */
-	private static Graph buildSimpleWorld(World world) {
-		//TODO refaire les logs
-		
+	private static Graph buildSimpleWorld() {		
         Graph graph = new MultiGraph("Plan du Métro");
 		try
         {
-    		for(Station station : world.getStations())
+    		for(Station station : World.getInstance().getStations())
     		{
-    			Node n = graph.addNode(station.num);
-    			n.addAttribute("ui.label", station.nom);
+    			Node n = graph.addNode(station.getNum());
+    			n.addAttribute("ui.label", station.getNom());
 //    			n.addAttribute("ui.label", station.num);
     		}
         }
@@ -120,34 +178,25 @@ public class App
         
         try
         {
-        	for(Ligne line : world.getLignes())
+        	for(Ligne line : World.getInstance().getLignes())
 	        {
-        		System.out.println('\t' + line.getNum()+".."+line.getName());
-//        		if(line.getNum().equals("B") || line.getNum().equals("A") )
-//    			if(line.getNum().equals("4") || line.getNum().equals("12") || line.getNum().equals("6") )
-        		{
-		        	for(ArrayList<String> branch : line.getArrets())
+        		logger.info(String.format("Building %s %s, going to %s", line.getType(), line.getNum() , line.getName()));
+	        	for(ArrayList<String> branch : line.getArrets())
+	        	{
+	        		logger.trace(String.format("Switching branch in %s %s", line.getType(), line.getNum()));
+		        	for(int i=0 ; i<branch.size()-1 ; i++)
 		        	{
-//		        		System.out.println("SWITCHING BRANCH");
-			        	for(int i=0 ; i<branch.size()-1 ; i++)
-			        	{
-	//		        		System.out.println(graph.getEdgeSet());
-			        		if(graph.getEdge(branch.get(i) + "-" + branch.get(i+1)) == null)
-			        		{
-			        			
-			        			graph.addEdge(branch.get(i) + "-" + branch.get(i+1),
-			        				branch.get(i), branch.get(i+1));
-//			        			System.out.println(line.getNum());
-			        			graph.getEdge(branch.get(i) + "-" + branch.get(i+1))
-			        				.addAttribute("ui.class", "C"+line.getNum());
-//			        				.addAttribute("ui.color", line.getColor());
-			        			
-//			        			graph.addAttribute(attribute, values);
-			        			
-//			        		System.out.println("Linked " + branch.get(i) + " to " + branch.get(i+1));
-			        		}
-			        	}
+		        		if(graph.getEdge(branch.get(i) + "-" + branch.get(i+1)) == null)
+		        		{
+		        			graph.addEdge(branch.get(i) + "-" + branch.get(i+1),
+		        				branch.get(i), branch.get(i+1));
+		        			// Colorizing the branch
+		        			graph.getEdge(branch.get(i) + "-" + branch.get(i+1))
+		        				.addAttribute("ui.class", "C"+line.getNum());
+		        			logger.trace(String.format("Successfully linked %s to %s", branch.get(i), branch.get(i+1)));
+		        		}
 		        	}
+	        	
         		}
 	        }
         }
@@ -267,7 +316,6 @@ public class App
 	 */
 	private static Graph removeLoneNode(Graph graph)
 	{
-		//TODO faire les logs
 		ArrayList<String> toRemove = new ArrayList<String>();
 		for(Node n : graph.getNodeSet())
 		{
@@ -279,8 +327,10 @@ public class App
 		}
 		for(String s : toRemove)
 		{
+			logger.trace(String.format("Removing station: ID=%s", s));
 			graph.removeNode(s);
 		}
+		logger.info("Successfully trimmed the graph by deleting lonely vertices");
 		return graph;
 	}
 }

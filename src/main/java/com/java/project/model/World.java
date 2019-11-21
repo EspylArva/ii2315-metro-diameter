@@ -17,7 +17,6 @@ public class World //Info: Singleton
 	// *** ATTRIBUTES *** //
 	private static World WORLD_INSTANCE = new World();
 	
-	
 	// Ensemble des correspondances entre tramway et métro/rer
 	private ArrayList<Correspondance> corresp;
 	// Ensemble des stations, sans les liens entre. Liste de Vertex
@@ -30,8 +29,7 @@ public class World //Info: Singleton
 	private ArrayList<Ligne> lignes;
 	
 	// *** GETTERS & SETTERS *** //
-	
-	
+		
 	public ArrayList<Correspondance> getCorresp() {
 		return corresp;
 	}
