@@ -1,0 +1,43 @@
+graph { fill-color: white; }
+
+node.marked{
+    fill-color: red;
+}
+
+node {
+	size: 3px;
+	fill-color: #777;
+	/*text-mode: hidden;*/
+	z-index: 0;
+}
+
+edge {
+	shape: line;
+	fill-color: #222;
+	arrow-size: 3px, 2px;
+}
+
+edge.CB {fill-color: #3466AC;}
+edge.CA {fill-color: #FE370F;}
+edge.C1 {fill-color: #00FF00;}
+edge.C2 {fill-color: #0065AE;}
+edge.C3 {fill-color: #99D4DE;}
+edge.C3B{fill-color: #99D4DE;}
+edge.C4 {fill-color: #BE418D;}
+edge.C5 {fill-color: #F19043;}
+edge.C6 {fill-color: #84C28E;}
+edge.C7 {fill-color: #F2A4B7;}
+edge.C7B{fill-color: #84C28E;}
+edge.C8 {fill-color: #CDACCF;}
+edge.C9 {fill-color: #D5C900;}
+edge.C10{fill-color: #E4B327;}
+edge.C11{fill-color: #8C5E24;}
+edge.C12{fill-color: #007E49;}
+edge.C13{fill-color: #99D4DE;}
+edge.C14{fill-color: #622280;}
+edge.CFUN{fill-color: #999;}
+edge.CORV{fill-color: #3F6F8D;}
+edge.CT1{fill-color: #006cb8;}
+edge.CT2{fill-color: #ba4a9a;}
+edge.CT3A{fill-color: #f78f4b;}
+edge.CT3B{fill-color: #00ab66;}
