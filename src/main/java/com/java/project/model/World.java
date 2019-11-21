@@ -64,6 +64,7 @@ public class World //Info: Singleton
     			n.addAttribute("ui.label", station.getNom());
 //    			n.addAttribute("ui.label", station.num);
     		}
+    		App.logger.info("Successfully built all stations");
         }
         catch(Exception e) {App.logger.error(e);}
 	}
@@ -91,7 +92,7 @@ public class World //Info: Singleton
 	        {
         		if(lignes == null || lignes.contains(line.getNum()))
         		{
-        			App.logger.info(String.format("Building %s %s, going to %s", line.getType(), line.getNum() , line.getName()));
+        			App.logger.trace(String.format("Building %s %s, going to %s", line.getType(), line.getNum() , line.getName()));
 		        	for(ArrayList<String> branch : line.getArrets())
 		        	{
 		        		App.logger.trace(String.format("Switching branch in %s %s", line.getType(), line.getNum()));
@@ -110,9 +111,10 @@ public class World //Info: Singleton
         		}
         		else
         		{
-        			App.logger.info(String.format("Line %s %s is not to be built", line.getType(), line.getNum()));
+        			App.logger.trace(String.format("Line %s %s is not to be built", line.getType(), line.getNum()));
         		}
 	        }
+        	App.logger.info("Successfully built all lines");
         }
 		catch(Exception e) {App.logger.error(e);}	
 	}

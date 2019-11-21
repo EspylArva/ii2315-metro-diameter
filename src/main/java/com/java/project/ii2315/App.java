@@ -50,7 +50,6 @@ public class App
     	PropertyConfigurator.configure(Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\log4j.properties");
                 
         // *** PARSAGE *** //
-    	
         parseWorld(Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\reseau.json");
         
 		// *** BUILDING MODEL *** //
@@ -64,10 +63,6 @@ public class App
 		logger.info("Displaying graph");
         Viewer viewer = graph.display();
      }
-
-
-	
-
 
 	/**
      * Using better setups for the graphical display of the graph.
@@ -171,7 +166,7 @@ public class App
 	        	switch(o.getKey())
 	        	{
 	        	case "stations":
-	        		logger.info("Computing object \"stations\"...");
+	        		logger.info('\t'+"Computing object \"stations\"...");
 	        		JsonObject allStations = (JsonObject)o.getValue();
 	        		
 	        		for(Entry<String, JsonElement> station : allStations.entrySet())
@@ -183,10 +178,10 @@ public class App
 	        			// Add to model
 	        			world.getStations().add(s);
 	        		}
-	        		logger.info("Object \"stations\" computed!");
+	        		logger.info('\t'+"Object \"stations\" computed!");
 	        		break;
 	        	case "lignes":
-	        		logger.info("Computing object \"lignes\"...");
+	        		logger.info('\t'+"Computing object \"lignes\"...");
 	    			JsonObject allLignes = (JsonObject)o.getValue();
 	        		
 	        		for(Entry<String, JsonElement> ligne : allLignes.entrySet())
@@ -203,17 +198,17 @@ public class App
 	        				// nothing happens
 	        			}
 	        		}
-	        		logger.info("Object \"lignes\" computed!");
+	        		logger.info('\t'+"Object \"lignes\" computed!");
 	        		break;
 	        	case "corresp":
-	        		logger.info("Computing object \"corresp\"...");
+	        		logger.info('\t'+"Computing object \"corresp\"...");
 	        		JsonArray allCorresp = (JsonArray)o.getValue();
 	        		ArrayList<ArrayList<String>> correspondances = g.fromJson(allCorresp, new TypeToken<ArrayList<ArrayList<String>>>(){}.getType());
 	        		world.setCorresp(correspondances);
-	        		logger.info("Object \"corresp\" computed!");
+	        		logger.info('\t'+"Object \"corresp\" computed!");
 	        		break;
 	        	case "routes":
-	        		logger.info("Computing for object \"routes\"...");
+	        		logger.info('\t'+"Computing for object \"routes\"...");
 	        		JsonArray allRoutes = (JsonArray)o.getValue();
 	        		for(JsonElement r : allRoutes)
 	        		{
@@ -222,10 +217,10 @@ public class App
 	        			// Add to model
 	        			world.getRoutes().add(route);
 	        		}
-	        		logger.info("Object \"routes\" computed!");
+	        		logger.info('\t'+"Object \"routes\" computed!");
 	        		break;
 	    		default:
-	    			logger.error("Could not compute; unknown object.");
+	    			logger.error('\t'+"Could not compute; unknown object.");
 	    			break;
 	        	}
 	       	
