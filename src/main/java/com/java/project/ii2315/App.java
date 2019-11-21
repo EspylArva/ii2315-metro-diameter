@@ -18,6 +18,7 @@ import com.google.gson.JsonParser;
 import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
+import com.java.project.model.Correspondance;
 import com.java.project.model.Ligne;
 import com.java.project.model.Route;
 import com.java.project.model.Station;
@@ -41,9 +42,8 @@ public class App
 {
 
 	private static final Gson g = new Gson();
-	private static Logger logger = Logger.getLogger(App.class);
+	public static Logger logger = Logger.getLogger(App.class);
 	
-	// A besoin d'un argument : fichier json au format correct
     public static void main( String[] args ) throws IOException
     {
     	// *** DEV CONF *** //
@@ -55,8 +55,9 @@ public class App
         parseWorld(Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\reseau.json");
         
 		// *** BUILDING MODEL *** //
-//        Graph graph = buildSimpleWorld();
-        Graph graph = buildSimplePartialWorld("B", "A");
+        Graph graph = buildSimpleWorld();
+//        Graph graph = buildSimplePartialWorld("B", "A");
+        
         
         // *** GRAPHICAL CONFIGURATION *** //
 		configureGraphUI(graph);
@@ -65,6 +66,9 @@ public class App
 		logger.info("Displaying graph");
         Viewer viewer = graph.display();
      }
+
+
+	
 
 
 	/**
@@ -100,54 +104,17 @@ public class App
 	 */
     private static Graph buildSimplePartialWorld(String... args )
     {
-    	ArrayList<String> partialWorldSetup = new ArrayList<String>();
-    	for(String s : args)
-    	{
-    		partialWorldSetup.add(s);
-    	}
+    	// Liste des lignes à mettre
+    	
     	Graph graph = new MultiGraph("Plan du Métro");
-		try
-        {
-    		for(Station station : World.getInstance().getStations())
-    		{
-    			Node n = graph.addNode(station.getNum());
-    			n.addAttribute("ui.label", station.getNom());
-//    			n.addAttribute("ui.label", station.num);
-    		}
-        }
-        catch(Exception e) {logger.error(e);}
+    	
+    	World.buildStations(graph);
+		World.buildCorrespondances(graph);
+		
+		ArrayList<String> partialWorldSetup = new ArrayList<String>(); for(String s : args)partialWorldSetup.add(s);
         
-        try
-        {
-        	for(Ligne line : World.getInstance().getLignes())
-	        {
-        		if(partialWorldSetup.contains(line.getNum()))
-        		{
-        			logger.info(String.format("Building %s %s, going to %s", line.getType(), line.getNum() , line.getName()));
-		        	for(ArrayList<String> branch : line.getArrets())
-		        	{
-		        		logger.trace(String.format("Switching branch in %s %s", line.getType(), line.getNum()));
-			        	for(int i=0 ; i<branch.size()-1 ; i++)
-			        	{
-			        		if(graph.getEdge(branch.get(i) + "-" + branch.get(i+1)) == null)
-			        		{			
-			        			graph.addEdge(branch.get(i) + "-" + branch.get(i+1),
-			        				branch.get(i), branch.get(i+1));
-			        			// Colorizing the branch
-			        			graph.getEdge(branch.get(i) + "-" + branch.get(i+1))
-			        				.addAttribute("ui.class", "C"+line.getNum());
-			        			logger.trace(String.format("Successfully linked %s to %s", branch.get(i), branch.get(i+1)));
-			        		}
-			        	}
-		        	}
-        		}
-        		else
-        		{
-        			logger.info(String.format("Line %s %s is not to be built", line.getType(), line.getNum()));
-        		}
-	        }
-        }
-        catch(Exception e){System.out.println(e);}
+		World.buildLignes(graph, partialWorldSetup);
+		
         // Clean the graph of useless stations
         return removeLoneNode(graph);
 	}
@@ -165,42 +132,9 @@ public class App
 	 */
 	private static Graph buildSimpleWorld() {		
         Graph graph = new MultiGraph("Plan du Métro");
-		try
-        {
-    		for(Station station : World.getInstance().getStations())
-    		{
-    			Node n = graph.addNode(station.getNum());
-    			n.addAttribute("ui.label", station.getNom());
-//    			n.addAttribute("ui.label", station.num);
-    		}
-        }
-        catch(Exception e) {logger.error(e);}
-        
-        try
-        {
-        	for(Ligne line : World.getInstance().getLignes())
-	        {
-        		logger.info(String.format("Building %s %s, going to %s", line.getType(), line.getNum() , line.getName()));
-	        	for(ArrayList<String> branch : line.getArrets())
-	        	{
-	        		logger.trace(String.format("Switching branch in %s %s", line.getType(), line.getNum()));
-		        	for(int i=0 ; i<branch.size()-1 ; i++)
-		        	{
-		        		if(graph.getEdge(branch.get(i) + "-" + branch.get(i+1)) == null)
-		        		{
-		        			graph.addEdge(branch.get(i) + "-" + branch.get(i+1),
-		        				branch.get(i), branch.get(i+1));
-		        			// Colorizing the branch
-		        			graph.getEdge(branch.get(i) + "-" + branch.get(i+1))
-		        				.addAttribute("ui.class", "C"+line.getNum());
-		        			logger.trace(String.format("Successfully linked %s to %s", branch.get(i), branch.get(i+1)));
-		        		}
-		        	}
-	        	
-        		}
-	        }
-        }
-        catch(Exception e){System.out.println(e);}
+        World.buildStations(graph);
+        World.buildCorrespondances(graph);
+        World.buildLignes(graph, null);        
         return graph;
 		
 	}
@@ -274,10 +208,8 @@ public class App
 	        	case "corresp":
 	        		logger.info("Computing object \"corresp\"...");
 	        		JsonArray allCorresp = (JsonArray)o.getValue();
-	        		for(JsonElement correspondance : allCorresp)
-	        		{
-	        			logger.debug(correspondance.toString());
-	        		}
+	        		ArrayList<ArrayList<String>> correspondances = g.fromJson(allCorresp, new TypeToken<ArrayList<ArrayList<String>>>(){}.getType());
+	        		world.setCorresp(correspondances);
 	        		logger.info("Object \"corresp\" computed!");
 	        		break;
 	        	case "routes":

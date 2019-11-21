@@ -5,13 +5,14 @@ import java.util.HashMap;
 
 public class Route {
 
+	// *** ATTRIBUTES *** //
 	private String ligne;
 	private String type;
 	private String direction;
 	private ArrayList<String> arrets = new ArrayList<String>();
 	private HashMap<String, ArrayList<String>>  intersections = new HashMap<String, ArrayList<String>>();
 	
-	
+	// *** METHODS *** //
 	public String toString()
 	{
 		return type + ligne + " going to " + direction + " has " + arrets.size() + " stops";

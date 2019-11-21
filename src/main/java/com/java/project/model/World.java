@@ -1,6 +1,13 @@
 package com.java.project.model;
 
 import java.util.ArrayList;
+import java.util.HashSet;
+
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+
+import com.java.project.ii2315.App;
 
 
 public class World //Info: Singleton
@@ -8,20 +15,99 @@ public class World //Info: Singleton
 	// *** CONSTRUCTORS *** //
 	private World()
 	{
-		this.corresp = new ArrayList<Correspondance>();
-		this.stations = new ArrayList<Station>();
+		this.corresp = new ArrayList<ArrayList<String>>();
+		this.stations = new HashSet<Station>();
 		this.routes = new ArrayList<Route>();
 		this.lignes = new ArrayList<Ligne>();
 	}
+	
+	// *** METHODS *** //
+
+	public static void buildCorrespondances(Graph graph)
+	{
+		try
+		{
+			for(ArrayList<String> correspondance : World.getInstance().getCorresp())
+			{
+				for(int i=0; i<correspondance.size()-1 ; i++)
+				{
+					graph.addEdge(String.format("%s-%s", correspondance.get(i), correspondance.get(i+1)),
+							correspondance.get(i), correspondance.get(i+1));
+					graph.getEdge(String.format("%s-%s", correspondance.get(i), correspondance.get(i+1)))
+						.addAttribute("ui.class", "Correspondance");
+				}
+			}
+			App.logger.info("Successfully built all correspondances");
+		}
+		catch(Exception e) {App.logger.error(e);}
+	}
+	
+	public static void buildStations(Graph graph)
+	{
+		try
+        {
+    		for(Station station : World.getInstance().getStations())
+    		{
+    			Node n = graph.addNode(station.getNum());
+    			n.addAttribute("ui.label", station.getNom());
+//    			n.addAttribute("ui.label", station.num);
+    		}
+        }
+        catch(Exception e) {App.logger.error(e);}
+	}
+	
+	public static void buildLignes(Graph graph, ArrayList<String> lignes)
+	{
+		if(lignes == null)
+		{
+			App.logger.trace("Building all the lines");	
+		}
+		else
+		{
+			App.logger.trace(String.format("Only building set lines: %s", lignes));			
+		}
+		try
+        {
+        	for(Ligne line : World.getInstance().getLignes())
+	        {
+        		if(lignes == null || lignes.contains(line.getNum()))
+        		{
+        			App.logger.info(String.format("Building %s %s, going to %s", line.getType(), line.getNum() , line.getName()));
+		        	for(ArrayList<String> branch : line.getArrets())
+		        	{
+		        		App.logger.trace(String.format("Switching branch in %s %s", line.getType(), line.getNum()));
+			        	for(int i=0 ; i<branch.size()-1 ; i++)
+			        	{
+			        		if(graph.getEdge(branch.get(i) + "-" + branch.get(i+1)) == null)
+			        		{
+			        			Edge e = graph.addEdge(branch.get(i) + "-" + branch.get(i+1),
+			        				branch.get(i), branch.get(i+1));
+			        			// Colorizing the branch
+			        			e.addAttribute("ui.class", "C"+line.getNum());
+			        			App.logger.trace(String.format("Successfully linked %s to %s", branch.get(i), branch.get(i+1)));
+			        		}
+			        	}
+		        	}
+        		}
+        		else
+        		{
+        			App.logger.info(String.format("Line %s %s is not to be built", line.getType(), line.getNum()));
+        		}
+	        }
+        }
+		catch(Exception e) {App.logger.error(e);}	
+	}
+	
+	
+	
 	
 	// *** ATTRIBUTES *** //
 	private static World WORLD_INSTANCE = new World();
 	
 	// Ensemble des correspondances entre tramway et métro/rer
-	private ArrayList<Correspondance> corresp;
+	private ArrayList<ArrayList<String>> corresp;
 	// Ensemble des stations, sans les liens entre. Liste de Vertex
-	// TODO passer en hashset
-	private ArrayList<Station> stations;
+	private HashSet<Station> stations;
 	// Ensemble des itinéraires, déterminé par un chemin (Array de stations), une direction, etc.
 	// Entraîne potentiellement des doublons, car une ligne a deux ou plus itinéraires (1 par terminus)
 	private ArrayList<Route> routes;
@@ -30,16 +116,16 @@ public class World //Info: Singleton
 	
 	// *** GETTERS & SETTERS *** //
 		
-	public ArrayList<Correspondance> getCorresp() {
+	public ArrayList<ArrayList<String>> getCorresp() {
 		return corresp;
 	}
-	public void setCorresp(ArrayList<Correspondance> corresp) {
+	public void setCorresp(ArrayList<ArrayList<String>> corresp) {
 		this.corresp = corresp;
 	}
-	public ArrayList<Station> getStations() {
+	public HashSet<Station> getStations() {
 		return stations;
 	}
-	public void setStations(ArrayList<Station> stations) {
+	public void setStations(HashSet<Station> stations) {
 		this.stations = stations;
 	}
 	public ArrayList<Route> getRoutes() {
