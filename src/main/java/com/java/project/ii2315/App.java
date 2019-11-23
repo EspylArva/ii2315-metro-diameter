@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
@@ -21,6 +22,7 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
 import org.graphstream.graph.implementations.MultiGraph;
+import org.graphstream.ui.swingViewer.Viewer;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -41,6 +43,7 @@ public class App
 
 	private static final Gson g = new Gson();
 	public static Logger logger = Logger.getLogger(App.class);
+	public static String pathToJson;
 	
     public static void main( String[] args ) throws IOException,
     ClassNotFoundException , InstantiationException ,
@@ -71,8 +74,11 @@ public class App
     	PropertyConfigurator.configure(Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\log4j.properties");
                 
         // *** PARSAGE *** //
-        parseWorld(Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\reseau.json");
-        
+    	
+        pathToJson = (Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\reseau.json");
+    	
+        parseWorld(pathToJson);
+//        System.out.println(App.class.getResource("/reseau.json").toString());
 		// *** BUILDING MODEL *** //
         Graph graph = buildSimpleWorld();
 //        Graph graph = buildSimplePartialWorld("B", "A");
@@ -84,18 +90,20 @@ public class App
 		logger.info("Displaying graph");
 //        Viewer viewer = graph.display();
         
-        
-        AStar astar = new AStar(graph);
-        astar.compute("1621", "B_1998");
-        Path path = astar.getShortestPath();
-        List<Node> stations = astar.getShortestPath().getNodePath();
-        System.out.println(path);
-        for(Node station : stations)
-        {
-        	System.out.println(station.getId() + ": " + station.getAttribute("nom"));
-        }
+//        
+//        AStar astar = new AStar(graph);
+//        astar.compute("1621", "B_1998");
+//        Path path = astar.getShortestPath();
+//        List<Node> stations = astar.getShortestPath().getNodePath();
+//        System.out.println(path);
+//        for(Node station : stations)
+//        {
+//        	System.out.println(station.getId() + ": " + station.getAttribute("nom"));
+//        }
         
      }
+
+
 
 	/**
      * Using better setups for the graphical display of the graph.
