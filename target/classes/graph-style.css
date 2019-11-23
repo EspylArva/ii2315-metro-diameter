@@ -7,7 +7,7 @@ node.marked{
 node {
 	size: 3px;
 	fill-color: #777;
-	/*text-mode: hidden;*/
+	text-mode: hidden;
 	z-index: 0;
 }
 

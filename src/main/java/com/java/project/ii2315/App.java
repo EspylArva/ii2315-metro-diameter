@@ -1,21 +1,31 @@
 package com.java.project.ii2315;
 
 
+import java.awt.EventQueue;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 import java.util.Map.Entry;
+
+import javax.swing.SwingUtilities;
+import javax.swing.UIManager;
+import javax.swing.UnsupportedLookAndFeelException;
+
+import org.apache.log4j.Logger;
+import org.apache.log4j.PropertyConfigurator;
+import org.graphstream.algorithm.AStar;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.Path;
+import org.graphstream.graph.implementations.MultiGraph;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
 import com.google.gson.JsonElement;
 import com.google.gson.JsonObject;
-import com.google.gson.JsonParser;
-import com.google.gson.internal.LinkedTreeMap;
 import com.google.gson.reflect.TypeToken;
 import com.google.gson.stream.JsonReader;
 import com.java.project.model.Ligne;
@@ -23,19 +33,8 @@ import com.java.project.model.Route;
 import com.java.project.model.Station;
 import com.java.project.model.World;
 
-import org.apache.log4j.BasicConfigurator;
-import org.apache.log4j.Logger;
-import org.apache.log4j.PropertyConfigurator;
-import org.graphstream.*;
-import org.graphstream.graph.Edge;
-import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
-import org.graphstream.graph.implementations.DefaultEdge;
-import org.graphstream.graph.implementations.DefaultGraph;
-import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.graph.implementations.SingleGraph;
-import org.graphstream.ui.graphicGraph.GraphicEdge;
-import org.graphstream.ui.swingViewer.Viewer;
+import gui.Frame;
+import gui.MainMenu;
 
 public class App 
 {
@@ -43,8 +42,30 @@ public class App
 	private static final Gson g = new Gson();
 	public static Logger logger = Logger.getLogger(App.class);
 	
-    public static void main( String[] args ) throws IOException
+    public static void main( String[] args ) throws IOException,
+    ClassNotFoundException , InstantiationException ,
+	IllegalAccessException , UnsupportedLookAndFeelException
     {
+    	
+//    	SwingUtilities.invokeLater(new Runnable() {
+		EventQueue.invokeLater(new Runnable() {
+			
+			@Override
+			public void run() {
+				try
+				{
+                    UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
+                }
+				catch (ClassNotFoundException | InstantiationException |
+						IllegalAccessException | UnsupportedLookAndFeelException ex)
+				{
+                }
+//				Frame f = new Frame("Diameter of Subway");
+				new MainMenu();
+			}
+		});
+    	
+    	
     	// *** DEV CONF *** //
     		// log4j
     	PropertyConfigurator.configure(Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\log4j.properties");
@@ -61,7 +82,19 @@ public class App
         
         // *** DISPLAY GRAPH *** //
 		logger.info("Displaying graph");
-        Viewer viewer = graph.display();
+//        Viewer viewer = graph.display();
+        
+        
+        AStar astar = new AStar(graph);
+        astar.compute("1621", "B_1998");
+        Path path = astar.getShortestPath();
+        List<Node> stations = astar.getShortestPath().getNodePath();
+        System.out.println(path);
+        for(Node station : stations)
+        {
+        	System.out.println(station.getId() + ": " + station.getAttribute("nom"));
+        }
+        
      }
 
 	/**

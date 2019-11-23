@@ -61,6 +61,7 @@ public class World //Info: Singleton
     		for(Station station : World.getInstance().getStations())
     		{
     			Node n = graph.addNode(station.getNum());
+    			n.addAttribute("nom", station.getNom());
     			n.addAttribute("ui.label", station.getNom());
 //    			n.addAttribute("ui.label", station.num);
     		}
