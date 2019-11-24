@@ -24,34 +24,15 @@ import com.java.project.model.Ligne;
 import com.java.project.model.Route;
 import com.java.project.model.Station;
 import com.java.project.model.World;
+import com.java.project.view.MainMenu;
 
 public class Back {
-	
-	private static Back INSTANCE;
 	
 	private static final Gson g = new Gson();
 	private static Logger logger = App.logger;
 	
 	private static Path pathToJson;
 	
-	private Back()
-	{
-		
-		
-	}
-	
-	public static Back getInstance()
-	{
-		if(INSTANCE == null)
-		{
-			INSTANCE = new Back();
-		}
-		return INSTANCE;
-	}
-
-	
-
-    
     public static Graph compute()
     {
     	parseWorld(getPathToJson());
@@ -266,7 +247,16 @@ public class Back {
 		logger.info("Successfully trimmed the graph by deleting lonely vertices");
 		return graph;
 	}
-
+	
+	// *** GUI *** //
+	public static void setEnabledButtons(boolean bool)
+	{
+		MainMenu.getBtn_SimpleWorld().setEnabled(bool);
+		MainMenu.getBtn_WeightedWorld().setEnabled(bool);
+	}
+	
+	// *** GETTERS & SETTERS *** //
+	
 	public static Path getPathToJson() {
 		return pathToJson;
 	}
@@ -274,4 +264,5 @@ public class Back {
 	public static void setPathToJson(Path pathToJson) {
 		Back.pathToJson = pathToJson;
 	}
+	
 }

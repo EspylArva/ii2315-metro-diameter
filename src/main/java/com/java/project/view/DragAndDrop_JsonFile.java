@@ -190,7 +190,7 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
 	public void setResource(Path path) {
 		lbl_JsonPath.setText(path.toString());
 		Back.setPathToJson(path);
-		MainMenu.getInstance().setEnabledButtons(true);
+		Back.setEnabledButtons(true);
 		state = DragState.Accept;
 		repaint();
 	}

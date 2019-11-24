@@ -163,8 +163,6 @@ public class World //Info: Singleton
 		this.lignes = lignes;
 	}
 	
-	public static World getInstance()
-    {   return WORLD_INSTANCE;
-    }
+	public static World getInstance(){ return WORLD_INSTANCE; }
 
 }

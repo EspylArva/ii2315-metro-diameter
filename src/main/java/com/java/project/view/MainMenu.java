@@ -4,19 +4,14 @@ import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowEvent;
 import java.nio.file.Paths;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
-import javax.swing.JOptionPane;
-
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 import org.graphstream.ui.swingViewer.DefaultView;
 import org.graphstream.ui.swingViewer.Viewer;
-import org.graphstream.ui.swingViewer.ViewerListener;
-import org.graphstream.ui.swingViewer.ViewerPipe;
-
 import com.java.project.control.Back;
 import com.java.project.ii2315.App;
 
@@ -24,25 +19,16 @@ public class MainMenu extends JFrame implements ActionListener
 {
 	private JFrame frame;
 
-	private static final long serialVersionUID = 1L;
+	private static final long serialVersionUID = 1L;	
 	
-	
-	private JButton btn_SimpleWorld;
-	private JButton btn_WeightedWorld;
+	private static JButton btn_SimpleWorld;
+
+
+	private static JButton btn_WeightedWorld;
 	private JButton btn_useDefaultJson;
 	private DragAndDrop_JsonFile dragAndDrop_image;
 	
-	private static MainMenu MAINMENU_INSTANCE;
-	
-	public static MainMenu getInstance()
-	{
-		if(MAINMENU_INSTANCE == null)
-		{
-			MAINMENU_INSTANCE = new MainMenu();
-		}
-		return MAINMENU_INSTANCE;
-	}
-	private MainMenu()
+	public MainMenu()
 	{
 		frame = new JFrame("Diameter Calculator");
 		frame.setLayout(new FlowLayout());
@@ -61,17 +47,13 @@ public class MainMenu extends JFrame implements ActionListener
     	btn_SimpleWorld.setEnabled(false);
     	btn_WeightedWorld.setEnabled(false);
     	
-//    	image = new JLabel(new ImageIcon(getClass().getResource("/useJson.png")));
     	dragAndDrop_image = new DragAndDrop_JsonFile();
     	
-//    	frame.add(image);
     	frame.add(dragAndDrop_image);
     	frame.add(btn_useDefaultJson);
     	frame.add(btn_SimpleWorld);
     	frame.add(btn_WeightedWorld);
     	
-		
-//		Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\useJson.png")
     	frame.setVisible(true);
     	
     	
@@ -104,7 +86,7 @@ public class MainMenu extends JFrame implements ActionListener
 		    newWindow.setVisible(true);
 			
 			
-//			this.frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
+			this.frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 		}
 		else if(source == btn_WeightedWorld)
 		{
@@ -119,10 +101,15 @@ public class MainMenu extends JFrame implements ActionListener
 		}
 	}
 	
-	public void setEnabledButtons(boolean bool)
-	{
-		btn_SimpleWorld.setEnabled(bool);
-		btn_WeightedWorld.setEnabled(bool);
+	public static JButton getBtn_SimpleWorld() {
+		return btn_SimpleWorld;
 	}
+
+
+	public static JButton getBtn_WeightedWorld() {
+		return btn_WeightedWorld;
+	}
+	
+
 
 }

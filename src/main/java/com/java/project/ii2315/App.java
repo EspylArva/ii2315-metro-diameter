@@ -61,7 +61,7 @@ public class App
 				try
 				{
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    MainMenu.getInstance();
+                    new MainMenu();
                 }
 				catch (ClassNotFoundException | InstantiationException |
 						IllegalAccessException | UnsupportedLookAndFeelException ex)
