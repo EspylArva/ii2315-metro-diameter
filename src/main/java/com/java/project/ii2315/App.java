@@ -5,6 +5,7 @@ import java.awt.EventQueue;
 import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.IOException;
+import java.net.URI;
 import java.net.URL;
 import java.nio.file.Paths;
 import java.util.ArrayList;
@@ -43,7 +44,7 @@ public class App
 
 	private static final Gson g = new Gson();
 	public static Logger logger = Logger.getLogger(App.class);
-	public static String pathToJson;
+	public static java.nio.file.Path pathToJson;
 	
     public static void main( String[] args ) throws IOException,
     ClassNotFoundException , InstantiationException ,
@@ -75,8 +76,9 @@ public class App
                 
         // *** PARSAGE *** //
     	
-        pathToJson = (Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\reseau.json");
-    	
+//        pathToJson = (Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\reseau.json");
+    	App.pathToJson = Paths.get("src","main","resources","reseau.json").toAbsolutePath();
+//    	pathToJson = null;
         parseWorld(pathToJson);
 //        System.out.println(App.class.getResource("/reseau.json").toString());
 		// *** BUILDING MODEL *** //
@@ -88,7 +90,7 @@ public class App
         
         // *** DISPLAY GRAPH *** //
 		logger.info("Displaying graph");
-//        Viewer viewer = graph.display();
+        Viewer viewer = graph.display();
         
 //        
 //        AStar astar = new AStar(graph);
@@ -182,12 +184,12 @@ public class App
 	 * @return world Instance of World built from the JSON file
 	 * @author Tchong-Kite Huam
 	 */
-	private static World parseWorld(String jsonFile)
+	private static World parseWorld(java.nio.file.Path jsonFile)
 	{
 		World world = World.getInstance();
 		JsonReader reader;
 		try {
-			reader = new JsonReader(new FileReader(jsonFile));
+			reader = new JsonReader(new FileReader(jsonFile.toString()));
 			
 			/** Objet global, qui comprend les éléments suivants :
 			 * corresp -- JsonArray
