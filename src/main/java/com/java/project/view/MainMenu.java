@@ -83,9 +83,7 @@ public class MainMenu extends JFrame implements ActionListener
 		}
 		else if(source == btn_useDefaultJson)
 		{
-			Back.setPathToJson(Paths.get("src","main","resources","reseau.json").toAbsolutePath()); 
 			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau.json").toAbsolutePath());
-			System.out.println(Paths.get("src","main","resources","reseau.json").toAbsolutePath());
 		}
 	}
 	

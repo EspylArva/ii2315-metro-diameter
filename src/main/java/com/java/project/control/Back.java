@@ -67,7 +67,7 @@ public class Back {
     {
 	    List<Node> vertices = path.getNodePath();
 	    List<Edge> edges = path.getEdgePath();
-	    System.out.println(path);
+	    App.logger.debug(String.format("Shortest path from %s to %s: %s",path.getNodePath().get(0),path.getNodePath().get(path.getNodePath().size()-1) , path));
 	    for(Node vertex : vertices)
 	    {
 	    	graph.getNode(vertex.getId()).addAttribute("ui.class", "diameter");

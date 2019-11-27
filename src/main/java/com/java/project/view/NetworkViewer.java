@@ -57,7 +57,7 @@ public class NetworkViewer extends JFrame implements ChangeListener
 	}
 	
 	public void stateChanged(ChangeEvent e) {
-		System.out.println("StateChanged");
+		App.logger.debug("StateChanged");
         SpinnerModel dateModel = spinner.getModel();
         setSeasonalColor(dateModel.getValue().toString());
         // REFRESH VALUES HERE

@@ -195,7 +195,7 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
         			return;
         		}
         	}
-        	System.out.println("Drop failed: " + dtde);
+        	App.logger.error("Drop failed: " + dtde);
         	dtde.rejectDrop();
         }
         catch (Exception e) {
