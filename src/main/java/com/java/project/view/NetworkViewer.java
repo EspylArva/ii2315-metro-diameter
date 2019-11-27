@@ -23,8 +23,6 @@ import com.java.project.ii2315.App;
 
 public class NetworkViewer extends JFrame implements ChangeListener 
 {
-	
-	
 	private String operationDuration;
     private JSpinner spinner;
     

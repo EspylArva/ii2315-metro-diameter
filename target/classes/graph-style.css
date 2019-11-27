@@ -13,10 +13,10 @@ node {
 }
 
 node.diameter{
-	size: 20px;
-	fill-color: #00FF00;
-	stroke-mode: dots;
-	stroke-color: #FF0000; stroke-width: 6px; }
+	size: 5px;
+	fill-color: #BBBBBB;
+	stroke-mode: plain;
+	stroke-color: #FF0000; stroke-width: 1px; }
 
 edge {
 	shape: line;

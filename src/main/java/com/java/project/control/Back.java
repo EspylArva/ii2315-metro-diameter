@@ -58,9 +58,8 @@ public class Back {
 	    astar.compute("1632", "3813512");
     	path = astar.getShortestPath();
     	displayPath(graph, path);
-//		displayPath()
 		
-      org.graphstream.ui.view.Viewer viewer = graph.display();
+//      org.graphstream.ui.view.Viewer viewer = graph.display();
       return graph;
     }
 
@@ -90,7 +89,7 @@ public class Back {
 	private static void configureGraphUI(Graph graph) {
 		// Setting up the .css file for GraphStream implementation
 		// Necessary for dynamic coloring	
-		System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+		System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		graph.addAttribute("ui.stylesheet", String.format("url('%s')", Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\graph-style.css"));
 		
 		graph.addAttribute("ui.quality");
@@ -259,11 +258,18 @@ public class Back {
 	 */
 	private static Graph removeLoneNode(Graph graph)
 	{
-		//FIXME correspondances...
 		ArrayList<String> toRemove = new ArrayList<String>();
 		for(Node n : graph.getNodeSet())
 		{
-			if (n.getEdgeSet().size() == 0)
+			List<Edge> trueEdge = new ArrayList<Edge>();
+			for(Edge e : n.getEdgeSet())
+			{
+				if(!e.getAttribute("ui.class").equals("Correspondance"))
+				{
+					trueEdge.add(e);
+				}
+			}
+			if(trueEdge.size() == 0)
 			{
 				toRemove.add(n.getId());
 //				graph.removeNode(n.getId());

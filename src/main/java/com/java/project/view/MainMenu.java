@@ -72,20 +72,8 @@ public class MainMenu extends JFrame implements ActionListener
  
 		if(source == btn_SimpleWorld)
 		{			
-//			JFrame newWindow = new JFrame("Diameter Calculator");
 			NetworkViewer newWindow = new NetworkViewer(Back.compute());
-			
-
-//			Graph graph = Back.compute();
-//		
-//			Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-//			viewer.enableAutoLayout();
-//			DefaultView view = (DefaultView) viewer.addDefaultView(false);
-//			view.setPreferredSize(new Dimension(400, 400));
-//		    
-//			newWindow.add(view);
-//		    newWindow.setVisible(true);
-			
+			newWindow.setVisible(true);
 			this.frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 		}
 		else if(source == btn_WeightedWorld)
