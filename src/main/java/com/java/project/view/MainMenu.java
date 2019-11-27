@@ -9,9 +9,13 @@ import java.nio.file.Paths;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
+import javax.swing.JSpinner;
+import javax.swing.SpinnerListModel;
+
 import org.graphstream.graph.Graph;
 import org.graphstream.ui.swingViewer.DefaultView;
 import org.graphstream.ui.swingViewer.Viewer;
+
 import com.java.project.control.Back;
 import com.java.project.ii2315.App;
 
@@ -49,10 +53,13 @@ public class MainMenu extends JFrame implements ActionListener
     	
     	dragAndDrop_image = new DragAndDrop_JsonFile();
     	
+    	
+    	
     	frame.add(dragAndDrop_image);
     	frame.add(btn_useDefaultJson);
     	frame.add(btn_SimpleWorld);
     	frame.add(btn_WeightedWorld);
+    	
     	
     	frame.setVisible(true);
     	
@@ -64,27 +71,20 @@ public class MainMenu extends JFrame implements ActionListener
 		Object source = e.getSource();
  
 		if(source == btn_SimpleWorld)
-		{
-			// Back.simpleWorld();
+		{			
+//			JFrame newWindow = new JFrame("Diameter Calculator");
+			NetworkViewer newWindow = new NetworkViewer(Back.compute());
 			
-			JFrame newWindow = new JFrame("Diameter Calculator");
-			newWindow.setDefaultCloseOperation(EXIT_ON_CLOSE);
-			newWindow.setLayout(new FlowLayout());
-			newWindow.setSize(800,800);
-			newWindow.setLocationRelativeTo(null);
 
-			Graph graph = Back.compute();
-			graph.setStrict(false);
-		
-			Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-			viewer.enableAutoLayout();
-			DefaultView view = (DefaultView) viewer.addDefaultView(false);
-			view.setPreferredSize(new Dimension(400, 400));
-		    
-
-			newWindow.add(view);
-		    newWindow.setVisible(true);
-			
+//			Graph graph = Back.compute();
+//		
+//			Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+//			viewer.enableAutoLayout();
+//			DefaultView view = (DefaultView) viewer.addDefaultView(false);
+//			view.setPreferredSize(new Dimension(400, 400));
+//		    
+//			newWindow.add(view);
+//		    newWindow.setVisible(true);
 			
 			this.frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 		}

@@ -12,18 +12,20 @@ import java.awt.dnd.DropTargetDragEvent;
 import java.awt.dnd.DropTargetDropEvent;
 import java.awt.dnd.DropTargetEvent;
 import java.awt.dnd.DropTargetListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
-import java.net.URI;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 
 import javax.imageio.ImageIO;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
-import javax.swing.JTextField;
+import javax.swing.filechooser.FileSystemView;
 
 import com.java.project.control.Back;
 import com.java.project.ii2315.App;
@@ -42,31 +44,54 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
     private BufferedImage wait_json;
     private BufferedImage accept_json;
     
-	public DragAndDrop_JsonFile()
-	{
+    public DragAndDrop_JsonFile()
+	{		
+		super.setPreferredSize(new Dimension(433,255));
 		DropTarget dt = new DropTarget(
                 this,
                 DnDConstants.ACTION_COPY_OR_MOVE,
                 this,
                 true);
-
-        setBackground(Color.BLACK);
-        try {
+        try
+        {
         	wait_json = ImageIO.read(getClass().getResource("/useJson.png"));
         	accept_json = ImageIO.read(getClass().getResource("/useJson_file.png"));
-        } catch (Exception e) {
+        }
+        catch (Exception e)
+        {
             e.printStackTrace();
         }
         
         lbl_JsonPath = new JLabel();
         this.add(lbl_JsonPath);
+        addMouseListener(getJsonPicker());
         
 	}
+    
+    public DragAndDrop_JsonFile(int w, int h)
+	{		
+		super.setPreferredSize(new Dimension(w,h));
+		DropTarget dt = new DropTarget(
+                this,
+                DnDConstants.ACTION_COPY_OR_MOVE,
+                this,
+                true);
+        try
+        {
+        	wait_json = ImageIO.read(getClass().getResource("/useJson.png"));
+        	accept_json = ImageIO.read(getClass().getResource("/useJson_file.png"));
+        }
+        catch (Exception e)
+        {
+            e.printStackTrace();
+        }
+        
+        lbl_JsonPath = new JLabel();
+        this.add(lbl_JsonPath);
+        addMouseListener(getJsonPicker());
+	}
 
-    @Override
-    public Dimension getPreferredSize() {
-        return new Dimension(433,255);
-    }
+
 
     @Override
     protected void paintComponent(Graphics g) {
@@ -108,7 +133,7 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
                         {
                             File file = (File) value;
                             String name = file.getName().toLowerCase();
-                            if (!name.endsWith(".json"))
+                            if (!isJson(name))
                             {
                                 state = DragState.Reject;
                                 break;
@@ -152,27 +177,18 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
     @Override
     public void drop(DropTargetDropEvent dtde) {
         state = DragState.Waiting;
-        System.out.println("Dropped ");
 
         try {
         	Transferable tr = dtde.getTransferable();
         	DataFlavor[] flavors = tr.getTransferDataFlavors();
         	for (int i = 0; i < flavors.length; i++) {
-        		System.out.println("Possible flavor: " + flavors[i].getMimeType());
         		if (flavors[i].isFlavorJavaFileListType()) {
         			dtde.acceptDrop(DnDConstants.ACTION_COPY);
-        			System.out.println("Successful file list drop.");
-        			
-        			java.util.List list = (java.util.List) tr.getTransferData(flavors[i]);
+        			java.util.List<DataFlavor> list = (java.util.List<DataFlavor>) tr.getTransferData(flavors[i]);
         			for (int j = 0; j < list.size(); j++) {
         				setResource(Paths.get(list.get(j).toString()));
-//        				lbl_JsonPath.setText(list.get(j).toString());
-////        				System.out.println(list.get(j).toString());
-//        				Back.setPathToJson(Paths.get(list.get(j).toString()));
-//        				java.nio.file.Path p = Paths.get(new URI(list.get(j).toString()));
         			}
         			dtde.dropComplete(true);
-//        			MainMenu.getInstance().setEnabledButtons(true);
         			return;
         		}
         	}
@@ -188,10 +204,35 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
     }
 
 	public void setResource(Path path) {
+		App.logger.info(String.format("Selected a .JSON file at %s. Setting this file as configuration file.", path.toString()));
 		lbl_JsonPath.setText(path.toString());
 		Back.setPathToJson(path);
 		Back.setEnabledButtons(true);
 		state = DragState.Accept;
 		repaint();
 	}
+	
+	private boolean isJson(String file)
+	{
+		if(file == null) { return false; }
+		else { return file.toLowerCase().endsWith(".json"); }
+	}
+	
+	private MouseAdapter getJsonPicker()
+	{
+		return new MouseAdapter() {
+            @Override
+            public void mousePressed(MouseEvent e) {
+            	JFileChooser jfc = new JFileChooser(FileSystemView.getFileSystemView().getHomeDirectory());
+        		int returnValue = jfc.showOpenDialog(null);
+        		File selectedFile = jfc.getSelectedFile();
+        		if (returnValue == JFileChooser.APPROVE_OPTION && isJson(selectedFile.getAbsolutePath()) ) {
+        			setResource(Paths.get(selectedFile.getAbsolutePath().toString()));
+        		}
+            }
+        };
+		
+	}
+	
+	
 }
