@@ -14,7 +14,7 @@ import javax.swing.SpinnerListModel;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.ui.swingViewer.DefaultView;
-import org.graphstream.ui.swingViewer.Viewer;
+//import org.graphstream.ui.swingViewer.Viewer;
 
 import com.java.project.control.Back;
 import com.java.project.ii2315.App;
@@ -91,11 +91,11 @@ public class MainMenu extends JFrame implements ActionListener
 		else if(source == btn_WeightedWorld)
 		{
 			// load complex world
-
+			App.logger.error("Not yet implemented!");
 		}
 		else if(source == btn_useDefaultJson)
 		{
-			App.pathToJson = Paths.get("src","main","resources","reseau.json").toAbsolutePath();
+			Back.setPathToJson(Paths.get("src","main","resources","reseau.json").toAbsolutePath()); 
 			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau.json").toAbsolutePath());
 			System.out.println(Paths.get("src","main","resources","reseau.json").toAbsolutePath());
 		}

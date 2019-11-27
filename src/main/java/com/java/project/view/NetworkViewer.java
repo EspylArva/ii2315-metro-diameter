@@ -16,7 +16,8 @@ import javax.swing.event.ChangeListener;
 
 import org.graphstream.graph.Graph;
 import org.graphstream.ui.swingViewer.DefaultView;
-import org.graphstream.ui.swingViewer.Viewer;
+//import org.graphstream.ui.swingViewer.Viewer;
+import org.graphstream.ui.view.Viewer;
 
 import com.java.project.ii2315.App;
 

@@ -15,11 +15,8 @@ public class App
 {
 
 	public static Logger logger = Logger.getLogger(App.class);
-	public static java.nio.file.Path pathToJson;
 	
-    public static void main( String[] args ) throws IOException,
-    ClassNotFoundException , InstantiationException ,
-	IllegalAccessException , UnsupportedLookAndFeelException
+    public static void main( String[] args ) throws IOException, ClassNotFoundException, InstantiationException, IllegalAccessException, UnsupportedLookAndFeelException
     {
     	// *** DEV CONF *** //
     	// log4j
@@ -43,36 +40,5 @@ public class App
                 }
 			}
 		});
-    	
-    	
-        // *** PARSAGE *** //
-//    	
-////        pathToJson = (Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\reseau.json");
-//    	App.pathToJson = Paths.get("src","main","resources","reseau.json").toAbsolutePath();
-////    	pathToJson = null;
-//        parseWorld(pathToJson);
-////        System.out.println(App.class.getResource("/reseau.json").toString());
-//		// *** BUILDING MODEL *** //
-//        Graph graph = buildSimpleWorld();
-////        Graph graph = buildSimplePartialWorld("B", "A");
-//        
-//        // *** GRAPHICAL CONFIGURATION *** //
-//		configureGraphUI(graph);
-//        
-//        // *** DISPLAY GRAPH *** //
-//		logger.info("Displaying graph");
-//        Viewer viewer = graph.display();
-//        
-//        
-//        AStar astar = new AStar(graph);
-//        astar.compute("1621", "B_1998");
-//        Path path = astar.getShortestPath();
-//        List<Node> stations = astar.getShortestPath().getNodePath();
-//        System.out.println(path);
-//        for(Node station : stations)
-//        {
-//        	System.out.println(station.getId() + ": " + station.getAttribute("nom"));
-//        }
-        
      }
 }

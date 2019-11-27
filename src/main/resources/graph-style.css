@@ -12,13 +12,25 @@ node {
 	z-index: 0;
 }
 
+node.diameter{
+	size: 5px;
+	fill-color: #BBBBBB;
+	stroke-mode: plain;
+	stroke-color: #FF0000; stroke-width: 1px; }
+
 edge {
 	shape: line;
 	fill-color: #222;
 	arrow-size: 3px, 2px;
 }
 
-edge.path {fill-color: #FF0000;
+edge.diameter
+{
+	fill-color: #FF0000;
+	size : 2px;
+}
+
+edge.path {fill-color: #0000FF;
 	size : 2px;
 	}
 

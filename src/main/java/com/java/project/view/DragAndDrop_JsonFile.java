@@ -184,9 +184,12 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
         	for (int i = 0; i < flavors.length; i++) {
         		if (flavors[i].isFlavorJavaFileListType()) {
         			dtde.acceptDrop(DnDConstants.ACTION_COPY);
-        			java.util.List<DataFlavor> list = (java.util.List<DataFlavor>) tr.getTransferData(flavors[i]);
+        			java.util.List list = (java.util.List) tr.getTransferData(flavors[i]);
         			for (int j = 0; j < list.size(); j++) {
-        				setResource(Paths.get(list.get(j).toString()));
+        				App.logger.debug(Paths.get(list.get(j).toString()));
+        				setResource(
+        						Paths.get(list.get(j).toString())
+        						);
         			}
         			dtde.dropComplete(true);
         			return;

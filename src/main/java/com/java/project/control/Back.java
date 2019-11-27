@@ -14,6 +14,7 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
 import org.graphstream.graph.implementations.MultiGraph;
+//import org.graphstream.ui.swingViewer.Viewer;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -50,14 +51,16 @@ public class Back {
 		
     	AStar astar = new AStar(graph);
     	astar.compute("1621", "B_1998");
+    	Path path = astar.getShortestPath();
+    	displayPath(graph, path);
 	    
-	    Path path = astar.getShortestPath();
-	    astar.compute("1621", "B_1998");
-		
-//		displayPath(graph, path);
+    	
+	    astar.compute("1632", "3813512");
+    	path = astar.getShortestPath();
+    	displayPath(graph, path);
 //		displayPath()
 		
-//      Viewer viewer = graph.display();
+      org.graphstream.ui.view.Viewer viewer = graph.display();
       return graph;
     }
 
@@ -68,11 +71,11 @@ public class Back {
 	    System.out.println(path);
 	    for(Node vertex : vertices)
 	    {
-	    	graph.getNode(vertex.getId()).addAttribute("ui.class", "marked");
+	    	graph.getNode(vertex.getId()).addAttribute("ui.class", "diameter");
 	    }
 	    for(Edge edge : edges)
 	    {
-	    	graph.getEdge(edge.getId()).addAttribute("ui.class", "path");
+	    	graph.getEdge(edge.getId()).addAttribute("ui.class", "diameter");
 	    }
     }
 
@@ -86,7 +89,8 @@ public class Back {
      */
 	private static void configureGraphUI(Graph graph) {
 		// Setting up the .css file for GraphStream implementation
-		// Necessary for dynamic coloring		
+		// Necessary for dynamic coloring	
+		System.setProperty("gs.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
 		graph.addAttribute("ui.stylesheet", String.format("url('%s')", Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\graph-style.css"));
 		
 		graph.addAttribute("ui.quality");
