@@ -2,16 +2,18 @@ package com.java.project.control;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.List;
 import java.util.Map.Entry;
 
 import org.apache.log4j.Logger;
+import org.graphstream.algorithm.AStar;
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
+import org.graphstream.graph.Path;
 import org.graphstream.graph.implementations.MultiGraph;
-import org.graphstream.ui.swingViewer.Viewer;
 
 import com.google.gson.Gson;
 import com.google.gson.JsonArray;
@@ -31,7 +33,7 @@ public class Back {
 	private static final Gson g = new Gson();
 	private static Logger logger = App.logger;
 	
-	private static Path pathToJson;
+	private static java.nio.file.Path pathToJson;
 	
     public static Graph compute()
     {
@@ -45,10 +47,34 @@ public class Back {
       
 		// *** DISPLAY GRAPH *** //
 		logger.info("Displaying graph");
+		
+    	AStar astar = new AStar(graph);
+    	astar.compute("1621", "B_1998");
+	    
+	    Path path = astar.getShortestPath();
+	    astar.compute("1621", "B_1998");
+		
+//		displayPath(graph, path);
+//		displayPath()
+		
 //      Viewer viewer = graph.display();
       return graph;
     }
 
+    public static void displayPath(Graph graph, Path path)
+    {
+	    List<Node> vertices = path.getNodePath();
+	    List<Edge> edges = path.getEdgePath();
+	    System.out.println(path);
+	    for(Node vertex : vertices)
+	    {
+	    	graph.getNode(vertex.getId()).addAttribute("ui.class", "marked");
+	    }
+	    for(Edge edge : edges)
+	    {
+	    	graph.getEdge(edge.getId()).addAttribute("ui.class", "path");
+	    }
+    }
 
 
 	/**
@@ -257,11 +283,11 @@ public class Back {
 	
 	// *** GETTERS & SETTERS *** //
 	
-	public static Path getPathToJson() {
+	public static java.nio.file.Path getPathToJson() {
 		return pathToJson;
 	}
 
-	public static void setPathToJson(Path pathToJson) {
+	public static void setPathToJson(java.nio.file.Path pathToJson) {
 		Back.pathToJson = pathToJson;
 	}
 	

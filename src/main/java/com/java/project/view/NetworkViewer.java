@@ -23,12 +23,6 @@ import com.java.project.ii2315.App;
 public class NetworkViewer extends JFrame implements ChangeListener 
 {
 	
-	private enum Durations
-	{
-		A,
-		B;
-	
-	}
 	
 	private String operationDuration;
     private JSpinner spinner;
@@ -68,7 +62,7 @@ public class NetworkViewer extends JFrame implements ChangeListener
         SpinnerModel dateModel = spinner.getModel();
         setSeasonalColor(dateModel.getValue().toString());
         // REFRESH VALUES HERE
-        this.operationDuration = spinner.getValue().toString();
+        operationDuration = spinner.getValue().toString();
     }
 	
 	public JFormattedTextField getTextField(JSpinner spinner) {
