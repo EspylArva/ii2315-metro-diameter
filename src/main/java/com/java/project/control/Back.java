@@ -4,6 +4,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Collection;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -54,27 +55,56 @@ public class Back {
     	Path path = astar.getShortestPath();
     	displayPath(graph, path);
 	    
+    	try {
+            synchronized (net) {
+                net.notifyAll();
+            }
+
+        } catch (IOException ioe) {
+            ioe.printStackTrace();
+        }
     	
 	    astar.compute("1632", "3813512");
     	path = astar.getShortestPath();
     	displayPath(graph, path);
 		
 //      org.graphstream.ui.view.Viewer viewer = graph.display();
-      return graph;
+    	return graph;
     }
 
     public static void displayPath(Graph graph, Path path)
     {
+    	Collection<Node> gVertices = graph.getNodeSet();
+    	Collection<Edge> gEdges = graph.getEdgeSet();
+    	for(Node n : gVertices)
+    	{
+    		if("path".equals(n.getLabel("ui.class")))
+    		{
+    			System.out.println("Path detected (n)");
+    			n.removeAttribute("ui.class");
+    		}
+    	}
+    	for(Edge e : gEdges)
+    	{
+    		if("path".equals(e.getLabel("ui.class")))
+    		{
+    			System.out.println("Path detected (e)");
+    			e.removeAttribute("ui.class");
+    		}
+    	}
+    	
+    	
 	    List<Node> vertices = path.getNodePath();
 	    List<Edge> edges = path.getEdgePath();
 	    App.logger.debug(String.format("Shortest path from %s to %s: %s",path.getNodePath().get(0),path.getNodePath().get(path.getNodePath().size()-1) , path));
 	    for(Node vertex : vertices)
 	    {
-	    	graph.getNode(vertex.getId()).addAttribute("ui.class", "diameter");
+	    	graph.getNode(vertex.getId()).addAttribute("ui.class", "path");
+	    	
 	    }
 	    for(Edge edge : edges)
 	    {
-	    	graph.getEdge(edge.getId()).addAttribute("ui.class", "diameter");
+	    	graph.getEdge(edge.getId()).addAttribute("ui.class", "path");
 	    }
     }
 
@@ -192,6 +222,7 @@ public class Back {
 	        			
 	        			// Add to model
 	        			world.getStations().add(s);
+	        			
 	        		}
 	        		logger.info('\t'+"Object \"stations\" computed!");
 	        		break;
@@ -238,7 +269,6 @@ public class Back {
 	    			logger.error('\t'+"Could not compute; unknown object.");
 	    			break;
 	        	}
-	       	
 	        }
 	        logger.info(String.format("Parsing of file %s finished.'\n'Model has been built accordingly.", jsonFile));
 		}

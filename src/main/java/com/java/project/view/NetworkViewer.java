@@ -82,8 +82,6 @@ public class NetworkViewer extends JFrame implements ChangeListener
     protected void setSeasonalColor(String date) {
         JFormattedTextField ftf = getTextField(spinner);
         if (ftf == null) return;
-
-
         
         ftf.setForeground(Color.BLUE);
         ftf.setBackground(Color.RED);

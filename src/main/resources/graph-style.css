@@ -1,6 +1,6 @@
 graph { fill-color: white; }
 
-node.marked{
+node.path{
 	size: 5px;
     fill-color: red;
 }

@@ -37,10 +37,9 @@ public class World //Info: Singleton
 			{
 				for(int i=0; i<correspondance.size()-1 ; i++)
 				{
-					graph.addEdge(String.format("%s-%s", correspondance.get(i), correspondance.get(i+1)),
+					Edge e = graph.addEdge(String.format("%s-%s", correspondance.get(i), correspondance.get(i+1)),
 							correspondance.get(i), correspondance.get(i+1));
-					graph.getEdge(String.format("%s-%s", correspondance.get(i), correspondance.get(i+1)))
-						.addAttribute("ui.class", "Correspondance");
+					e.addAttribute("ui.class", "Correspondance");
 				}
 			}
 			App.logger.info("Successfully built all correspondances");
