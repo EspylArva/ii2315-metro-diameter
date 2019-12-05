@@ -11,7 +11,7 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 
 
-public class Station
+public class Station 
 {	
 	// *** ATTRIBUTES *** //
 	
@@ -113,5 +113,4 @@ public class Station
 	public void setLignes(Map<String, ArrayList<String>> lignes) {
 		this.lignes = lignes;
 	}
-
 }
