@@ -3,15 +3,15 @@ package com.java.project.view;
 import java.awt.Color;
 import java.awt.Component;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
-import java.util.ArrayList;
 
+import javax.swing.BorderFactory;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
+import javax.swing.JLabel;
 import javax.swing.JSpinner;
 import javax.swing.SpinnerListModel;
 import javax.swing.SpinnerModel;
@@ -27,8 +27,10 @@ import com.java.project.ii2315.App;
 
 public class NetworkViewer extends JFrame implements ChangeListener 
 {
-	private String operationDuration;
-    private JSpinner spinner;
+    private JSpinner spinnerTime;
+    private JCheckBox chk_names;
+    private JCheckBox chk_paths;
+    private JCheckBox chk_diam;
     
 	public NetworkViewer(Graph graph)
 	{
@@ -49,29 +51,35 @@ public class NetworkViewer extends JFrame implements ChangeListener
 		view.setPreferredSize(new Dimension(600, 600));
 	    
 		// CheckBox : 
-		JCheckBox chk = new JCheckBox("A");
+		chk_names = new JCheckBox("Show names of stations");
+		chk_paths = new JCheckBox("Show path computing");
+		chk_diam = new JCheckBox("Show diameters");
 		
 		
 		
 		
 		// Spinner :
 		SpinnerListModel durationModel = new SpinnerListModel(new String[] {"100 ms","500 ms", "1 s"});
-    	spinner = new JSpinner(durationModel);
-    	spinner.addChangeListener(this);
+    	spinnerTime = new JSpinner(durationModel);
+    	spinnerTime.addChangeListener(this);
     	
-    	
+    	// Log console :
+    	JLabel logConsole = new JLabel();
+    	logConsole.setSize(new Dimension(200,600));
+    	logConsole.setText("TESTETSTETESTE");
+    	logConsole.setBorder(BorderFactory.createLineBorder(Color.black));
     	
 //    	this.add(exchangingCard1);
 //    	this.add(view);
 //    	this.add(spinner);
 //    	
-    	addElementsInGrid(view);
+    	addElementsInGrid(view, logConsole, spinnerTime );
     	//, spinner, chk
     	this.setVisible(true);
 	}
 	
 	
-	private void addElementsInGrid(Component graph)
+	private void addElementsInGrid(Component graph, Component logConsole,Component spinner)
 	{
 //		ArrayList<Component> e = new ArrayList<Component>();
 //		for(Component o : elements)
@@ -80,30 +88,33 @@ public class NetworkViewer extends JFrame implements ChangeListener
 //		}
 		
 		GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
 		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridwidth = 2;
+		gbc.gridy = 0;
+//		gbc.gridwidth = 2;
+		gbc.gridheight = 4;
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 		this.add(graph, gbc);
+		
+		
 
-//		gbc.fill = GridBagConstraints.HORIZONTAL;
-//        gbc.gridx = 0;
-//        gbc.gridy = 0;
-//        this.add(e.get(0), gbc);
-// 
-//        gbc.gridx = 1;
-//        gbc.gridy = 0;
-//        this.add(e.get(1), gbc);
+        gbc.gridx = 0;
+        gbc.gridy = 4;
+        this.add(logConsole, gbc);
+//
+        gbc.gridx = 1;
+        gbc.gridy = 0;
+        this.add(spinner, gbc);
  
 		
 	}
 	
 	public void stateChanged(ChangeEvent e) {
 		App.logger.debug("StateChanged");
-        SpinnerModel dateModel = spinner.getModel();
+        SpinnerModel dateModel = this.spinnerTime.getModel();
         setSeasonalColor(dateModel.getValue().toString());
         // REFRESH VALUES HERE
-        operationDuration = spinner.getValue().toString();
+//        operationDuration = spinnerTime.getValue().toString();
     }
 	
 	public JFormattedTextField getTextField(JSpinner spinner) {
@@ -122,7 +133,7 @@ public class NetworkViewer extends JFrame implements ChangeListener
 	
 
     protected void setSeasonalColor(String date) {
-        JFormattedTextField ftf = getTextField(spinner);
+        JFormattedTextField ftf = getTextField(this.spinnerTime);
         if (ftf == null) return;
         
         ftf.setForeground(Color.BLUE);

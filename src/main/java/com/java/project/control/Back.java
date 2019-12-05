@@ -60,14 +60,18 @@ public class Back {
 	    
 
     	
-	    astar.compute("1632", "3813512");
+	    astar.compute("1839", "1889");
     	path = astar.getShortestPath();
+    	for(Node n : path.getNodePath())
+    	{
+    		System.out.println("name " + n.getAttribute("nom").toString());
+    	}
+    	
     	displayPath(graph, path);
 		
     	
     	System.out.println("Diamètre : " + org.graphstream.algorithm.Toolkit.diameter(graph));
     	
-//      org.graphstream.ui.view.Viewer viewer = graph.display();
     	return graph;
     }
 
