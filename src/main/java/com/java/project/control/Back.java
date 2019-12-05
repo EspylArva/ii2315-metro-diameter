@@ -50,24 +50,23 @@ public class Back {
 		// *** DISPLAY GRAPH *** //
 		logger.info("Displaying graph");
 		
+		
+		
+		
     	AStar astar = new AStar(graph);
     	astar.compute("1621", "B_1998");
     	Path path = astar.getShortestPath();
     	displayPath(graph, path);
 	    
-    	try {
-            synchronized (net) {
-                net.notifyAll();
-            }
 
-        } catch (IOException ioe) {
-            ioe.printStackTrace();
-        }
     	
 	    astar.compute("1632", "3813512");
     	path = astar.getShortestPath();
     	displayPath(graph, path);
 		
+    	
+    	System.out.println("Diamètre : " + org.graphstream.algorithm.Toolkit.diameter(graph));
+    	
 //      org.graphstream.ui.view.Viewer viewer = graph.display();
     	return graph;
     }
@@ -147,12 +146,12 @@ public class Back {
     	
     	Graph graph = new MultiGraph("Plan du Métro");
     	
-    	World.buildStations(graph);
-		World.buildCorrespondances(graph);
+    	WorldControl.buildStations(graph);
+		WorldControl.buildCorrespondances(graph);
 		
 		ArrayList<String> partialWorldSetup = new ArrayList<String>(); for(String s : args)partialWorldSetup.add(s);
         
-		World.buildLignes(graph, partialWorldSetup);
+		WorldControl.buildLignes(graph, partialWorldSetup);
 		
         // Clean the graph of useless stations
         return removeLoneNode(graph);
@@ -172,9 +171,9 @@ public class Back {
 	private static Graph buildSimpleWorld()
 	{		
         Graph graph = new MultiGraph("Plan du Métro");
-        World.buildStations(graph);
-        World.buildCorrespondances(graph);
-        World.buildLignes(graph, null);        
+        WorldControl.buildStations(graph);
+        WorldControl.buildCorrespondances(graph);
+        WorldControl.buildLignes(graph, null);        
         return graph;
 		
 	}
