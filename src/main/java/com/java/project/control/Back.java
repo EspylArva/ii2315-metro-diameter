@@ -5,6 +5,7 @@ import java.io.FileReader;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
 
@@ -51,16 +52,20 @@ public class Back {
 		logger.info("Displaying graph");
 		
 		
-		
+		addWeights(graph);
 		
     	AStar astar = new AStar(graph);
+    	astar.setCosts(new AStar.DefaultCosts("distance"));
     	astar.compute("1621", "B_1998");
     	Path path = astar.getShortestPath();
     	displayPath(graph, path);
 	    
 
     	
-	    astar.compute("1839", "1889");
+
+    	
+	    astar.compute("1889", "1839");
+
     	path = astar.getShortestPath();
     	for(Node n : path.getNodePath())
     	{
@@ -68,11 +73,45 @@ public class Back {
     	}
     	
     	displayPath(graph, path);
-		
-    	
+    	for (Node n:path.getNodePath()) {
+    		System.out.println(n.getAttribute("nom"));
+    	}
     	System.out.println("Diamètre : " + org.graphstream.algorithm.Toolkit.diameter(graph));
     	
+    	
+    	
+      org.graphstream.ui.view.Viewer viewer = graph.display();
     	return graph;
+    }
+    
+    
+    private static void addWeights(Graph graph)
+    {
+    	Collection<Edge> edges = graph.getEdgeSet();
+    	for(Edge e : edges)
+    	{
+    		Node s1 = e.getSourceNode();
+    		Node s2 = e.getTargetNode();
+    		
+    	
+    			        		
+            double Xs1 = s1.getAttribute("latitude");
+            double Ys1 =s1.getAttribute("longitude");
+            
+            double Xs2 = s2.getAttribute("latitude");
+            double Ys2 =s2.getAttribute("longitude");
+            
+            
+            
+            double formula = Math.sqrt(Math.pow(Xs1-Xs2, 2)+Math.pow(Ys1-Ys2, 2));
+            System.out.println(formula);
+            
+            
+            e.addAttribute("distance",formula);
+            //e.addAttribute("ui.label",formula);
+    		
+            
+    	}
     }
 
     public static void displayPath(Graph graph, Path path)

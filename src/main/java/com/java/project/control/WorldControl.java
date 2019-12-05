@@ -54,7 +54,10 @@ public class WorldControl {
     			n.addAttribute("nom", station.getNom());
     			n.addAttribute("ui.label", station.getNom());
 //    			n.addAttribute("ui.label", station.num);
-    		}
+    			n.addAttribute("latitude", station.getLat());
+    			n.addAttribute("longitude", station.getLng());
+    			
+    			}
     		App.logger.info("Successfully built all stations");
         }
         catch(Exception e) {App.logger.error(e);}

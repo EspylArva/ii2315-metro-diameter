@@ -59,8 +59,6 @@ public class MainMenu extends JFrame implements ActionListener
     	frame.add(btn_useDefaultJson);
     	frame.add(btn_SimpleWorld);
     	frame.add(btn_WeightedWorld);
-    	
-    	
     	frame.setVisible(true);
     	
     	

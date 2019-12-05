@@ -1,9 +1,16 @@
 graph { fill-color: white; }
 
+
+
+
 node.path{
 	size: 5px;
     fill-color: red;
+<<<<<<< HEAD
     text-mode: normal;
+=======
+    text-mode:normal;
+>>>>>>> 74cf7c11cb931b27d1da53d8f498ce0381efa736
 }
 
 node {
@@ -24,6 +31,7 @@ edge {
 	fill-color: #222;
 	arrow-size: 3px, 2px;
 }
+
 
 edge.diameter
 {

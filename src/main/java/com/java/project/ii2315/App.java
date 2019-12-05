@@ -26,7 +26,6 @@ public class App
     	// GUI: MainMenu
     	SwingUtilities.invokeLater(new Runnable()
 		{	
-			@Override
 			public void run() {
 				try
 				{
