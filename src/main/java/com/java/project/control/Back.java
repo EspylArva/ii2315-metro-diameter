@@ -80,7 +80,7 @@ public class Back {
     	
     	
     	
-      org.graphstream.ui.view.Viewer viewer = graph.display();
+//    	org.graphstream.ui.view.Viewer viewer = graph.display();
     	return graph;
     }
     
@@ -108,7 +108,7 @@ public class Back {
             
             
             e.addAttribute("distance",formula);
-            //e.addAttribute("ui.label",formula);
+//            e.addAttribute("ui.label",formula);
     		
             
     	}
@@ -216,7 +216,7 @@ public class Back {
         Graph graph = new MultiGraph("Plan du Métro");
         WorldControl.buildStations(graph);
         WorldControl.buildCorrespondances(graph);
-        WorldControl.buildLignes(graph, null);        
+        WorldControl.buildLignes(graph, null);   
         return graph;
 		
 	}
