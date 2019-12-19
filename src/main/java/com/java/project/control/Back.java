@@ -451,14 +451,22 @@ public class Back {
 		{
 			for(Edge e : g.getEdgeSet())
 			{
-				e.addAttribute("ui.class", "showDistance");
+				if(e.hasAttribute("distance"))
+				{
+					e.addAttribute("ui.label", e.getAttribute("distance"));
+				}
+//				e.addAttribute("ui.class", "showDistance");
+				else
+				{
+					e.addAttribute("ui.label", 1);
+				}
 			}
 		}
 		else
 		{
 			for(Edge e : g.getEdgeSet())
 			{
-				e.changeAttribute("ui.class", "edge");
+				e.removeAttribute("ui.label");
 			}
 		}
 	}
