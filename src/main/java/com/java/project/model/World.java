@@ -24,9 +24,9 @@ public class World //Info: Singleton
 	// *** METHODS *** //
 
 	
-	
-	
 	// *** ATTRIBUTES *** //
+	
+	private static boolean built = false;
 	private static World WORLD_INSTANCE = new World();
 	
 	// Ensemble des correspondances entre tramway et métro/rer
@@ -67,5 +67,11 @@ public class World //Info: Singleton
 	}
 	
 	public static World getInstance(){ return WORLD_INSTANCE; }
+	public static boolean isBuilt() {
+		return built;
+	}
+	public static void setBuilt(boolean built) {
+		World.built = built;
+	}
 
 }

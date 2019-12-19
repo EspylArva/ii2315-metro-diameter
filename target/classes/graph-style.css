@@ -1,7 +1,12 @@
 graph { fill-color: white; }
 
+node.showName{
+    text-mode:normal;
+}
 
-
+edge.showDistance{
+    text-mode:normal;
+}
 
 node.path{
 	size: 5px;
@@ -38,7 +43,7 @@ edge.diameter
 
 edge.path {fill-color: #0000FF;
 	size : 2px;
-	}
+}
 
 edge.CB {fill-color: #3466AC;}
 edge.CA {fill-color: #FE370F;}

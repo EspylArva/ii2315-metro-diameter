@@ -41,9 +41,14 @@ public class Back {
 	
     public static Graph computeWeightlessGraph()
     {
-    	parseWorld(getPathToJson());
-		// *** BUILDING MODEL *** //
-    	Graph graph = buildSimpleWorld();
+    	Graph graph = null;
+    	// *** BUILDING MODEL *** //
+    	if(!World.isBuilt())
+    	{
+	    	parseWorld(getPathToJson());
+	    	World.setBuilt(true);
+    	}
+    	graph = buildSimpleWorld();
 //      Graph graph = buildSimplePartialWorld("B", "A");
       
     	// *** GRAPHICAL CONFIGURATION *** //
@@ -76,14 +81,14 @@ public class Back {
     	path = astar.getShortestPath();
     	for(Node n : path.getNodePath())
     	{
-    		System.out.println("name " + n.getAttribute("nom").toString());
+    		logger.trace("name " + n.getAttribute("nom").toString());
     	}
     	
     	displayPath(graph, path);
     	for (Node n:path.getNodePath()) {
-    		System.out.println(n.getAttribute("nom"));
+    		logger.trace(n.getAttribute("nom"));
     	}
-    	System.out.println("Diamètre : " + org.graphstream.algorithm.Toolkit.diameter(graph));
+    	logger.info("Diamètre : " + org.graphstream.algorithm.Toolkit.diameter(graph));
     	
     }
     
@@ -95,8 +100,6 @@ public class Back {
     	{
     		Node s1 = e.getSourceNode();
     		Node s2 = e.getTargetNode();
-    		
-    	
     			        		
             double Xs1 = s1.getAttribute("latitude");
             double Ys1 =s1.getAttribute("longitude");
@@ -107,7 +110,7 @@ public class Back {
             
             
             double formula = Math.sqrt(Math.pow(Xs1-Xs2, 2)+Math.pow(Ys1-Ys2, 2));
-            System.out.println(formula);
+            logger.trace(formula);
             
             
             e.addAttribute("distance",formula);
@@ -175,7 +178,7 @@ public class Back {
     	{
     		if("path".equals(n.getLabel("ui.class")))
     		{
-    			System.out.println("Path detected (n)");
+    			logger.trace("Path detected (n)");
     			n.removeAttribute("ui.class");
     		}
     	}
@@ -183,7 +186,7 @@ public class Back {
     	{
     		if("path".equals(e.getLabel("ui.class")))
     		{
-    			System.out.println("Path detected (e)");
+    			logger.trace("Path detected (e)");
     			e.removeAttribute("ui.class");
     		}
     	}
@@ -424,6 +427,40 @@ public class Back {
 
 	public static void setPathToJson(java.nio.file.Path pathToJson) {
 		Back.pathToJson = pathToJson;
+	}
+
+	public static void showStationsName(boolean selected, Graph g) {
+		if(selected)
+		{
+			for(Node n : g.getNodeSet())
+			{
+				n.addAttribute("ui.class", "showName");
+			}
+		}
+		else
+		{
+			for(Node n : g.getNodeSet())
+			{
+				n.changeAttribute("ui.class", "node");
+			}
+		}
+	}
+	
+	public static void showDistances(boolean selected, Graph g) {
+		if(selected)
+		{
+			for(Edge e : g.getEdgeSet())
+			{
+				e.addAttribute("ui.class", "showDistance");
+			}
+		}
+		else
+		{
+			for(Edge e : g.getEdgeSet())
+			{
+				e.changeAttribute("ui.class", "edge");
+			}
+		}
 	}
 	
 }
