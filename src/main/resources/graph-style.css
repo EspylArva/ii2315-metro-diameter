@@ -4,9 +4,6 @@ node.showName{
     text-mode:normal;
 }
 
-edge.showDistance{
-    text-mode:normal;
-}
 
 node.path{
 	size: 5px;

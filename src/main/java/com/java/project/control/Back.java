@@ -73,7 +73,7 @@ public class Back {
     	astar.setCosts(new AStar.DefaultCosts("distance"));
     	astar.compute("1621", "B_1998");
     	Path path = astar.getShortestPath();
-    	displayPath(graph, path);
+    	displayPath(graph, path, "path");
 	    
 
 	    astar.compute("1889", "1839");
@@ -84,7 +84,7 @@ public class Back {
     		logger.trace("name " + n.getAttribute("nom").toString());
     	}
     	
-    	displayPath(graph, path);
+    	displayPath(graph, path, "diameter");
     	for (Node n:path.getNodePath()) {
     		logger.trace(n.getAttribute("nom"));
     	}
@@ -170,39 +170,39 @@ public class Back {
 	    return null;
     }
 
-    public static void displayPath(Graph graph, Path path)
+    public static void displayPath(Graph graph, Path path, String label)
     {
     	Collection<Node> gVertices = graph.getNodeSet();
     	Collection<Edge> gEdges = graph.getEdgeSet();
     	for(Node n : gVertices)
     	{
-    		if("path".equals(n.getLabel("ui.class")))
+    		if(label.equals(n.getLabel("ui.class")))
     		{
     			logger.trace("Path detected (n)");
-    			n.removeAttribute("ui.class");
+    			n.removeAttribute("ui.class."+label);
     		}
     	}
     	for(Edge e : gEdges)
     	{
-    		if("path".equals(e.getLabel("ui.class")))
+    		if(label.equals(e.getLabel("ui.class")))
     		{
     			logger.trace("Path detected (e)");
-    			e.removeAttribute("ui.class");
+    			e.removeAttribute("ui.class."+label);
     		}
     	}
     	
-    	
 	    List<Node> vertices = path.getNodePath();
 	    List<Edge> edges = path.getEdgePath();
+	    
 	    App.logger.debug(String.format("Shortest path from %s to %s: %s",path.getNodePath().get(0),path.getNodePath().get(path.getNodePath().size()-1) , path));
 	    for(Node vertex : vertices)
 	    {
-	    	graph.getNode(vertex.getId()).addAttribute("ui.class", "path");
+	    	graph.getNode(vertex.getId()).addAttribute("ui.class", label);
 	    	
 	    }
 	    for(Edge edge : edges)
 	    {
-	    	graph.getEdge(edge.getId()).addAttribute("ui.class", "path");
+	    	graph.getEdge(edge.getId()).addAttribute("ui.class", label);
 	    }
     }
 
@@ -455,7 +455,6 @@ public class Back {
 				{
 					e.addAttribute("ui.label", e.getAttribute("distance"));
 				}
-//				e.addAttribute("ui.class", "showDistance");
 				else
 				{
 					e.addAttribute("ui.label", 1);
