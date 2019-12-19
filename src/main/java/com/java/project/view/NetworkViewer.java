@@ -5,8 +5,11 @@ import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
 import javax.swing.BorderFactory;
+import javax.swing.JButton;
 import javax.swing.JCheckBox;
 import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
@@ -23,17 +26,21 @@ import org.graphstream.ui.swingViewer.DefaultView;
 //import org.graphstream.ui.swingViewer.Viewer;
 import org.graphstream.ui.view.Viewer;
 
+import com.java.project.control.Back;
 import com.java.project.ii2315.App;
 
-public class NetworkViewer extends JFrame implements ChangeListener 
+public class NetworkViewer extends JFrame implements ChangeListener, ActionListener
 {
     private JSpinner spinnerTime;
     private JCheckBox chk_names;
     private JCheckBox chk_paths;
     private JCheckBox chk_diam;
+    private JButton compute;
+    private Graph graph = null;
     
 	public NetworkViewer(Graph graph)
 	{
+		this.graph = graph;
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		this.setSize(800,800);
 		this.setLocationRelativeTo(null);
@@ -55,7 +62,9 @@ public class NetworkViewer extends JFrame implements ChangeListener
 		chk_paths = new JCheckBox("Show path computing");
 		chk_diam = new JCheckBox("Show diameters");
 		
-		
+		// Button : 
+		compute = new JButton("Compute diameter");
+		compute.addActionListener(this);
 		
 		
 		// Spinner :
@@ -76,6 +85,17 @@ public class NetworkViewer extends JFrame implements ChangeListener
     	addElementsInGrid(view, logConsole, spinnerTime );
     	//, spinner, chk
     	this.setVisible(true);
+	}
+	
+	public void actionPerformed(ActionEvent e) {
+		Object source = e.getSource();
+ 
+		if(source == compute)
+		{			
+			compute.setEnabled(false);
+			Back.computeDiameter(this.graph);
+			compute.setEnabled(true);
+		}
 	}
 	
 	

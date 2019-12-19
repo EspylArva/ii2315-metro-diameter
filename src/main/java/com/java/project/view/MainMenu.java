@@ -70,14 +70,17 @@ public class MainMenu extends JFrame implements ActionListener
  
 		if(source == btn_SimpleWorld)
 		{			
-			NetworkViewer newWindow = new NetworkViewer(Back.compute());
+			NetworkViewer newWindow = new NetworkViewer(Back.computeWeightlessGraph());
 			newWindow.setVisible(true);
-			this.frame.dispatchEvent(new WindowEvent(frame, WindowEvent.WINDOW_CLOSING));
 		}
 		else if(source == btn_WeightedWorld)
 		{
 			// load complex world
-			App.logger.error("Not yet implemented!");
+			Graph g = Back.computeWeightlessGraph();
+			Back.addWeights(g);
+			NetworkViewer newWindow = new NetworkViewer(g);
+			newWindow.setVisible(true);
+//			App.logger.error("Not yet implemented!");
 		}
 		else if(source == btn_useDefaultJson)
 		{

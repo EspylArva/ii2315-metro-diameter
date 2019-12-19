@@ -8,6 +8,7 @@ import java.util.Collection;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map.Entry;
+import java.util.Stack;
 
 import org.apache.log4j.Logger;
 import org.graphstream.algorithm.AStar;
@@ -38,7 +39,7 @@ public class Back {
 	
 	private static java.nio.file.Path pathToJson;
 	
-    public static Graph compute()
+    public static Graph computeWeightlessGraph()
     {
     	parseWorld(getPathToJson());
 		// *** BUILDING MODEL *** //
@@ -52,8 +53,17 @@ public class Back {
 		logger.info("Displaying graph");
 		
 		
-		addWeights(graph);
+//		addWeights(graph);
 		
+
+    	
+    	
+//    	org.graphstream.ui.view.Viewer viewer = graph.display();
+    	return graph;
+    }
+    
+    public static void computeDiameter(Graph graph)
+    {
     	AStar astar = new AStar(graph);
     	astar.setCosts(new AStar.DefaultCosts("distance"));
     	astar.compute("1621", "B_1998");
@@ -61,9 +71,6 @@ public class Back {
     	displayPath(graph, path);
 	    
 
-    	
-
-    	
 	    astar.compute("1889", "1839");
 
     	path = astar.getShortestPath();
@@ -78,14 +85,10 @@ public class Back {
     	}
     	System.out.println("Diamètre : " + org.graphstream.algorithm.Toolkit.diameter(graph));
     	
-    	
-    	
-//    	org.graphstream.ui.view.Viewer viewer = graph.display();
-    	return graph;
     }
     
     
-    private static void addWeights(Graph graph)
+    public static void addWeights(Graph graph)
     {
     	Collection<Edge> edges = graph.getEdgeSet();
     	for(Edge e : edges)
