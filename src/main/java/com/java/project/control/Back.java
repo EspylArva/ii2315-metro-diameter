@@ -114,6 +114,56 @@ public class Back {
     	}
     }
 
+    /**
+    * Récupère le plus long des plus court chemin
+    * Todo faire un check de la distance pour raccourcir l'execution
+    * gérer le java.lang.OutOfMemoryError: Java heap space ^^
+    * @param graph
+    * @param start
+    * @param end
+    * @return
+    */
+    public static Path longShortestPath(Graph graph,String start, String end) {
+    	System.out.println("-----TEST-----");
+    	Node root = graph.getNode(start);
+    	Node goal = graph.getNode(end);
+    	ArrayList<ArrayList<Node>> completePath = new ArrayList<ArrayList<Node>>();
+    	Stack<ArrayList<Node>> todo = new Stack<ArrayList<Node>>();
+    	
+    	
+    	// initialisation ddu chemin de départ -- a supprimer
+    	ArrayList<Node> tmp = null;
+		for(Edge e : root.getEachLeavingEdge()) {
+			Node neighbor = e.getTargetNode();
+			tmp = new ArrayList<Node>();
+			tmp.add(root);
+			tmp.add(neighbor);
+			todo.push(tmp);
+			System.out.println(neighbor.getAttribute("nom"));
+		}
+		System.out.println(todo);
+		
+		// on parcours chaque node pour trouver un chemin possible
+		ArrayList<Node> newPath = null;
+		while(!todo.empty()) {
+			tmp = todo.peek();
+			Node last = tmp.get(tmp.size()-1);
+			for(Edge e : last.getEachLeavingEdge()) {
+				Node neighbor = e.getTargetNode();
+				newPath = (ArrayList<Node>) tmp.clone();
+				newPath.add(neighbor);
+				if(neighbor == goal) {
+					completePath.add(newPath);
+				}
+				else {
+					todo.push(newPath);
+				}
+			}
+		}
+	    System.out.println("-----TEST-----");
+	    return null;
+    }
+
     public static void displayPath(Graph graph, Path path)
     {
     	Collection<Node> gVertices = graph.getNodeSet();
