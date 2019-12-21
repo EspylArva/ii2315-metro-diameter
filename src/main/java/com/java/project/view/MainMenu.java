@@ -34,8 +34,8 @@ public class MainMenu extends JFrame implements ActionListener
 	
 	public MainMenu()
 	{
-		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		frame = new JFrame("Diameter Calculator");
+		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 		frame.setLayout(new FlowLayout());
     	frame.setSize(1200,800);
 
