@@ -67,29 +67,13 @@ public class Back {
     	return graph;
     }
     
-    public static void computeDiameter(Graph graph)
+     public static void computeDiameter(Graph graph)
     {
-    	AStar astar = new AStar(graph);
-    	astar.setCosts(new AStar.DefaultCosts("distance"));
-    	astar.compute("1621", "B_1998");
-    	Path path = astar.getShortestPath();
-    	displayPath(graph, path, "path");
-	    
-
-	    astar.compute("1889", "1839");
-
-    	path = astar.getShortestPath();
-    	for(Node n : path.getNodePath())
-    	{
-    		logger.trace("name " + n.getAttribute("nom").toString());
-    	}
-    	
+    	logger.info("Début du calcul de diamètre...");
+    	Path path = findDiameter(graph);
+    	logger.info("Diamètre : " + path.getNodeCount());
+    	logger.info("Diamètre : " + path);
     	displayPath(graph, path, "diameter");
-    	for (Node n:path.getNodePath()) {
-    		logger.trace(n.getAttribute("nom"));
-    	}
-    	logger.info("Diamètre : " + org.graphstream.algorithm.Toolkit.diameter(graph));
-    	
     }
     
     
@@ -120,56 +104,76 @@ public class Back {
     	}
     }
 
-    /**
-    * Récupère le plus long des plus court chemin
-    * Todo faire un check de la distance pour raccourcir l'execution
-    * gérer le java.lang.OutOfMemoryError: Java heap space ^^
-    * @param graph
-    * @param start
-    * @param end
-    * @return
-    */
-    public static Path longShortestPath(Graph graph,String start, String end) {
-    	System.out.println("-----TEST-----");
-    	Node root = graph.getNode(start);
-    	Node goal = graph.getNode(end);
-    	ArrayList<ArrayList<Node>> completePath = new ArrayList<ArrayList<Node>>();
-    	Stack<ArrayList<Node>> todo = new Stack<ArrayList<Node>>();
+    /*
+     * Fonction qui retourne le Path du diamètre 
+     * Input : Graph graph, le graphe où chercher
+     * Output : Path diameter, le Path du diamètre
+     */
+    public static Path findDiameter(Graph graph) {
     	
+    	// ArrayList qui va contenir tous les paths testés
+    	ArrayList<Path> history = new ArrayList<Path>();
     	
-    	// initialisation ddu chemin de départ -- a supprimer
-    	ArrayList<Node> tmp = null;
-		for(Edge e : root.getEachLeavingEdge()) {
-			Node neighbor = e.getTargetNode();
-			tmp = new ArrayList<Node>();
-			tmp.add(root);
-			tmp.add(neighbor);
-			todo.push(tmp);
-			System.out.println(neighbor.getAttribute("nom"));
-		}
-		System.out.println(todo);
-		
-		// on parcours chaque node pour trouver un chemin possible
-		ArrayList<Node> newPath = null;
-		while(!todo.empty()) {
-			tmp = todo.peek();
-			Node last = tmp.get(tmp.size()-1);
-			for(Edge e : last.getEachLeavingEdge()) {
-				Node neighbor = e.getTargetNode();
-				newPath = (ArrayList<Node>) tmp.clone();
-				newPath.add(neighbor);
-				if(neighbor == goal) {
-					completePath.add(newPath);
-				}
-				else {
-					todo.push(newPath);
-				}
-			}
-		}
-	    System.out.println("-----TEST-----");
-	    return null;
-    }
+    	// Boolean qui indique s'il on a déjà le chemin dans un essai précédent
+    	boolean skip;
+    	
+    	// Path du diamètre
+    	Path diameter = null;
+    	
+    	// Nombre d'itération d'A* pour information
+    	int iteration = 0;
+    	
+    	// On créer et paramètre un A*
+	AStar astar = new AStar(graph);
+    	astar.setCosts(new AStar.DefaultCosts("distance"));
+    	
+    	// Pour chaque noeud du graphe en départ
+    	for(Node start : graph.getEachNode()) {
+    		
+    		// On l'associe a tous les autres en fin
+    		for(Node end : graph.getEachNode()) {
+    			skip = false;
+    			
+    			// Pour chaque path de l'historique
+    			for(Path p : history) {
+    				
+    				// Si le départ et l'arrivée sont dans un des chemins alors inutile de faire un A*
+        			if(p.contains(start) && p.contains(end)) {
+        				skip = true;
+        				break;
+        			}
+    			}
+    			
+    			// Si nous devont rechercher le path
+    			if(!skip) {
+    				
+    				// On paramètre A* avec  notre départ et arrivée
+				astar.compute(start.getId(), end.getId());
+				Path path = astar.getShortestPath();
+				iteration += 1;
 
+				// Si le path est non null
+				if(path != null) {
+
+					// Ajout a l'historique 
+					history.add(path);
+
+					// Si le path est plus long que le diamètre actuel alors le path devient le diamètre
+					if(diameter == null || path.getNodeCount() > diameter.getNodeCount()) {
+						diameter = path;
+					}
+				}
+    		    	
+    			}
+    			
+    		}
+    		
+    	}
+    	logger.info("Nombre d'itération d'A* pour trouver le diamètre : " + iteration);
+    	return diameter;
+    	
+    }
+	
     public static void displayPath(Graph graph, Path path, String label)
     {
     	Collection<Node> gVertices = graph.getNodeSet();
