@@ -1,0 +1,88 @@
+package com.java.project.control;
+
+
+import java.util.HashMap;
+
+import org.apache.log4j.Logger;
+import org.graphstream.algorithm.AStar;
+import org.graphstream.graph.Edge;
+import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.Path;
+
+import com.java.project.ii2315.App;
+
+public class ClusterAndDiameter extends Thread {
+
+	private static Logger logger = App.logger;
+	private Graph cluster;
+	private int minimumCluster;
+	
+	public ClusterAndDiameter(String name,Graph graph, int minimumCluster) {
+		super(name);
+		this.cluster = graph;
+		this.minimumCluster = minimumCluster;
+	}
+	
+	
+	public void run() {
+		
+		HashMap<Edge,Integer> edgeList = new HashMap<Edge,Integer>();    	    	
+    	Path diameter = null;
+    	int iteration = 0;
+    	
+    	AStar astar = new AStar(this.cluster);
+    	astar.setCosts(new AStar.DefaultCosts("distance"));
+    	
+    	for(Node start : this.cluster.getEachNode()) {
+    		
+    		for(Node end : this.cluster.getEachNode()) {
+    		
+				astar.compute(start.getId(), end.getId());
+				Path path = astar.getShortestPath();
+				iteration += 1;
+				if(iteration % 50000 == 0) {
+					logger.info("Cluster et diamètre thread intérations : " + iteration);
+				}
+				
+				if(path != null) {
+
+					for(Edge e : path.getEdgeSet()) {
+						if(edgeList.containsKey(e)) {
+							edgeList.put(e, edgeList.get(e) + 1);
+						}
+						else {
+							edgeList.put(e, 1);
+						}
+					}
+
+					if(diameter == null || path.getNodeCount() > diameter.getNodeCount()) {
+						diameter = path;
+					}
+				}
+    			
+    		}
+    		
+    	}
+    	Back.diameter = diameter;
+    	logger.info("Diamètre : " + Back.diameter.getNodeCount());
+    	logger.info("Diamètre : " + Back.diameter);
+    	
+    	logger.info("Graph Nodes: " + this.cluster.getNodeCount() );
+    	logger.info("Graph Edges: " + this.cluster.getEdgeCount() );
+    	
+    	for(Edge e : edgeList.keySet()) {
+    		if(edgeList.get(e) < this.minimumCluster) {
+    			this.cluster.removeEdge(e);
+    		}
+    	}
+    	
+    	
+    	Back.cluster = this.cluster;
+    	logger.info("Cluster minimum Edge value : " + this.minimumCluster );
+    	logger.info("Cluster Nodes: " + Back.cluster.getNodeCount() );
+    	logger.info("Cluster Edges: " + Back.cluster.getEdgeCount() );
+  
+	}
+	
+}
