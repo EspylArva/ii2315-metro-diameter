@@ -1,25 +1,22 @@
 package com.java.project.view;
 
-import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.GridBagConstraints;
 import java.awt.GridBagLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
-import java.awt.event.WindowEvent;
 import java.nio.file.Paths;
 
+import javax.swing.BorderFactory;
 import javax.swing.JButton;
+import javax.swing.JComponent;
 import javax.swing.JFrame;
-import javax.swing.JSpinner;
-import javax.swing.SpinnerListModel;
+import javax.swing.JPanel;
 
 import org.graphstream.graph.Graph;
-import org.graphstream.ui.swingViewer.DefaultView;
-//import org.graphstream.ui.swingViewer.Viewer;
 
 import com.java.project.control.Back;
-import com.java.project.ii2315.App;
 
 public class MainMenu extends JFrame implements ActionListener
 {
@@ -27,6 +24,7 @@ public class MainMenu extends JFrame implements ActionListener
 
 	private static final long serialVersionUID = 1L;	
 	
+	private GridBagConstraints gbc = new GridBagConstraints();
 	private static JButton btn_SimpleWorld;
 	private static JButton btn_WeightedWorld;
 	private JButton btn_useDefaultJson;
@@ -38,8 +36,9 @@ public class MainMenu extends JFrame implements ActionListener
 	{
 		this.setTitle(title);
 		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		this.setLayout(new GridBagLayout());
-    	this.setSize(1200,800);
+		
+		JPanel content = new JPanel(new GridBagLayout());
+    	this.setSize(500,400);
 
     	this.setResizable(true);
     	this.setLocationRelativeTo(null);
@@ -59,49 +58,45 @@ public class MainMenu extends JFrame implements ActionListener
     	btn_SimpleWorld.setEnabled(false);
     	btn_WeightedWorld.setEnabled(false);
     	
-    	dragAndDrop_image = new DragAndDrop_JsonFile();
+    	dragAndDrop_image = new DragAndDrop_JsonFile(433,255);
     	
-    	
-    	GridBagConstraints gbc = new GridBagConstraints();
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-//
-		gbc.gridx = 0;
-		gbc.gridy = 0;
-		gbc.gridwidth = 6;
-		gbc.gridheight = 1;
-		this.add(dragAndDrop_image, gbc);
-		
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridwidth = 2;
-		gbc.gridheight = 1;
-    	this.add(btn_useDefaultJson, gbc);
-    	gbc.gridx = 2;
-		gbc.gridy = 1;
-		gbc.gridwidth = 2;
-		gbc.gridheight = 1;
-    	this.add(btn_useFullJson, gbc);
-    	gbc.gridx = 4;
-		gbc.gridy = 1;
-		gbc.gridwidth = 2;
-		gbc.gridheight = 1;
-    	this.add(btn_useSimpleJson, gbc);
-    	
-    	gbc.gridx = 0;
-		gbc.gridy = 3;
-		gbc.gridwidth = 3;
-		gbc.gridheight = 1;
-    	this.add(btn_SimpleWorld, gbc);
-    	gbc.gridx = 3;
-		gbc.gridy = 3;
-		gbc.gridwidth = 3;
-		gbc.gridheight = 1;
-    	this.add(btn_WeightedWorld, gbc);
 
+    	JPanel p = new JPanel(new GridBagLayout());
+		p.setBorder(BorderFactory.createTitledBorder("Select .JSON file"));
+		
+		addComp(p, dragAndDrop_image, 0, 0, 3, 1, GridBagConstraints.BOTH, 0.33, 0.5);
+		addComp(p, btn_useDefaultJson, 0, 1, 1, 1, GridBagConstraints.BOTH, 0.33, 0.5);
+		addComp(p, btn_useFullJson, 1, 1, 1, 1, GridBagConstraints.BOTH, 0.33, 0.5);
+		addComp(p, btn_useSimpleJson, 2, 1, 1, 1, GridBagConstraints.BOTH, 0.33, 0.5);
+		
+		
+		JPanel p2 = new JPanel(new GridBagLayout());
+		p2.setBorder(BorderFactory.createTitledBorder("Select world model"));
+		
+		addComp(p2, btn_SimpleWorld, 0, 0, 1, 1, GridBagConstraints.BOTH, 0.5, 1);
+		addComp(p2, btn_WeightedWorld, 1, 0, 1, 1, GridBagConstraints.BOTH, 0.5, 1);
+		
+		addComp(content, p, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, 0.7);
+		addComp(content, p2, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, 0.3);
+		
+		this.setContentPane(content);
+		this.pack();
     	this.setVisible(true);
     	
-    	
 	}
+	
+	private void addComp(JPanel panel, JComponent comp, int x, int y, int gWidth , int gHeight, int fill, double weightx, double weighty) {
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.gridwidth = gWidth;
+		gbc.gridheight = gHeight;
+		gbc.fill = fill;
+		gbc.weightx = weightx;
+		gbc.weighty = weighty; 
+
+		panel.add(comp, gbc);
+	}
+	
 	
 	
 	public void actionPerformed(ActionEvent e) {

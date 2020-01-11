@@ -177,16 +177,17 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 			}
 			addLogConsoleLine(diamPath.toString());
 		}
-		if(source == chk_names)
+		if(source == chk_names || source == chk_dp_names)
 		{
 			App.logger.info("Checkbox: names " + chk_names.isSelected());
 			Back.showStationsName(chk_names.isSelected(), graph);
-		}
-		if(source == chk_dp_names)
-		{
-			App.logger.info("Checkbox: path names " + chk_dp_names.isSelected());
 			Back.showPathStationsName(chk_dp_names.isSelected(), graph);
 		}
+//		if(source == chk_dp_names)
+//		{
+//			App.logger.info("Checkbox: path names " + chk_dp_names.isSelected());
+//			Back.showPathStationsName(chk_dp_names.isSelected(), graph);
+//		}
 		if(source == chk_distances)
 		{
 			App.logger.info("Checkbox: distances " + chk_distances.isSelected());

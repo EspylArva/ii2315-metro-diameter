@@ -199,7 +199,7 @@ public class Back {
 	 */
 	private static Graph buildSimpleWorld()
 	{		
-        Graph graph = new MultiGraph("Plan du Métro");
+        Graph graph = new MultiGraph("Paris' transportation map");
         WorldControl.buildStations(graph);
         WorldControl.buildCorrespondances(graph);
         WorldControl.buildLignes(graph, null);   
