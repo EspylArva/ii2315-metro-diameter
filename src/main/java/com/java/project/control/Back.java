@@ -48,6 +48,12 @@ public class Back {
 	    	parseWorld(getPathToJson());
 	    	World.setBuilt(true);
     	}
+    	else
+    	{
+    		World.destroy();
+    		parseWorld(getPathToJson());
+	    	World.setBuilt(true);
+    	}
     	graph = buildSimpleWorld();
 //      Graph graph = buildSimplePartialWorld("B", "A");
       

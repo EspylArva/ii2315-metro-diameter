@@ -57,6 +57,9 @@ public class WorldControl {
     			n.addAttribute("latitude", station.getLat());
     			n.addAttribute("longitude", station.getLng());
     			
+//    			n.addAttribute("layout.frozen");
+    			n.addAttribute("xy", station.getLng(),station.getLat());
+    			
     			}
     		App.logger.info("Successfully built all stations");
         }

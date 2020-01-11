@@ -73,5 +73,8 @@ public class World //Info: Singleton
 	public static void setBuilt(boolean built) {
 		World.built = built;
 	}
+	public static void destroy() {
+		WORLD_INSTANCE = new World();
+	}
 
 }
