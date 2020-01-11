@@ -36,7 +36,7 @@ public class App
 				try
 				{
                     UIManager.setLookAndFeel(UIManager.getSystemLookAndFeelClassName());
-                    new MainMenu();
+                    new MainMenu("Diameter Calculator - Network Settings");
                 }
 				catch (ClassNotFoundException | InstantiationException |
 						IllegalAccessException | UnsupportedLookAndFeelException ex)

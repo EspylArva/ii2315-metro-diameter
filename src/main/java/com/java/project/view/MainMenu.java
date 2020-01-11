@@ -2,6 +2,8 @@ package com.java.project.view;
 
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridBagConstraints;
+import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowEvent;
@@ -21,33 +23,38 @@ import com.java.project.ii2315.App;
 
 public class MainMenu extends JFrame implements ActionListener
 {
-	private JFrame frame;
+//	private JFrame frame;
 
 	private static final long serialVersionUID = 1L;	
 	
 	private static JButton btn_SimpleWorld;
-
-
 	private static JButton btn_WeightedWorld;
 	private JButton btn_useDefaultJson;
+	private JButton btn_useFullJson;
+	private JButton btn_useSimpleJson;
 	private DragAndDrop_JsonFile dragAndDrop_image;
 	
-	public MainMenu()
+	public MainMenu(String title)
 	{
-		frame = new JFrame("Diameter Calculator");
-		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
-		frame.setLayout(new FlowLayout());
-    	frame.setSize(1200,800);
+		this.setTitle(title);
+		this.setDefaultCloseOperation(EXIT_ON_CLOSE);
+		this.setLayout(new GridBagLayout());
+    	this.setSize(1200,800);
 
-    	frame.setResizable(true);
-    	frame.setLocationRelativeTo(null);
+    	this.setResizable(true);
+    	this.setLocationRelativeTo(null);
 
     	btn_SimpleWorld = new JButton("Simple world");
     	btn_WeightedWorld = new JButton("Complex world");
     	btn_useDefaultJson = new JButton("Use default .JSON resource");
+    	btn_useFullJson = new JButton("Use full .JSON resource");
+    	btn_useSimpleJson = new JButton("Use reduced .JSON resource");
+    	
     	btn_SimpleWorld.addActionListener(this);
     	btn_WeightedWorld.addActionListener(this);
     	btn_useDefaultJson.addActionListener(this);
+    	btn_useFullJson.addActionListener(this);
+    	btn_useSimpleJson.addActionListener(this);
     	
     	btn_SimpleWorld.setEnabled(false);
     	btn_WeightedWorld.setEnabled(false);
@@ -55,12 +62,43 @@ public class MainMenu extends JFrame implements ActionListener
     	dragAndDrop_image = new DragAndDrop_JsonFile();
     	
     	
+    	GridBagConstraints gbc = new GridBagConstraints();
+		gbc.fill = GridBagConstraints.HORIZONTAL;
+//
+		gbc.gridx = 0;
+		gbc.gridy = 0;
+		gbc.gridwidth = 6;
+		gbc.gridheight = 1;
+		this.add(dragAndDrop_image, gbc);
+		
+		gbc.gridx = 0;
+		gbc.gridy = 1;
+		gbc.gridwidth = 2;
+		gbc.gridheight = 1;
+    	this.add(btn_useDefaultJson, gbc);
+    	gbc.gridx = 2;
+		gbc.gridy = 1;
+		gbc.gridwidth = 2;
+		gbc.gridheight = 1;
+    	this.add(btn_useFullJson, gbc);
+    	gbc.gridx = 4;
+		gbc.gridy = 1;
+		gbc.gridwidth = 2;
+		gbc.gridheight = 1;
+    	this.add(btn_useSimpleJson, gbc);
     	
-    	frame.add(dragAndDrop_image);
-    	frame.add(btn_useDefaultJson);
-    	frame.add(btn_SimpleWorld);
-    	frame.add(btn_WeightedWorld);
-    	frame.setVisible(true);
+    	gbc.gridx = 0;
+		gbc.gridy = 3;
+		gbc.gridwidth = 3;
+		gbc.gridheight = 1;
+    	this.add(btn_SimpleWorld, gbc);
+    	gbc.gridx = 3;
+		gbc.gridy = 3;
+		gbc.gridwidth = 3;
+		gbc.gridheight = 1;
+    	this.add(btn_WeightedWorld, gbc);
+
+    	this.setVisible(true);
     	
     	
 	}
@@ -86,6 +124,14 @@ public class MainMenu extends JFrame implements ActionListener
 		else if(source == btn_useDefaultJson)
 		{
 			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau.json").toAbsolutePath());
+		}
+		else if(source == btn_useFullJson)
+		{
+			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau_RER.json").toAbsolutePath());
+		}
+		else if(source == btn_useSimpleJson)
+		{
+			dragAndDrop_image.setResource(Paths.get("src","main","resources","reducedNetwork.json").toAbsolutePath());
 		}
 	}
 	
