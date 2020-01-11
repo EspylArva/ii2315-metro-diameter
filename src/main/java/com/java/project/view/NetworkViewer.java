@@ -11,6 +11,7 @@ import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -41,6 +42,7 @@ import org.graphstream.ui.view.util.DefaultMouseManager;
 
 import com.java.project.control.Back;
 import com.java.project.control.ClusterAndDiameter;
+import com.java.project.control.ViewControl;
 import com.java.project.ii2315.App;
 
 public class NetworkViewer extends JFrame implements ChangeListener, ActionListener
@@ -61,6 +63,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     
 	public NetworkViewer(Graph graph)
 	{
+		
 		this.setTitle("Diameter Calculator");
 		this.graph = graph;
 		
@@ -138,6 +141,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     			chk_names, chk_dp_names, chk_distances, chk_paths, chk_diam);
     	//, spinner, chk
     	this.setVisible(true);
+    	Back.computeDiameter(graph);
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -145,43 +149,42 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
  
 		if(source == compute)
 		{			
-			compute.setEnabled(false);
-
-			Back.computeDiameter(graph);//, thread, chk_paths.isSelected());
+//			compute.setEnabled(false);
+//			if(diam == null)
+//			{
+//				Back.computeDiameter(graph);//, thread, chk_paths.isSelected());
+//			}
 			while(diam == null)
 			{
 				diam = Back.getDiameter();
 			}
-	    	App.logger.info("Diamètre : " + diam.getNodeCount());
-	    	App.logger.info("Diamètre : " + diam);
-	    	compute.setEnabled(true);
 			
 	    	if(diam != null &&  chk_diam.isSelected())
 			{
-				Back.showDiameter(chk_diam.isSelected(), graph, diam);
+				ViewControl.showDiameter(chk_diam.isSelected(), graph, diam);
 			}	
 	    	
 	    	if(chk_dp_names.isSelected())
 			{
-				Back.showPathStationsName(chk_diam.isSelected(), graph);
+	    		ViewControl.showPathStationsName(chk_diam.isSelected(), graph);
 			}	
 	    	
+	    	App.logger.info("Diamètre : " + diam.getNodeCount());
+	    	App.logger.info("Diamètre : " + diam);
 	    	addLogConsoleLine("Diameter length: " + diam.getNodeCount());
 			addLogConsoleLine("Diameter path: " + diam);
-			ArrayList<String> diamPath = new ArrayList<String>();
-			for(Node n : diam.getNodeSet())
-			{
-				diamPath.add(n.getAttribute("nom").toString());
-//				addLogConsoleLine(n.getAttribute("nom").toString());
-				
-			}
-			addLogConsoleLine(diamPath.toString());
+//			ArrayList<String> diamPath = new ArrayList<String>();
+//			for(Node n : diam.getNodeSet())
+//			{
+//				diamPath.add(n.getAttribute("nom").toString());
+//			}
+//			addLogConsoleLine(diamPath.toString());
 		}
 		if(source == chk_names || source == chk_dp_names)
 		{
 			App.logger.info("Checkbox: names " + chk_names.isSelected());
-			Back.showStationsName(chk_names.isSelected(), graph);
-			Back.showPathStationsName(chk_dp_names.isSelected(), graph);
+			ViewControl.showStationsName(chk_names.isSelected(), graph);
+			ViewControl.showPathStationsName(chk_dp_names.isSelected(), graph);
 		}
 //		if(source == chk_dp_names)
 //		{
@@ -191,14 +194,14 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		if(source == chk_distances)
 		{
 			App.logger.info("Checkbox: distances " + chk_distances.isSelected());
-			Back.showDistances(chk_distances.isSelected(), graph);
+			ViewControl.showDistances(chk_distances.isSelected(), graph);
 		}
 		if(source == chk_diam)
 		{
 			App.logger.info("Checkbox: diameter " + chk_diam.isSelected());
 			if(diam != null)
 			{
-				Back.showDiameter(chk_diam.isSelected(), graph, diam);
+				ViewControl.showDiameter(chk_diam.isSelected(), graph, diam);
 			}	
 		}
 	}
@@ -316,6 +319,18 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     public static void addLogConsoleLine(String s)
     {
     	if(!logs.equals("")) { logs += ""+'\n' + ""; }
+    	if (logConsole.getLineCount() > 50)
+    	{
+    		ArrayList<String> sss = new ArrayList<String>(Arrays.asList(logs.split("\\r?\\n")));
+    		sss.remove(0);
+    		String tmpS = "";
+    		for(String str: sss )
+    		{
+    			tmpS += str + '\n';
+    		}
+    		
+    		logs = tmpS;
+    	}
 		logs += s;
 		logConsole.setText(logs);
     }

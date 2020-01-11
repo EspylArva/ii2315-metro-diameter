@@ -11,6 +11,8 @@ import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
 
 import com.java.project.ii2315.App;
+import com.java.project.view.DragAndDrop_JsonFile;
+import com.java.project.view.NetworkViewer;
 
 public class ClusterAndDiameter extends Thread {
 
@@ -40,12 +42,13 @@ public class ClusterAndDiameter extends Thread {
     		
 				astar.compute(start.getId(), end.getId());
 				Path path = astar.getShortestPath();
+				
 				iteration += 1;
 				if(iteration % 50000 == 0) {
 					logger.info("Cluster et diamètre thread itérations : " + iteration);
 				}
 				
-				if(path != null) {
+				if(path != null ) {
 
 					for(Edge e : path.getEdgeSet()) {
 						if(edgeList.containsKey(e)) {
@@ -55,9 +58,17 @@ public class ClusterAndDiameter extends Thread {
 							edgeList.put(e, 1);
 						}
 					}
-
+	
+//					NetworkViewer.addLogConsoleLine("a");
+					NetworkViewer.addLogConsoleLine(String.format("(%s) Computing path between %s and %s",
+//							String.valueOf(0),"a","b"							
+							path.size(),start.getAttribute("nom"),end.getAttribute("nom")
+							));
+					
+					
 					if(diameter == null || path.getNodeCount() > diameter.getNodeCount()) {
 						diameter = path;
+						
 					}
 				}
     			

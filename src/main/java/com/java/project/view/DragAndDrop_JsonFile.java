@@ -28,6 +28,7 @@ import javax.swing.JPanel;
 import javax.swing.filechooser.FileSystemView;
 
 import com.java.project.control.Back;
+import com.java.project.control.ViewControl;
 import com.java.project.ii2315.App;
 
 public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
@@ -210,7 +211,7 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
 		App.logger.info(String.format("Selected a .JSON file at %s. Setting this file as configuration file.", path.toString()));
 		lbl_JsonPath.setText(path.toString());
 		Back.setPathToJson(path);
-		Back.setEnabledButtons(true);
+		ViewControl.setEnabledButtons(true);
 		state = DragState.Accept;
 		repaint();
 	}
