@@ -42,7 +42,7 @@ public class ClusterAndDiameter extends Thread {
 				Path path = astar.getShortestPath();
 				iteration += 1;
 				if(iteration % 50000 == 0) {
-					logger.info("Cluster et diamètre thread intérations : " + iteration);
+					logger.info("Cluster et diamètre thread itérations : " + iteration);
 				}
 				
 				if(path != null) {
@@ -64,21 +64,26 @@ public class ClusterAndDiameter extends Thread {
     		}
     		
     	}
-    	Back.diameter = diameter;
-    	logger.info("Diamètre : " + Back.diameter.getNodeCount());
-    	logger.info("Diamètre : " + Back.diameter);
+    	for(Node n : diameter.getNodeSet())
+    	{
+    		n.addAttribute("diameter", true);
+    	}
+    	Back.setDiameter(diameter);
+    	logger.info("Diamètre : " + Back.getDiameter().getNodeCount());
+    	logger.info("Diamètre : " + Back.getDiameter());
     	
     	logger.info("Graph Nodes: " + this.cluster.getNodeCount() );
     	logger.info("Graph Edges: " + this.cluster.getEdgeCount() );
     	
     	for(Edge e : edgeList.keySet()) {
     		if(edgeList.get(e) < this.minimumCluster) {
-    			this.cluster.removeEdge(e);
+//    			this.cluster.removeEdge(e);
+    			this.cluster.getEdge(e.getId()).addAttribute("ui.class", "ClusterCut");
     		}
     	}
     	
     	
-    	Back.cluster = this.cluster;
+    	Back.setCluster(this.cluster);
     	logger.info("Cluster minimum Edge value : " + this.minimumCluster );
     	logger.info("Cluster Nodes: " + Back.cluster.getNodeCount() );
     	logger.info("Cluster Edges: " + Back.cluster.getEdgeCount() );

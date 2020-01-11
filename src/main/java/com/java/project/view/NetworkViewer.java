@@ -40,6 +40,7 @@ import org.graphstream.ui.view.Viewer;
 import org.graphstream.ui.view.util.DefaultMouseManager;
 
 import com.java.project.control.Back;
+import com.java.project.control.ClusterAndDiameter;
 import com.java.project.ii2315.App;
 
 public class NetworkViewer extends JFrame implements ChangeListener, ActionListener
@@ -114,6 +115,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		chk_diam = new JCheckBox("Show diameters");
 		chk_diam.addActionListener(this);
 		chk_diam.setSelected(true);
+		chk_dp_names.setSelected(true);
 		chk_paths.setSelected(true);
 		
 		// Button : 
@@ -144,30 +146,12 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		if(source == compute)
 		{			
 			compute.setEnabled(false);
-			
-			Thread thread = new Thread();
-//			thread = new Thread(new Runnable()
-//			{
-//			@Override
-//		      public void run()
-//			{
-//				try {
-//					System.out.println(path.getEdgeSet());
-//					displayPath(graph, path, "path");
-//					this.wait(100);
-//					resetColor(graph, path);
-//					this.notifyAll();
-//				} catch (InterruptedException e) {
-//					// TODO Auto-generated catch block
-//					e.printStackTrace();
-//				}
-//				
-//				
-//			}
-//			});
-//	thread.run();
-			
-			diam = Back.findDiameter(graph, thread, chk_paths.isSelected());
+
+			Back.computeDiameter(graph);//, thread, chk_paths.isSelected());
+			while(diam == null)
+			{
+				diam = Back.getDiameter();
+			}
 	    	App.logger.info("Diamètre : " + diam.getNodeCount());
 	    	App.logger.info("Diamètre : " + diam);
 	    	compute.setEnabled(true);

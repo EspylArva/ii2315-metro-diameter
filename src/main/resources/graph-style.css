@@ -44,6 +44,10 @@ edge.path {fill-color: #0000FF;
 	size : 2px;
 }
 
+edge.ClusterCut {fill-color: #00FF00;
+	size : 2px;
+}
+
 edge.CB {fill-color: #3466AC;}
 edge.CA {fill-color: #FE370F;}
 edge.C1 {fill-color: #00FF00;}

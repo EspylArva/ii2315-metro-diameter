@@ -34,7 +34,7 @@ public class Back {
 	private static final Gson g = new Gson();
 	private static Logger logger = App.logger;
 	private static boolean run = false; 
-	public static Path diameter;
+	private static Path diameter;
 	public static Graph cluster;
 	
 	private static java.nio.file.Path pathToJson;
@@ -119,37 +119,20 @@ public class Back {
    
     public static void displayPath(Graph graph, Path path, String label)
     {
-    	Collection<Node> gVertices = graph.getNodeSet();
-    	Collection<Edge> gEdges = graph.getEdgeSet();
-    	for(Node n : gVertices)
-    	{
-    		if(label.equals(n.getLabel("ui.class")))
-    		{
-    			logger.trace("Path detected (n)");
-    			n.removeAttribute("ui.class."+label);
-    		}
-    	}
-    	for(Edge e : gEdges)
-    	{
-    		if(label.equals(e.getLabel("ui.class")))
-    		{
-    			logger.trace("Path detected (e)");
-    			e.removeAttribute("ui.class."+label);
-    		}
-    	}
-    	
-	    List<Node> vertices = path.getNodePath();
-	    List<Edge> edges = path.getEdgePath();
-	    
-	    App.logger.debug(String.format("Shortest path from %s to %s: %s",path.getNodePath().get(0),path.getNodePath().get(path.getNodePath().size()-1) , path));
-	    for(Node vertex : vertices)
+	    for(Node vertex : path.getNodePath())
 	    {
 	    	graph.getNode(vertex.getId()).addAttribute("ui.class", label);
-	    	
 	    }
-	    for(Edge edge : edges)
+	    for(Edge edge : path.getEdgePath())
 	    {
-	    	graph.getEdge(edge.getId()).addAttribute("ui.class", label);
+	    	System.out.println("graph null: " + graph == null);
+	    	System.out.println("contains " + edge.getId().split("-")[0] + ": " + (graph.getNode(edge.getId().split("-")[0]) != null));
+	    	System.out.println("contains " + edge.getId().split("-")[1] + ": " + (graph.getNode(edge.getId().split("-")[1]) != null));
+	    	System.out.println("contains edge: " + (graph.getEdge(edge.getId() ) != null));
+	    	if(graph.getEdge(edge.getId()) != null)
+	    	{
+	    		graph.getEdge(edge.getId()).addAttribute("ui.class", label);
+	    	}
 	    }
     }
 
@@ -220,7 +203,7 @@ public class Back {
         WorldControl.buildStations(graph);
         WorldControl.buildCorrespondances(graph);
         WorldControl.buildLignes(graph, null);   
-        return graph;
+        return removeLoneNode(graph);
 		
 	}
 	
@@ -375,6 +358,12 @@ public class Back {
 	public static void setPathToJson(java.nio.file.Path pathToJson) {
 		Back.pathToJson = pathToJson;
 	}
+	public static Path getDiameter() {
+		return diameter;
+	}
+	public static void setDiameter(Path d) {
+		diameter = d;
+	}
 
 	public static void showStationsName(boolean selected, Graph g) {
 		if(selected)
@@ -416,5 +405,62 @@ public class Back {
 			}
 		}
 	}
+
+
+	public static void showDiameter(boolean selected, Graph g, Path diam) {
+		if(selected)
+		{
+			displayPath(g,diam,"diameter");
+		}
+		else
+		{
+			resetColor(g);
+		}
+	}
+
+	private static void resetColor(Graph graph) {
+		Collection<Node> gVertices = graph.getNodeSet();
+    	Collection<Edge> gEdges = graph.getEdgeSet();
+    	for(Node n : gVertices)
+    	{
+    		if(n.hasAttribute("ui.class"))
+    		{
+    			n.setAttribute("ui.class", "node");
+    		}
+    	}
+    	for(Edge e : gEdges)
+    	{
+    		if(e.hasAttribute("ui.class"))
+    		{
+    			e.setAttribute("ui.class", e.getAttribute("ligne"));
+    		}
+    	}
+	}
+
+	public static void showPathStationsName(boolean selected, Graph g) {
+		if(selected)
+		{
+			for(Node n : g.getNodeSet())
+			{
+				if( n.hasAttribute("diameter") )
+				{
+					n.addAttribute("ui.class", "showName");
+				}
+			}
+		}
+		else
+		{
+			for(Node n : g.getNodeSet())
+			{
+				n.changeAttribute("ui.class", "node");
+			}
+		}
+		
+	}
+
+	public static void setCluster(Graph c) {
+		cluster = c;
+	}
+
 	
 }
