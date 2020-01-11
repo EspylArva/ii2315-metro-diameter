@@ -15,6 +15,7 @@ node {
 	size: 3px;
 	fill-color: #777;
 	text-mode: hidden;
+	text-size: 15;
 	z-index: 0;
 }
 
@@ -29,6 +30,7 @@ edge {
 	fill-color: #222;
 	arrow-size: 3px, 2px;
 	text-mode: normal;
+	text-size: 15;
 }
 
 

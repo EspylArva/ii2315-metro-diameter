@@ -8,9 +8,9 @@ import java.awt.GridBagLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
-import java.awt.event.MouseListener;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -28,6 +28,8 @@ import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
 import org.graphstream.graph.Graph;
+import org.graphstream.graph.Node;
+import org.graphstream.graph.Path;
 import org.graphstream.ui.geom.Point2;
 import org.graphstream.ui.geom.Point3;
 import org.graphstream.ui.swingViewer.DefaultView;
@@ -44,14 +46,16 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 {
     private JSpinner spinnerTime;
     private JCheckBox chk_names;
+    private JCheckBox chk_dp_names;
     private JCheckBox chk_distances;
     private JCheckBox chk_paths;
     private JCheckBox chk_diam;
     private JButton compute;
     private Graph graph = null;
-    private JTextArea logConsole ;
+    private static JTextArea logConsole ;
+    public Viewer viewer;
     
-    
+    private Path diam;
     
     
 	public NetworkViewer(Graph graph)
@@ -69,7 +73,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		JLabel lbl_title = new JLabel(graph.getId());
 		
 		// GraphStream visualizer : view
-		Viewer viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
+		viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 		viewer.enableAutoLayout();
 		final DefaultView vi = (DefaultView) viewer.addDefaultView(false);
 		vi.setPreferredSize(new Dimension(600, 600));
@@ -101,12 +105,16 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		// CheckBox : 
 		chk_names = new JCheckBox("Show names of stations");
 		chk_names.addActionListener(this);
+		chk_dp_names = new JCheckBox("Show names of paths");
+		chk_dp_names.addActionListener(this);
 		chk_distances = new JCheckBox("Show distances between stations");
 		chk_distances.addActionListener(this);
 		chk_paths = new JCheckBox("Show path computing");
 		chk_paths.addActionListener(this);
 		chk_diam = new JCheckBox("Show diameters");
 		chk_diam.addActionListener(this);
+		chk_diam.setSelected(true);
+		chk_paths.setSelected(true);
 		
 		// Button : 
 		compute = new JButton("Compute diameter");
@@ -125,7 +133,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     	logConsole.setBorder(BorderFactory.createLineBorder(Color.black));
     	
     	addElementsInGrid(lbl_title, vi, logs, spinnerTime , compute,
-    			chk_names, chk_distances, chk_paths, chk_diam);
+    			chk_names, chk_dp_names, chk_distances, chk_paths, chk_diam);
     	//, spinner, chk
     	this.setVisible(true);
 	}
@@ -136,27 +144,83 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		if(source == compute)
 		{			
 			compute.setEnabled(false);
-			Back.computeDiameter(this.graph);
-			compute.setEnabled(true);
 			
-			addLogConsoleLine("New Line: rnd " + Math.random());
+			Thread thread = new Thread();
+//			thread = new Thread(new Runnable()
+//			{
+//			@Override
+//		      public void run()
+//			{
+//				try {
+//					System.out.println(path.getEdgeSet());
+//					displayPath(graph, path, "path");
+//					this.wait(100);
+//					resetColor(graph, path);
+//					this.notifyAll();
+//				} catch (InterruptedException e) {
+//					// TODO Auto-generated catch block
+//					e.printStackTrace();
+//				}
+//				
+//				
+//			}
+//			});
+//	thread.run();
+			
+			diam = Back.findDiameter(graph, thread, chk_paths.isSelected());
+	    	App.logger.info("Diamètre : " + diam.getNodeCount());
+	    	App.logger.info("Diamètre : " + diam);
+	    	compute.setEnabled(true);
+			
+	    	if(diam != null &&  chk_diam.isSelected())
+			{
+				Back.showDiameter(chk_diam.isSelected(), graph, diam);
+			}	
+	    	
+	    	if(chk_dp_names.isSelected())
+			{
+				Back.showPathStationsName(chk_diam.isSelected(), graph);
+			}	
+	    	
+	    	addLogConsoleLine("Diameter length: " + diam.getNodeCount());
+			addLogConsoleLine("Diameter path: " + diam);
+			ArrayList<String> diamPath = new ArrayList<String>();
+			for(Node n : diam.getNodeSet())
+			{
+				diamPath.add(n.getAttribute("nom").toString());
+//				addLogConsoleLine(n.getAttribute("nom").toString());
+				
+			}
+			addLogConsoleLine(diamPath.toString());
 		}
 		if(source == chk_names)
 		{
 			App.logger.info("Checkbox: names " + chk_names.isSelected());
 			Back.showStationsName(chk_names.isSelected(), graph);
 		}
-		
+		if(source == chk_dp_names)
+		{
+			App.logger.info("Checkbox: path names " + chk_dp_names.isSelected());
+			Back.showPathStationsName(chk_dp_names.isSelected(), graph);
+		}
 		if(source == chk_distances)
 		{
 			App.logger.info("Checkbox: distances " + chk_distances.isSelected());
 			Back.showDistances(chk_distances.isSelected(), graph);
 		}
+		if(source == chk_diam)
+		{
+			App.logger.info("Checkbox: diameter " + chk_diam.isSelected());
+			if(diam != null)
+			{
+				Back.showDiameter(chk_diam.isSelected(), graph, diam);
+			}	
+		}
 	}
 	
 	
 	private void addElementsInGrid(Component lbl_title ,Component graph, Component logConsole,Component spinner, Component button,
-			Component chk_names, Component chk_distances, Component chk_paths, Component chk_diam)
+			Component chk_names, Component chk_dp_names, Component chk_distances, Component chk_paths, Component chk_diam)
 	{
 		
 		GridBagConstraints gbc = new GridBagConstraints();
@@ -165,7 +229,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		gbc.gridx = 0;
 		gbc.gridy = 1;
 		gbc.gridwidth = 1;
-		gbc.gridheight = 4;
+		gbc.gridheight = 5;
 		this.add(graph, gbc);
 //
         gbc.gridx = 0;
@@ -196,28 +260,34 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
         gbc.gridy = 2;
         gbc.gridwidth = 2;
 		gbc.gridheight = 1;
-        this.add(chk_distances, gbc);
-//
+        this.add(chk_dp_names, gbc);
+//      
         gbc.gridx = 1;
         gbc.gridy = 3;
         gbc.gridwidth = 2;
 		gbc.gridheight = 1;
-        this.add(chk_paths, gbc);
+        this.add(chk_distances, gbc);
 //
         gbc.gridx = 1;
         gbc.gridy = 4;
         gbc.gridwidth = 2;
 		gbc.gridheight = 1;
-        this.add(chk_diam, gbc);
+        this.add(chk_paths, gbc);
 //
         gbc.gridx = 1;
         gbc.gridy = 5;
+        gbc.gridwidth = 2;
+		gbc.gridheight = 1;
+        this.add(chk_diam, gbc);
+//
+        gbc.gridx = 1;
+        gbc.gridy = 6;
         gbc.gridwidth = 1;
 		gbc.gridheight = 1;
         this.add(button, gbc);
 //
         gbc.gridx = 0;
-        gbc.gridy = 6;
+        gbc.gridy = 7;
         gbc.gridwidth = 3;
 		gbc.gridheight = 1;
         this.add(logConsole, gbc);
@@ -256,9 +326,9 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
         
     }
     
-    private String logs = "";
+    private static String logs = "";
     
-    public void addLogConsoleLine(String s)
+    public static void addLogConsoleLine(String s)
     {
     	if(!logs.equals("")) { logs += ""+'\n' + ""; }
 		logs += s;
@@ -276,40 +346,34 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 				now.consume();
 				
 				Camera cam = vi.getCamera();
-				
-				App.logger.debug(String.format("Current center: %sx%s", vi.getCamera().getViewCenter().x, vi.getCamera().getViewCenter().y));
-				
-				App.logger.debug(vi.getCamera().getMetrics().ratioPx2Gu);
-				
+//				App.logger.debug(vi.getCamera().getMetrics());
 				double ratio = vi.getCamera().getMetrics().ratioPx2Gu;
 				
-				Point2 pLast = new Point2(last.getX(), last.getY());
-				Point2 pNow = new Point2(now.getX(), now.getY());
-	
-				App.logger.debug("PRESSED ON " + last.getX() + "x" + last.getY());
-				App.logger.debug("RELEASED ON " + now.getX() + "x" + now.getY());
-	
-				double x = Math.abs(pLast.x + pNow.x)/2;
-				double y = Math.abs(pLast.y + pNow.y)/2;
 				
-		        cam.setViewCenter(x/ratio, y/ratio, 0);
-		        App.logger.debug(String.format("New center: %sx%s", x,y));
-		        App.logger.debug(String.format("New center with gu ratio: %sx%s", x/ratio,y/ratio));
-		        
-		        cam.setViewPercent(0.99);
-	//	        vi.getCamera().resetView();
+//				App.logger.debug(String.format("Current center: %sx%s", vi.getCamera().getViewCenter().x, vi.getCamera().getViewCenter().y));				
+//	
+//				App.logger.debug("PRESSED ON " + cam.transformPxToGu(last.getX(),last.getY()));
+//				App.logger.debug("RELEASED ON " + cam.transformPxToGu(now.getX(),now.getY()));
+	
+				double x = (last.getX() + now.getX())/2;
+				double y = (last.getY() + now.getY())/2;
+				
+				Point3 newCenter = cam.transformPxToGu(x, y);
+				
+				App.logger.debug(String.format("New center: %sx%s. Zooming to %s",
+						newCenter.x,newCenter.y , cam.getViewPercent()-0.1));
+				cam.setViewPercent(cam.getViewPercent()*0.9);
+		        cam.setViewCenter(newCenter.x, newCenter.y, newCenter.z);
 	
 			}
 			
 			@Override
 			public void mouseClicked(MouseEvent e) {
-				App.logger.debug(String.format("Current center: %sx%s", vi.getCamera().getViewCenter().x, vi.getCamera().getViewCenter().y));
-				vi.getCamera().resetView();
-				
+				vi.getCamera().resetView();	
+				App.logger.debug("CLICKED ON " + vi.getCamera().transformPxToGu(e.getX(),e.getY()));
 			}
 			@Override
 			public void mousePressed(MouseEvent e) {
-//				resetDrag();
 			    last=e;				
 			}
 			@Override
@@ -319,26 +383,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 					zoomToSelection(last, e);
 				}
 			}
-//		    public void processDrag(MouseEvent event)
-//		    {
-//			    if(last!=null) {
-//				    //see DefaultShortcutManager
-//				    Camera camera = view.getCamera();
-//				    Point3 p1 = camera.getViewCenter();
-//				    Point3 p2=camera.transformGuToPx(p1.x,p1.y,0);
-//				    int xdelta=event.getX()-last.getX();//determine direction
-//				    int ydelta=event.getY()-last.getY();//determine direction
-//				    //sysout("xdelta "+xdelta+" ydelta "+ydelta);
-//				    p2.x-=xdelta;
-//				    p2.y-=ydelta;
-//				    Point3 p3=camera.transformPxToGu(p2.x,p2.y);
-//				    camera.setViewCenter(p3.x,p3.y, 0);
-//			    }
-//			    last=event;
-//		    }
-			public void resetDrag() {
-				this.last=null;
-			}
+
 		};
 		return m;
     }

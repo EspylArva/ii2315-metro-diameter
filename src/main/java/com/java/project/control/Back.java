@@ -31,11 +31,14 @@ import com.java.project.model.Route;
 import com.java.project.model.Station;
 import com.java.project.model.World;
 import com.java.project.view.MainMenu;
+import com.java.project.view.NetworkViewer;
 
 public class Back {
 	
 	private static final Gson g = new Gson();
 	private static Logger logger = App.logger;
+	public static final Object lock = new Object();
+
 	
 	private static java.nio.file.Path pathToJson;
 	
@@ -67,14 +70,14 @@ public class Back {
     	return graph;
     }
     
-     public static void computeDiameter(Graph graph)
-    {
-    	logger.info("Début du calcul de diamètre...");
-    	Path path = findDiameter(graph);
-    	logger.info("Diamètre : " + path.getNodeCount());
-    	logger.info("Diamètre : " + path);
-    	displayPath(graph, path, "diameter");
-    }
+//     public static void computeDiameter(Graph graph)
+//    {
+//    	logger.info("Début du calcul de diamètre...");
+//    	Path path = findDiameter(graph);
+//    	logger.info("Diamètre : " + path.getNodeCount());
+//    	logger.info("Diamètre : " + path);
+////    	displayPath(graph, path, "diameter");
+//    }
     
     
     public static void addWeights(Graph graph)
@@ -109,7 +112,8 @@ public class Back {
      * Input : Graph graph, le graphe où chercher
      * Output : Path diameter, le Path du diamètre
      */
-    public static Path findDiameter(Graph graph) {
+    public static synchronized Path findDiameter(Graph graph, Thread thread, boolean show) {
+    	
     	
     	// ArrayList qui va contenir tous les paths testés
     	ArrayList<Path> history = new ArrayList<Path>();
@@ -124,7 +128,7 @@ public class Back {
     	int iteration = 0;
     	
     	// On créer et paramètre un A*
-	AStar astar = new AStar(graph);
+    	AStar astar = new AStar(graph);
     	astar.setCosts(new AStar.DefaultCosts("distance"));
     	
     	// Pour chaque noeud du graphe en départ
@@ -148,20 +152,50 @@ public class Back {
     			if(!skip) {
     				
     				// On paramètre A* avec  notre départ et arrivée
-				astar.compute(start.getId(), end.getId());
-				Path path = astar.getShortestPath();
-				iteration += 1;
-
-				// Si le path est non null
-				if(path != null) {
-
-					// Ajout a l'historique 
-					history.add(path);
-
-					// Si le path est plus long que le diamètre actuel alors le path devient le diamètre
-					if(diameter == null || path.getNodeCount() > diameter.getNodeCount()) {
-						diameter = path;
+					astar.compute(start.getId(), end.getId());
+					Path path = astar.getShortestPath();
+					String pathSize;
+					if(path != null)
+					{
+						pathSize = String.valueOf(path.size());
 					}
+					else
+					{
+						pathSize = "+INF";
+					}
+					NetworkViewer.addLogConsoleLine(String.format("(Length: %s) Computing shortest path between %s and %s",
+							pathSize,
+							start.getAttribute("nom"),
+							end.getAttribute("nom")));
+					
+					if(show)
+					{
+//						synchronized(lock)
+//						{
+//								thread = new Thread(new MonThread(graph,path));
+//								thread.run();//*/
+//						}
+						
+//						displayPath(graph, path, "path");
+//						try {
+//							Back.class.wait(10);
+//						} catch (InterruptedException e) { e.printStackTrace(); }
+//						resetColor(graph, path);
+
+					}
+					
+					iteration += 1;
+
+					// Si le path est non null
+					if(path != null) {
+	
+						// Ajout a l'historique 
+						history.add(path);
+	
+						// Si le path est plus long que le diamètre actuel alors le path devient le diamètre
+						if(diameter == null || path.getNodeCount() > diameter.getNodeCount()) {
+							diameter = path;
+						}
 				}
     		    	
     			}
@@ -170,35 +204,21 @@ public class Back {
     		
     	}
     	logger.info("Nombre d'itération d'A* pour trouver le diamètre : " + iteration);
+    	
+    	for(Node n : diameter.getNodeSet())
+    	{
+    		graph.getNode(n.getId()).addAttribute("diameter", true);
+    	}
+    	
     	return diameter;
     	
     }
 	
-    public static void displayPath(Graph graph, Path path, String label)
+    public static Graph displayPath(Graph graph, Path path, String label)
     {
-    	Collection<Node> gVertices = graph.getNodeSet();
-    	Collection<Edge> gEdges = graph.getEdgeSet();
-    	for(Node n : gVertices)
-    	{
-    		if(label.equals(n.getLabel("ui.class")))
-    		{
-    			logger.trace("Path detected (n)");
-    			n.removeAttribute("ui.class."+label);
-    		}
-    	}
-    	for(Edge e : gEdges)
-    	{
-    		if(label.equals(e.getLabel("ui.class")))
-    		{
-    			logger.trace("Path detected (e)");
-    			e.removeAttribute("ui.class."+label);
-    		}
-    	}
-    	
 	    List<Node> vertices = path.getNodePath();
 	    List<Edge> edges = path.getEdgePath();
 	    
-	    App.logger.debug(String.format("Shortest path from %s to %s: %s",path.getNodePath().get(0),path.getNodePath().get(path.getNodePath().size()-1) , path));
 	    for(Node vertex : vertices)
 	    {
 	    	graph.getNode(vertex.getId()).addAttribute("ui.class", label);
@@ -208,6 +228,26 @@ public class Back {
 	    {
 	    	graph.getEdge(edge.getId()).addAttribute("ui.class", label);
 	    }
+	    return graph;
+    }
+    
+    public static Graph resetColor(Graph graph, Path path)
+    {
+    	List<Node> vertices = path.getNodePath();
+	    List<Edge> edges = path.getEdgePath();
+	    
+	    for(Node vertex : vertices)
+	    {
+	    	graph.getNode(vertex.getId()).removeAttribute("ui.class");
+	    	
+	    }
+	    for(Edge edge : edges)
+	    {
+	    	String colorLabel = graph.getEdge(edge.getId()).getAttribute("ligne");
+	    	graph.getEdge(edge.getId()).addAttribute("ui.class", colorLabel);
+	    }
+	    
+	    return graph;
     }
 
 
@@ -277,6 +317,7 @@ public class Back {
         WorldControl.buildStations(graph);
         WorldControl.buildCorrespondances(graph);
         WorldControl.buildLignes(graph, null);   
+        graph = removeLoneNode(graph);
         return graph;
 		
 	}
@@ -449,6 +490,29 @@ public class Back {
 			}
 		}
 	}
+	public static void showPathStationsName(boolean selected, Graph g)
+	{
+		if(selected)
+		{
+			for(Node n : g.getNodeSet())
+			{
+				if(n.hasAttribute("diameter") || n.hasAttribute("path"))
+				{					
+					if(n.getAttribute("diameter").equals(true) || n.getAttribute("path").equals(true))
+					{
+						n.addAttribute("ui.class", "showName");
+					}
+				}
+			}
+		}
+		else
+		{
+			for(Node n : g.getNodeSet())
+			{
+				n.changeAttribute("ui.class", "node");
+			}
+		}
+	}
 	
 	public static void showDistances(boolean selected, Graph g) {
 		if(selected)
@@ -471,6 +535,18 @@ public class Back {
 			{
 				e.removeAttribute("ui.label");
 			}
+		}
+	}
+	
+	public static void showDiameter(boolean show, Graph g, Path p)
+	{
+		if(show)
+		{
+			displayPath(g, p, "diameter");
+		}
+		else
+		{
+	    	g = resetColor(g, p);
 		}
 	}
 	

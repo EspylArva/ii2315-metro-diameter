@@ -98,6 +98,7 @@ public class WorldControl {
 			        				branch.get(i), branch.get(i+1));
 			        			// Colorizing the branch
 			        			e.addAttribute("ui.class", "C"+line.getNum());
+			        			e.addAttribute("ligne", "C"+line.getNum());
 			        			App.logger.trace(String.format("Successfully linked %s to %s", branch.get(i), branch.get(i+1)));
 			        		}
 			        	}
