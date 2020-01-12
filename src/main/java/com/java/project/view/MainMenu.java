@@ -151,14 +151,6 @@ public class MainMenu extends JFrame implements ActionListener, ChangeListener
 //        operationDuration = spinnerTime.getValue().toString();
         
         boolean freeze = updown_frozenPicker.getValue().toString().equals("Keep geographic exactitude") ? true : false;
-        if(freeze)
-    	{
-        	System.out.println("FREEZE");
-    	}
-        else
-        {
-        	System.out.println("NOT FREEZE");
-        }
         ViewControl.setFreeze(freeze);
     }
 	

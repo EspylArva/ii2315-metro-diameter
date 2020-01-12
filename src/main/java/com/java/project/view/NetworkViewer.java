@@ -20,6 +20,7 @@ import javax.swing.JComponent;
 import javax.swing.JFormattedTextField;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JSpinner;
 import javax.swing.JTextArea;
@@ -47,6 +48,7 @@ import com.java.project.ii2315.App;
 
 public class NetworkViewer extends JFrame implements ChangeListener, ActionListener
 {
+	private GridBagConstraints gbc = new GridBagConstraints();
     private JSpinner spinnerTime;
     private JCheckBox chk_names;
     private JCheckBox chk_dp_names;
@@ -73,6 +75,10 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		this.setLocationRelativeTo(null);
 //		GridBagLayout layout = ;
 		this.setLayout(new GridBagLayout());
+		
+		JPanel content = new JPanel(new GridBagLayout());
+    	
+		
 		
 		JLabel lbl_title = new JLabel(graph.getId());
 		
@@ -137,9 +143,31 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     	logConsole.setEditable(false);
     	logConsole.setBorder(BorderFactory.createLineBorder(Color.black));
     	
-    	addElementsInGrid(lbl_title, vi, logs, spinnerTime , compute,
-    			chk_names, chk_dp_names, chk_distances, chk_paths, chk_diam);
-    	//, spinner, chk
+//    	addElementsInGrid(lbl_title, vi, logs, spinnerTime , compute,chk_names, chk_dp_names, chk_distances, chk_paths, chk_diam);
+    	
+    	JPanel visu = new JPanel(new GridBagLayout());
+		visu.setBorder(BorderFactory.createTitledBorder("Graph Visualizer"));	
+		addComp(visu, lbl_title, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, 0.01);
+		addComp(visu, vi, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, 0.99);
+	
+		JPanel options = new JPanel(new GridBagLayout());
+		options.setBorder(BorderFactory.createTitledBorder("Visualization options"));		
+		addComp(options, chk_distances, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
+		addComp(options, chk_names, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
+		addComp(options, chk_dp_names, 0, 2, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
+		addComp(options, chk_diam, 0, 3, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
+		addComp(options, chk_paths, 0, 4, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
+		addComp(options, compute, 0, 5, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
+		
+		JPanel logger = new JPanel(new GridBagLayout());
+		logger.setBorder(BorderFactory.createTitledBorder("Operation logs"));
+		addComp(logger, logs, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, 1);
+		
+		addComp(content, options, 1, 0, 1, 1, GridBagConstraints.BOTH, 0.02, 0.8);
+		addComp(content, visu, 0, 0, 1, 1, GridBagConstraints.BOTH, 0.98, 0.8);
+		addComp(content, logger, 0, 1, 3, 1, GridBagConstraints.BOTH, 1, 0.2);
+    	
+    	this.setContentPane(content);
     	this.setVisible(true);
     	Back.computeDiameter(graph);
 	}
@@ -206,12 +234,23 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		}
 	}
 	
+	private void addComp(JPanel panel, Component graph2, int x, int y, int gWidth , int gHeight, int fill, double weightx, double weighty) {
+		gbc.gridx = x;
+		gbc.gridy = y;
+		gbc.gridwidth = gWidth;
+		gbc.gridheight = gHeight;
+		gbc.fill = fill;
+		gbc.weightx = weightx;
+		gbc.weighty = weighty; 
+
+		panel.add(graph2, gbc);
+	}
 	
 	private void addElementsInGrid(Component lbl_title ,Component graph, Component logConsole,Component spinner, Component button,
 			Component chk_names, Component chk_dp_names, Component chk_distances, Component chk_paths, Component chk_diam)
 	{
 		
-		GridBagConstraints gbc = new GridBagConstraints();
+		
 		gbc.fill = GridBagConstraints.HORIZONTAL;
 //
 		gbc.gridx = 0;

@@ -63,13 +63,7 @@ public class Back {
       
 		// *** DISPLAY GRAPH *** //
 		logger.info("Displaying graph");
-		
-		
 //		addWeights(graph);
-		
-
-    	
-    	
 //    	org.graphstream.ui.view.Viewer viewer = graph.display();
     	return graph;
     }
