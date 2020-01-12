@@ -29,6 +29,7 @@ import javax.swing.SpinnerModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.graphstream.algorithm.AStar;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
@@ -182,11 +183,11 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 //			{
 //				Back.computeDiameter(graph);//, thread, chk_paths.isSelected());
 //			}
-			while(diam == null)
-			{
-				diam = Back.getDiameter();
-			}
-			
+//			while(diam == null)
+//			{
+//				diam = Back.getDiameter();
+//			}
+/*			
 	    	if(diam != null &&  chk_diam.isSelected())
 			{
 				ViewControl.showDiameter(chk_diam.isSelected(), graph, diam);
@@ -196,7 +197,12 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 			{
 	    		ViewControl.showPathStationsName(chk_diam.isSelected(), graph);
 			}	
-	    	
+//*/
+			AStar a = new AStar(graph);
+			a.compute("A_161468","B_1673");
+			Path path = a.getShortestPath();
+			ViewControl.displayPath(graph, path, "path");
+			
 	    	App.logger.info("Diamètre : " + diam.getNodeCount());
 	    	App.logger.info("Diamètre : " + diam);
 	    	addLogConsoleLine("Diameter length: " + diam.getNodeCount());

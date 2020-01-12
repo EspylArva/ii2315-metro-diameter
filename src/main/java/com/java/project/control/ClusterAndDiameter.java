@@ -90,7 +90,7 @@ public class ClusterAndDiameter extends Thread {
     	for(Edge e : edgeList.keySet()) {
     		if(edgeList.get(e) < this.minimumCluster) {
 //    			this.cluster.removeEdge(e);
-    			this.cluster.getEdge(e.getId()).addAttribute("ui.class", "ClusterCut");
+//    			this.cluster.getEdge(e.getId()).addAttribute("ui.class", "ClusterCut");
     		}
     	}
     	
