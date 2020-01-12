@@ -1,5 +1,6 @@
 package com.java.project.control;
 
+import java.nio.file.Paths;
 import java.util.Collection;
 
 import org.graphstream.graph.Edge;
@@ -7,15 +8,58 @@ import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
 
+import com.java.project.ii2315.App;
 import com.java.project.view.MainMenu;
 import com.java.project.view.NetworkViewer;
 
 public class ViewControl {
 	
+	private static boolean freeze = false;
+	
+	/**
+     * Using better setups for the graphical display of the graph.
+     * See <a href="http://graphstream-project.org/doc/FAQ/Attributes/Is-there-a-list-of-attributes-with-a-predefined-meaning-for-the-layout-algorithms/"> GraphStream documentation</a> for more informations.
+     * <p>
+     * @param graph Graph to work on
+     * @author Tchong-Kite Huam
+     */
+	public static void configureGraphUI(Graph graph) {
+		// Setting up the .css file for GraphStream implementation
+		// Necessary for dynamic coloring	
+		System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
+		graph.addAttribute("ui.stylesheet", String.format("url('%s')", Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\graph-style.css"));
+		
+		graph.addAttribute("ui.quality");
+        graph.addAttribute("ui.antialias");
+    	graph.addAttribute("layout.weight", 100);
+    	
+    	App.logger.info("Successfully upgraded graphical display of the map");
+	}
+	
+	public static void freezeWorld(Graph g)
+	{
+		if(freeze)
+		{	
+			for(Node n : g.getNodeSet())
+			{
+				n.addAttribute("layout.frozen");
+			}
+		}
+		else
+		{
+			for(Node n : g.getNodeSet())
+			{
+				n.removeAttribute("layout.frozen");
+			}
+		}
+	}
+	
+	
 	public static void setEnabledButtons(boolean bool)
 	{
 		MainMenu.getBtn_SimpleWorld().setEnabled(bool);
 		MainMenu.getBtn_WeightedWorld().setEnabled(bool);
+		MainMenu.getUpDown_Freeze().setEnabled(bool);
 	}
 	
 	
@@ -133,7 +177,16 @@ public class ViewControl {
 	{
 		NetworkViewer.addLogConsoleLine(s);
 	}
-	
+
+
+	public static boolean isFreeze() {
+		return freeze;
+	}
+
+
+	public static void setFreeze(boolean freeze) {
+		ViewControl.freeze = freeze;
+	}	
 	
 	
 

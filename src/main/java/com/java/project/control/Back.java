@@ -58,7 +58,8 @@ public class Back {
 //      Graph graph = buildSimplePartialWorld("B", "A");
       
     	// *** GRAPHICAL CONFIGURATION *** //
-		configureGraphUI(graph);
+		ViewControl.configureGraphUI(graph);
+		ViewControl.freezeWorld(graph);
       
 		// *** DISPLAY GRAPH *** //
 		logger.info("Displaying graph");
@@ -126,25 +127,7 @@ public class Back {
     
 
 
-	/**
-     * Using better setups for the graphical display of the graph.
-     * See <a href="http://graphstream-project.org/doc/FAQ/Attributes/Is-there-a-list-of-attributes-with-a-predefined-meaning-for-the-layout-algorithms/"> GraphStream documentation</a> for more informations.
-     * <p>
-     * @param graph Graph to work on
-     * @author Tchong-Kite Huam
-     */
-	private static void configureGraphUI(Graph graph) {
-		// Setting up the .css file for GraphStream implementation
-		// Necessary for dynamic coloring	
-		System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
-		graph.addAttribute("ui.stylesheet", String.format("url('%s')", Paths.get(".").toAbsolutePath() + "\\src\\main\\resources\\graph-style.css"));
-		
-		graph.addAttribute("ui.quality");
-        graph.addAttribute("ui.antialias");
-    	graph.addAttribute("layout.weight", 100);
-    	
-    	logger.info("Successfully upgraded graphical display of the map");
-	}
+	
 	
 	/**
 	 * Building a simple transportation map, limited to parameters.
