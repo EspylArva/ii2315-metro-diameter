@@ -38,6 +38,8 @@ public class World //Info: Singleton
 	private ArrayList<Route> routes;
 	// Ensemble des lignes de métro, tramway et rer
 	private ArrayList<Ligne> lignes;
+	private Graph graph;
+	private ArrayList<Graph> clusters = new ArrayList<Graph>();
 	
 	// *** GETTERS & SETTERS *** //
 		
@@ -65,6 +67,18 @@ public class World //Info: Singleton
 	public void setLignes(ArrayList<Ligne> lignes) {
 		this.lignes = lignes;
 	}
+	public Graph getGraph() {
+		return graph;
+	}
+	public void setGraph(Graph graph) {
+		this.graph = graph;
+	}
+	public ArrayList<Graph> getClusters() {
+		return clusters;
+	}
+	public void setClusters(ArrayList<Graph> clusters) {
+		this.clusters = clusters;
+	}
 	
 	public static World getInstance(){ return WORLD_INSTANCE; }
 	public static boolean isBuilt() {
@@ -76,5 +90,7 @@ public class World //Info: Singleton
 	public static void destroy() {
 		WORLD_INSTANCE = new World();
 	}
+	
+	
 
 }

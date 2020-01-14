@@ -18,11 +18,13 @@ public class ClusterAndDiameter extends Thread {
 
 	private static Logger logger = App.logger;
 	private Graph cluster;
+	private Graph graph;
 	private int minimumCluster;
 	
 	public ClusterAndDiameter(String name,Graph graph, int minimumCluster) {
 		super(name);
-		this.cluster = graph;
+		this.cluster = graph; // should get a clone
+		this.graph = graph;
 		this.minimumCluster = minimumCluster;
 	}
 	
@@ -64,6 +66,19 @@ public class ClusterAndDiameter extends Thread {
 //							String.valueOf(0),"a","b"							
 							path.size(),start.getAttribute("nom"),end.getAttribute("nom")
 							));
+					if(ViewControl.isShowComputation())
+					{						
+						try
+						{
+							ViewControl.displayPath(graph, path, "path");
+							Thread.sleep(ViewControl.getDisplayDelay());
+							ViewControl.resetColor(graph);
+						}
+						catch (Exception e) {
+							App.logger.error(e);
+							ViewControl.resetColor(graph);
+						}
+					}
 					
 					
 					if(diameter == null || path.getNodeCount() > diameter.getNodeCount()) {
@@ -97,8 +112,8 @@ public class ClusterAndDiameter extends Thread {
     	
     	Back.setCluster(this.cluster);
     	logger.info("Cluster minimum Edge value : " + this.minimumCluster );
-    	logger.info("Cluster Nodes: " + Back.cluster.getNodeCount() );
-    	logger.info("Cluster Edges: " + Back.cluster.getEdgeCount() );
+    	logger.info("Cluster Nodes: " + Back.getCluster().getNodeCount() );
+    	logger.info("Cluster Edges: " + Back.getCluster().getEdgeCount() );
   
 	}
 	

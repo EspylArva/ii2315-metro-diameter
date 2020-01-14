@@ -15,6 +15,8 @@ import com.java.project.view.NetworkViewer;
 public class ViewControl {
 	
 	private static boolean freeze = false;
+	private static boolean showComputation = true;
+	private static long delay = 0;
 	
 	/**
      * Using better setups for the graphical display of the graph.
@@ -64,15 +66,20 @@ public class ViewControl {
 	
 	
 	public static void displayPath(Graph graph, Path path, String label)
-    {
+    {	
 	    for(Node vertex : path.getNodePath())
 	    {
-	    	graph.getNode(vertex.getId()).addAttribute("ui.class", label);
+	    	if(graph.getNode(vertex.getId()) != null)
+	    	{
+	    		graph.getNode(vertex.getId()).addAttribute(label);
+	    		graph.getNode(vertex.getId()).addAttribute("ui.class", label);
+	    	}
 	    }
 	    for(Edge edge : path.getEdgePath())
 	    {
 	    	if(graph.getEdge(edge.getId()) != null)
 	    	{
+	    		graph.getEdge(edge.getId()).addAttribute(label);
 	    		graph.getEdge(edge.getId()).addAttribute("ui.class", label);
 	    	}
 	    }
@@ -179,14 +186,30 @@ public class ViewControl {
 	}
 
 
+	// *** GETTERS & SETTERS *** //
+	
 	public static boolean isFreeze() {
 		return freeze;
 	}
-
-
 	public static void setFreeze(boolean freeze) {
 		ViewControl.freeze = freeze;
+	}
+
+	public static boolean isShowComputation() {
+		return showComputation;
+	}
+
+	public static void setShowComputation(boolean showComputation) {
+		ViewControl.showComputation = showComputation;
+	}
+
+	public static long getDisplayDelay() {
+		return delay;
 	}	
+	public static void setDisplayDelay(long d)
+	{
+		delay = d;
+	}
 	
 	
 

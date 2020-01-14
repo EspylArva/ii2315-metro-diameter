@@ -50,6 +50,7 @@ import com.java.project.ii2315.App;
 public class NetworkViewer extends JFrame implements ChangeListener, ActionListener
 {
 	private GridBagConstraints gbc = new GridBagConstraints();
+	
     private JSpinner spinnerTime;
     private JCheckBox chk_names;
     private JCheckBox chk_dp_names;
@@ -57,10 +58,15 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     private JCheckBox chk_paths;
     private JCheckBox chk_diam;
     private JButton compute;
-    private Graph graph = null;
+    private JButton cluster;
+    private JLabel lbl_title;
     private static JTextArea logConsole ;
     public Viewer viewer;
     
+    private static String logs = "";
+    
+    
+    private Graph graph = null;
     private Path diam;
     
     
@@ -74,20 +80,89 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		
 		this.setSize(800,800);
 		this.setLocationRelativeTo(null);
-//		GridBagLayout layout = ;
 		this.setLayout(new GridBagLayout());
 		
 		JPanel content = new JPanel(new GridBagLayout());
     	
-		
-		
-		JLabel lbl_title = new JLabel(graph.getId());
+		// Label
+		lbl_title = new JLabel(graph.getId());
 		
 		// GraphStream visualizer : view
 		viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
 		viewer.enableAutoLayout();
 		final DefaultView vi = (DefaultView) viewer.addDefaultView(false);
 		vi.setPreferredSize(new Dimension(600, 600));
+		addZoomControl(vi);
+		
+		
+		
+		// CheckBox : 
+		chk_names = new JCheckBox("Show names of stations");
+		chk_names.addActionListener(this);
+		chk_dp_names = new JCheckBox("Show names of paths");
+		chk_dp_names.addActionListener(this);
+		chk_distances = new JCheckBox("Show distances between stations");
+		chk_distances.addActionListener(this);
+		chk_paths = new JCheckBox("Show path computing");
+		chk_paths.addActionListener(this);
+		chk_diam = new JCheckBox("Show diameters");
+		chk_diam.addActionListener(this);
+		
+		chk_diam.setSelected(true);
+		chk_dp_names.setSelected(true);
+		chk_paths.setSelected(true);
+		
+		// Button : 
+		compute = new JButton("Compute diameter");
+		compute.addActionListener(this);
+		
+		// Spinner :
+		SpinnerListModel durationModel = new SpinnerListModel(new String[] {"1 ms", "5 ms" ,"10 ms"});
+    	spinnerTime = new JSpinner(durationModel);
+    	spinnerTime.setValue("5 ms");
+    	ViewControl.setDisplayDelay(5);
+    	spinnerTime.addChangeListener(this);
+    	
+    	// Log console :
+    	logConsole = new JTextArea(5, 20);
+    	logConsole.setSize(new Dimension(200,600));
+    	JScrollPane logs = new JScrollPane(logConsole);
+    	logConsole.setEditable(false);
+    	logConsole.setBorder(BorderFactory.createLineBorder(Color.black));
+    	
+//    	addElementsInGrid(lbl_title, vi, logs, spinnerTime , compute,chk_names, chk_dp_names, chk_distances, chk_paths, chk_diam);
+    	
+    	JPanel visu = new JPanel(new GridBagLayout());
+		visu.setBorder(BorderFactory.createTitledBorder("Graph Visualizer"));	
+		addComp(visu, lbl_title, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, 0.01);
+		addComp(visu, vi, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, 0.99);
+	
+		JPanel options = new JPanel(new GridBagLayout());
+		options.setBorder(BorderFactory.createTitledBorder("Visualization options"));		
+		addComp(options, new JLabel("Duration of step: "), 0, 0, 1, 1, GridBagConstraints.BOTH, 0.5, (1/7));
+		addComp(options, spinnerTime, 1, 0, 1, 1, GridBagConstraints.BOTH, 0.5, (1/7));
+		addComp(options, chk_distances, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
+		addComp(options, chk_names, 	0, 2, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
+		addComp(options, chk_dp_names, 	0, 3, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
+		addComp(options, chk_diam, 		0, 4, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
+		addComp(options, chk_paths, 	0, 5, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
+		addComp(options, compute, 		0, 6, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
+		
+		
+		JPanel logger = new JPanel(new GridBagLayout());
+		logger.setBorder(BorderFactory.createTitledBorder("Operation logs"));
+		addComp(logger, logs, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, 1);
+		
+		addComp(content, options, 1, 0, 1, 1, GridBagConstraints.BOTH, 0.02, 0.8);
+		addComp(content, visu, 0, 0, 1, 1, GridBagConstraints.BOTH, 0.98, 0.8);
+		addComp(content, logger, 0, 1, 3, 1, GridBagConstraints.BOTH, 1, 0.2);
+    	
+    	this.setContentPane(content);
+    	this.setVisible(true);
+    	Back.computeDiameter(graph);
+	}
+	
+	private void addZoomControl(final DefaultView vi) {
 		((Component) vi).addMouseWheelListener(new MouseWheelListener() {
 		    @Override
 		    public void mouseWheelMoved(MouseWheelEvent e) {
@@ -111,132 +186,77 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		});
 
 		((Component) vi).addMouseListener(getGraphMouseManager(vi));
-		
-		
-		// CheckBox : 
-		chk_names = new JCheckBox("Show names of stations");
-		chk_names.addActionListener(this);
-		chk_dp_names = new JCheckBox("Show names of paths");
-		chk_dp_names.addActionListener(this);
-		chk_distances = new JCheckBox("Show distances between stations");
-		chk_distances.addActionListener(this);
-		chk_paths = new JCheckBox("Show path computing");
-		chk_paths.addActionListener(this);
-		chk_diam = new JCheckBox("Show diameters");
-		chk_diam.addActionListener(this);
-		chk_diam.setSelected(true);
-		chk_dp_names.setSelected(true);
-		chk_paths.setSelected(true);
-		
-		// Button : 
-		compute = new JButton("Compute diameter");
-		compute.addActionListener(this);
-		
-		// Spinner :
-		SpinnerListModel durationModel = new SpinnerListModel(new String[] {"100 ms","500 ms", "1 s"});
-    	spinnerTime = new JSpinner(durationModel);
-    	spinnerTime.addChangeListener(this);
-    	
-    	// Log console :
-    	logConsole = new JTextArea(5, 20);
-    	logConsole.setSize(new Dimension(200,600));
-    	JScrollPane logs = new JScrollPane(logConsole);
-    	logConsole.setEditable(false);
-    	logConsole.setBorder(BorderFactory.createLineBorder(Color.black));
-    	
-//    	addElementsInGrid(lbl_title, vi, logs, spinnerTime , compute,chk_names, chk_dp_names, chk_distances, chk_paths, chk_diam);
-    	
-    	JPanel visu = new JPanel(new GridBagLayout());
-		visu.setBorder(BorderFactory.createTitledBorder("Graph Visualizer"));	
-		addComp(visu, lbl_title, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, 0.01);
-		addComp(visu, vi, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, 0.99);
-	
-		JPanel options = new JPanel(new GridBagLayout());
-		options.setBorder(BorderFactory.createTitledBorder("Visualization options"));		
-		addComp(options, chk_distances, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
-		addComp(options, chk_names, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
-		addComp(options, chk_dp_names, 0, 2, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
-		addComp(options, chk_diam, 0, 3, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
-		addComp(options, chk_paths, 0, 4, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
-		addComp(options, compute, 0, 5, 1, 1, GridBagConstraints.BOTH, 1, (1/6));
-		
-		JPanel logger = new JPanel(new GridBagLayout());
-		logger.setBorder(BorderFactory.createTitledBorder("Operation logs"));
-		addComp(logger, logs, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, 1);
-		
-		addComp(content, options, 1, 0, 1, 1, GridBagConstraints.BOTH, 0.02, 0.8);
-		addComp(content, visu, 0, 0, 1, 1, GridBagConstraints.BOTH, 0.98, 0.8);
-		addComp(content, logger, 0, 1, 3, 1, GridBagConstraints.BOTH, 1, 0.2);
-    	
-    	this.setContentPane(content);
-    	this.setVisible(true);
-    	Back.computeDiameter(graph);
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
  
 		if(source == compute)
 		{			
-//			compute.setEnabled(false);
-//			if(diam == null)
-//			{
-//				Back.computeDiameter(graph);//, thread, chk_paths.isSelected());
-//			}
-//			while(diam == null)
-//			{
-//				diam = Back.getDiameter();
-//			}
-/*			
-	    	if(diam != null &&  chk_diam.isSelected())
+			if(Back.getDiameter() != null)
 			{
-				ViewControl.showDiameter(chk_diam.isSelected(), graph, diam);
-			}	
-	    	
-	    	if(chk_dp_names.isSelected())
-			{
-	    		ViewControl.showPathStationsName(chk_diam.isSelected(), graph);
-			}	
-//*/
-			AStar a = new AStar(graph);
-			a.compute("A_161468","B_1673");
-			Path path = a.getShortestPath();
-			ViewControl.displayPath(graph, path, "path");
+				diam = Back.getDiameter();
+			}
 			
-	    	App.logger.info("Diamètre : " + diam.getNodeCount());
-	    	App.logger.info("Diamètre : " + diam);
-	    	addLogConsoleLine("Diameter length: " + diam.getNodeCount());
-			addLogConsoleLine("Diameter path: " + diam);
-//			ArrayList<String> diamPath = new ArrayList<String>();
-//			for(Node n : diam.getNodeSet())
-//			{
-//				diamPath.add(n.getAttribute("nom").toString());
-//			}
-//			addLogConsoleLine(diamPath.toString());
+	    	if(diam != null)
+	    	{
+	    		
+	    		if(chk_diam.isSelected())
+				{
+					ViewControl.showDiameter(chk_diam.isSelected(), graph, diam);
+				}	
+		    	
+		    	if(chk_dp_names.isSelected())
+				{
+		    		ViewControl.showPathStationsName(chk_diam.isSelected(), graph);
+				}	
+	//*/
+	//			AStar a = new AStar(graph);
+	//			a.compute("A_161468","B_1673");
+	//			Path path = a.getShortestPath();
+	//			ViewControl.displayPath(graph, path, "path");
+				
+		    	App.logger.info("Diamètre : " + diam.getNodeCount());
+		    	App.logger.info("Diamètre : " + diam);
+		    	addLogConsoleLine("Diameter length: " + diam.getNodeCount());
+		    	String diamString = "[";
+		    	for(Node n : diam.getNodePath())
+		    	{
+		    		diamString += n.getAttribute("nom") + ", ";
+		    	}
+		    	diamString = diamString.substring(0, diamString.length()-2) + "]";
+				addLogConsoleLine("Diameter path: " + diamString);
+	    	}
 		}
-		if(source == chk_names || source == chk_dp_names)
+		else if(source == cluster) {}
+		else if(source == chk_names || source == chk_dp_names)
 		{
-			App.logger.info("Checkbox: names " + chk_names.isSelected());
+			App.logger.trace("Checkbox: names " + chk_names.isSelected());
 			ViewControl.showStationsName(chk_names.isSelected(), graph);
 			ViewControl.showPathStationsName(chk_dp_names.isSelected(), graph);
 		}
-//		if(source == chk_dp_names)
-//		{
-//			App.logger.info("Checkbox: path names " + chk_dp_names.isSelected());
-//			Back.showPathStationsName(chk_dp_names.isSelected(), graph);
-//		}
-		if(source == chk_distances)
+		else if(source == chk_dp_names)
 		{
-			App.logger.info("Checkbox: distances " + chk_distances.isSelected());
+			App.logger.trace("Checkbox: path names " + chk_dp_names.isSelected());
+			ViewControl.showPathStationsName(chk_dp_names.isSelected(), graph);
+		}
+		else if(source == chk_distances)
+		{
+			App.logger.trace("Checkbox: distances " + chk_distances.isSelected());
 			ViewControl.showDistances(chk_distances.isSelected(), graph);
 		}
-		if(source == chk_diam)
+		else if(source == chk_diam)
 		{
-			App.logger.info("Checkbox: diameter " + chk_diam.isSelected());
+			App.logger.trace("Checkbox: diameter " + chk_diam.isSelected());
 			if(diam != null)
 			{
 				ViewControl.showDiameter(chk_diam.isSelected(), graph, diam);
 			}	
+		}
+		else if(source == chk_paths)
+		{
+			App.logger.trace("Checkbox: paths " + chk_paths.isSelected());
+			ViewControl.setShowComputation(chk_paths.isSelected());
 		}
 	}
 	
@@ -252,114 +272,24 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		panel.add(graph2, gbc);
 	}
 	
-	private void addElementsInGrid(Component lbl_title ,Component graph, Component logConsole,Component spinner, Component button,
-			Component chk_names, Component chk_dp_names, Component chk_distances, Component chk_paths, Component chk_diam)
-	{
-		
-		
-		gbc.fill = GridBagConstraints.HORIZONTAL;
-//
-		gbc.gridx = 0;
-		gbc.gridy = 1;
-		gbc.gridwidth = 1;
-		gbc.gridheight = 5;
-		this.add(graph, gbc);
-//
-        gbc.gridx = 0;
-        gbc.gridy = 0;
-        gbc.gridwidth = 4;
-		gbc.gridheight = 1;
-        this.add(lbl_title, gbc);
-//
-        gbc.gridx = 2;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-		gbc.gridheight = 1;
-        this.add(spinner, gbc);
-//      
-        gbc.gridx = 1;
-        gbc.gridy = 0;
-        gbc.gridwidth = 1;
-		gbc.gridheight = 1;
-        this.add(new JLabel("Duration of step: "), gbc);
-//      
-        gbc.gridx = 1;
-        gbc.gridy = 1;
-        gbc.gridwidth = 2;
-		gbc.gridheight = 1;
-        this.add(chk_names, gbc);
-//      
-        gbc.gridx = 1;
-        gbc.gridy = 2;
-        gbc.gridwidth = 2;
-		gbc.gridheight = 1;
-        this.add(chk_dp_names, gbc);
-//      
-        gbc.gridx = 1;
-        gbc.gridy = 3;
-        gbc.gridwidth = 2;
-		gbc.gridheight = 1;
-        this.add(chk_distances, gbc);
-//
-        gbc.gridx = 1;
-        gbc.gridy = 4;
-        gbc.gridwidth = 2;
-		gbc.gridheight = 1;
-        this.add(chk_paths, gbc);
-//
-        gbc.gridx = 1;
-        gbc.gridy = 5;
-        gbc.gridwidth = 2;
-		gbc.gridheight = 1;
-        this.add(chk_diam, gbc);
-//
-        gbc.gridx = 1;
-        gbc.gridy = 6;
-        gbc.gridwidth = 1;
-		gbc.gridheight = 1;
-        this.add(button, gbc);
-//
-        gbc.gridx = 0;
-        gbc.gridy = 7;
-        gbc.gridwidth = 3;
-		gbc.gridheight = 1;
-        this.add(logConsole, gbc);
-		
-	}
-	
 	public void stateChanged(ChangeEvent e) {
 		App.logger.debug("StateChanged");
         SpinnerModel dateModel = this.spinnerTime.getModel();
-        setSeasonalColor(dateModel.getValue().toString());
-        // REFRESH VALUES HERE
-//        operationDuration = spinnerTime.getValue().toString();
+        long delay;
+        switch(dateModel.getValue().toString())
+        {
+        case "1 ms":
+        	delay = 1;break;
+        case "5 ms":
+        	delay = 5;break;
+        case "10 ms":
+        	delay = 10;break;
+    	default:
+    		delay = 1;break;
+        }
+        ViewControl.setDisplayDelay(delay);        
     }
 	
-	public JFormattedTextField getTextField(JSpinner spinner) {
-	    JComponent editor = spinner.getEditor();
-	    if (editor instanceof JSpinner.DefaultEditor)
-	    {
-	        return ((JSpinner.DefaultEditor)editor).getTextField();
-	    }
-	    else
-	    {
-	        App.logger.error(String.format("Unexpected editor type: %s isn't a descendant of DefaultEditor",
-	        		spinner.getEditor().getClass()));
-	        return null;
-	    }
-	}
-	
-
-    protected void setSeasonalColor(String date) {
-        JFormattedTextField ftf = getTextField(this.spinnerTime);
-        if (ftf == null) return;
-        
-        ftf.setForeground(Color.BLUE);
-        ftf.setBackground(Color.RED);
-        
-    }
-    
-    private static String logs = "";
     
     public static void addLogConsoleLine(String s)
     {

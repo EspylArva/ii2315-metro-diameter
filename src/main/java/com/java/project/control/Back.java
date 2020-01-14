@@ -35,7 +35,7 @@ public class Back {
 	private static Logger logger = App.logger;
 	private static boolean run = false; 
 	private static Path diameter;
-	public static Graph cluster;
+	private static Graph cluster;
 	
 	private static java.nio.file.Path pathToJson;
 	
@@ -117,11 +117,6 @@ public class Back {
     	}
     }
 
-   
-    
-
-
-	
 	
 	/**
 	 * Building a simple transportation map, limited to parameters.
@@ -328,6 +323,9 @@ public class Back {
 		cluster = c;
 	}
 
+	public static Graph getCluster() {
+		return cluster;
+	}
 	
 
 	
