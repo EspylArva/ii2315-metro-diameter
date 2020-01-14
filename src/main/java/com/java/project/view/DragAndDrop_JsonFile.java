@@ -208,12 +208,19 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
     }
 
 	public void setResource(Path path) {
-		App.logger.info(String.format("Selected a .JSON file at %s. Setting this file as configuration file.", path.toString()));
-		lbl_JsonPath.setText(path.toString());
-		Back.setPathToJson(path);
-		ViewControl.setEnabledButtons(true);
-		state = DragState.Accept;
-		repaint();
+		if(ViewControl.isComputationFinished())
+		{
+			App.logger.info(String.format("Selected a .JSON file at %s. Setting this file as configuration file.", path.toString()));
+			lbl_JsonPath.setText(path.toString());
+			Back.setPathToJson(path);
+			if(NetworkViewer.getAdditionalTitle() == null || NetworkViewer.getAdditionalTitle().equals(""))
+			{
+				ViewControl.addTitleToWindow("Custom network");
+			}
+			ViewControl.setEnabledButtons(true);
+			state = DragState.Accept;
+			repaint();
+		}
 	}
 	
 	private boolean isJson(String file)

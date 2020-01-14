@@ -17,6 +17,7 @@ public class ViewControl {
 	private static boolean freeze = false;
 	private static boolean showComputation = true;
 	private static long delay = 0;
+	private static boolean computationFinished = true;
 	
 	/**
      * Using better setups for the graphical display of the graph.
@@ -212,5 +213,25 @@ public class ViewControl {
 	}
 	
 	
+//	public static void computationFinished(boolean isFinished)
+//	{
+////		Back.setResourceCanChange(isFinished);
+//		NetworkViewer.getComputeButton().setEnabled(isFinished);
+//		NetworkViewer.getClusterButton().setEnabled(isFinished);
+//	}
+	
+	public static boolean isComputationFinished()
+	{
+		return computationFinished;
+	}
+	
+	public static void setComputationFinished(boolean b)
+	{
+		computationFinished = b;
+	}
+
+	public static void addTitleToWindow(String string) {
+		NetworkViewer.setAdditionalTitle(string);
+	}
 
 }

@@ -41,7 +41,7 @@ public class Back {
 	
     public static Graph computeWeightlessGraph()
     {
-    	Graph graph = null;
+//    	Graph graph = null;
     	// *** BUILDING MODEL *** //
     	if(!World.isBuilt())
     	{
@@ -54,18 +54,18 @@ public class Back {
     		parseWorld(getPathToJson());
 	    	World.setBuilt(true);
     	}
-    	graph = buildSimpleWorld();
+    	World.getInstance().setGraph(buildSimpleWorld());
 //      Graph graph = buildSimplePartialWorld("B", "A");
       
     	// *** GRAPHICAL CONFIGURATION *** //
-		ViewControl.configureGraphUI(graph);
-		ViewControl.freezeWorld(graph);
+		ViewControl.configureGraphUI(World.getInstance().getGraph());
+		ViewControl.freezeWorld(World.getInstance().getGraph());
       
 		// *** DISPLAY GRAPH *** //
 		logger.info("Displaying graph");
 //		addWeights(graph);
 //    	org.graphstream.ui.view.Viewer viewer = graph.display();
-    	return graph;
+    	return World.getInstance().getGraph();
     }
     
      public static void computeDiameter(Graph graph)
@@ -134,17 +134,17 @@ public class Back {
     {
     	// Liste des lignes à mettre
     	
-    	Graph graph = new MultiGraph("Plan du Métro");
+    	World.getInstance().setGraph(new MultiGraph("Plan du Métro"));
     	
-    	WorldControl.buildStations(graph);
-		WorldControl.buildCorrespondances(graph);
+    	WorldControl.buildStations(World.getInstance().getGraph());
+		WorldControl.buildCorrespondances(World.getInstance().getGraph());
 		
 		ArrayList<String> partialWorldSetup = new ArrayList<String>(); for(String s : args)partialWorldSetup.add(s);
         
-		WorldControl.buildLignes(graph, partialWorldSetup);
+		WorldControl.buildLignes(World.getInstance().getGraph(), partialWorldSetup);
 		
         // Clean the graph of useless stations
-        return removeLoneNode(graph);
+        return removeLoneNode(World.getInstance().getGraph());
 	}
 
 
@@ -160,11 +160,11 @@ public class Back {
 	 */
 	private static Graph buildSimpleWorld()
 	{		
-        Graph graph = new MultiGraph("Paris' transportation map");
-        WorldControl.buildStations(graph);
-        WorldControl.buildCorrespondances(graph);
-        WorldControl.buildLignes(graph, null);   
-        return removeLoneNode(graph);
+        World.getInstance().setGraph(new MultiGraph("Paris' transportation map"));
+        WorldControl.buildStations(World.getInstance().getGraph());
+        WorldControl.buildCorrespondances(World.getInstance().getGraph());
+        WorldControl.buildLignes(World.getInstance().getGraph(), null);   
+        return removeLoneNode(World.getInstance().getGraph());
 		
 	}
 	
@@ -317,7 +317,10 @@ public class Back {
 		return diameter;
 	}
 	public static void setDiameter(Path d) {
-		diameter = d;
+		if(d != null)
+		{
+			diameter = d;
+		}
 	}
 	public static void setCluster(Graph c) {
 		cluster = c;
@@ -326,9 +329,5 @@ public class Back {
 	public static Graph getCluster() {
 		return cluster;
 	}
-	
-
-	
-
 	
 }

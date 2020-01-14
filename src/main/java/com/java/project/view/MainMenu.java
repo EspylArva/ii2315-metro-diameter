@@ -25,11 +25,9 @@ import com.java.project.control.ViewControl;
 import com.java.project.ii2315.App;
 
 public class MainMenu extends JFrame implements ActionListener, ChangeListener
-{
-//	private JFrame frame;
+{	
 
-	private static final long serialVersionUID = 1L;	
-	
+	private static final long serialVersionUID = 1L;
 	private GridBagConstraints gbc = new GridBagConstraints();
 	private static JButton btn_SimpleWorld;
 	private static JButton btn_WeightedWorld;
@@ -38,6 +36,10 @@ public class MainMenu extends JFrame implements ActionListener, ChangeListener
 	private JButton btn_useSimpleJson;
 	private static JSpinner updown_frozenPicker;
 	private DragAndDrop_JsonFile dragAndDrop_image;
+	
+//	private final static java.nio.file.Path pDefault = Paths.get("src","main","resources","reseau.json").toAbsolutePath();
+//	private final static java.nio.file.Path pReduced = Paths.get("src","main","resources","reducedNetwork.json").toAbsolutePath();
+//	private final static java.nio.file.Path pComplete = Paths.get("src","main","resources","reseau_RER.json").toAbsolutePath();
 	
 	public MainMenu(String title)
 	{
@@ -133,14 +135,17 @@ public class MainMenu extends JFrame implements ActionListener, ChangeListener
 		else if(source == btn_useDefaultJson)
 		{
 			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau.json").toAbsolutePath());
+			ViewControl.addTitleToWindow("Default network");
 		}
 		else if(source == btn_useFullJson)
 		{
 			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau_RER.json").toAbsolutePath());
+			ViewControl.addTitleToWindow("Full network");
 		}
 		else if(source == btn_useSimpleJson)
 		{
 			dragAndDrop_image.setResource(Paths.get("src","main","resources","reducedNetwork.json").toAbsolutePath());
+			ViewControl.addTitleToWindow("Reduced network");
 		}
 	}
 	
@@ -167,7 +172,16 @@ public class MainMenu extends JFrame implements ActionListener, ChangeListener
 	public static JSpinner getUpDown_Freeze() {
 		return updown_frozenPicker;
 	}
-	
+//	public static java.nio.file.Path getpDefault() {
+//		return pDefault;
+//	}
+//	public static java.nio.file.Path getpReduced() {
+//		return pReduced;
+//	}
+//	public static java.nio.file.Path getpComplete() {
+//		return pComplete;
+//	}
+//	
 
 
 }

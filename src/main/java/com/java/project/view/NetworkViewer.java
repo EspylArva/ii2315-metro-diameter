@@ -10,6 +10,7 @@ import java.awt.event.ActionListener;
 import java.awt.event.MouseEvent;
 import java.awt.event.MouseWheelEvent;
 import java.awt.event.MouseWheelListener;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 
@@ -57,14 +58,14 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     private JCheckBox chk_distances;
     private JCheckBox chk_paths;
     private JCheckBox chk_diam;
-    private JButton compute;
-    private JButton cluster;
+    private static JButton compute;
+    private static JButton cluster;
     private JLabel lbl_title;
     private static JTextArea logConsole ;
     public Viewer viewer;
     
     private static String logs = "";
-    
+    private static String additionalTitle;
     
     private Graph graph = null;
     private Path diam;
@@ -85,7 +86,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		JPanel content = new JPanel(new GridBagLayout());
     	
 		// Label
-		lbl_title = new JLabel(graph.getId());
+		lbl_title = new JLabel(String.format("%s - %s", graph.getId(), additionalTitle));
 		
 		// GraphStream visualizer : view
 		viewer = new Viewer(graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -110,17 +111,21 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		
 		chk_diam.setSelected(true);
 		chk_dp_names.setSelected(true);
-		chk_paths.setSelected(true);
+		chk_paths.setSelected(false);
 		
 		// Button : 
 		compute = new JButton("Compute diameter");
 		compute.addActionListener(this);
+		compute.setEnabled(ViewControl.isComputationFinished());
+		cluster = new JButton("Compute clusters");
+		cluster.addActionListener(this);
+		cluster.setEnabled(ViewControl.isComputationFinished());
 		
 		// Spinner :
 		SpinnerListModel durationModel = new SpinnerListModel(new String[] {"1 ms", "5 ms" ,"10 ms"});
     	spinnerTime = new JSpinner(durationModel);
-    	spinnerTime.setValue("5 ms");
-    	ViewControl.setDisplayDelay(5);
+    	spinnerTime.setValue("10 ms");
+    	ViewControl.setDisplayDelay(10);
     	spinnerTime.addChangeListener(this);
     	
     	// Log console :
@@ -137,16 +142,17 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		addComp(visu, lbl_title, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, 0.01);
 		addComp(visu, vi, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, 0.99);
 	
-		JPanel options = new JPanel(new GridBagLayout());
+		JPanel options = new JPanel(new GridBagLayout());int nOptions = 8; 
 		options.setBorder(BorderFactory.createTitledBorder("Visualization options"));		
-		addComp(options, new JLabel("Duration of step: "), 0, 0, 1, 1, GridBagConstraints.BOTH, 0.5, (1/7));
-		addComp(options, spinnerTime, 1, 0, 1, 1, GridBagConstraints.BOTH, 0.5, (1/7));
-		addComp(options, chk_distances, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
-		addComp(options, chk_names, 	0, 2, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
-		addComp(options, chk_dp_names, 	0, 3, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
-		addComp(options, chk_diam, 		0, 4, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
-		addComp(options, chk_paths, 	0, 5, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
-		addComp(options, compute, 		0, 6, 1, 1, GridBagConstraints.BOTH, 1, (1/7));
+		addComp(options, new JLabel("Duration of step: "), 0, 0, 1, 1, GridBagConstraints.BOTH, 0.5, (1/nOptions));
+		addComp(options, spinnerTime, 1, 0, 1, 1, GridBagConstraints.BOTH, 0.5, (1/nOptions));
+		addComp(options, chk_distances, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
+		addComp(options, chk_names, 	0, 2, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
+		addComp(options, chk_dp_names, 	0, 3, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
+		addComp(options, chk_diam, 		0, 4, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
+		addComp(options, chk_paths, 	0, 5, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
+		addComp(options, compute, 		0, 6, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
+		addComp(options, cluster, 		0, 7, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
 		
 		
 		JPanel logger = new JPanel(new GridBagLayout());
@@ -362,6 +368,24 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		};
 		return m;
     }
+    
+    public static JButton getComputeButton()
+    {
+    	return compute;
+    }
+    
+    public static JButton getClusterButton()
+    {
+    	return cluster;
+    }
+
+	public static String getAdditionalTitle() {
+		return additionalTitle;
+	}
+
+	public static void setAdditionalTitle(String additionalTitle) {
+		NetworkViewer.additionalTitle = additionalTitle;
+	}
     
     
 
