@@ -75,13 +75,13 @@ public class ClusterAndDiameter extends Thread {
 					{						
 						try
 						{
-							ViewControl.displayPath(graph, path, "path");
+							nv.getVc().displayPath(graph, path, "path");
 							Thread.sleep(nv.getVc().getDisplayDelay());
-							ViewControl.resetColor(graph);
+							nv.getVc().resetColor(graph);
 						}
 						catch (Exception e) {
 							App.logger.error(e);
-							ViewControl.resetColor(graph);
+							nv.getVc().resetColor(graph);
 						}
 					}
 					

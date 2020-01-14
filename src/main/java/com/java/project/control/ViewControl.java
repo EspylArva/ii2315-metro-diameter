@@ -73,12 +73,13 @@ public class ViewControl {
 	}
 	
 	
-	public static void displayPath(Graph graph, Path path, String label)
+	public void displayPath(Graph graph, Path path, String label)
     {	
 	    for(Node vertex : path.getNodePath())
 	    {
 	    	if(graph.getNode(vertex.getId()) != null)
 	    	{
+	    		graph.getNode(vertex.getId()).addAttribute("old", graph.getNode(vertex.getId()).getAttribute("ui.class"));
 	    		graph.getNode(vertex.getId()).addAttribute(label);
 	    		graph.getNode(vertex.getId()).addAttribute("ui.class", label);
 	    	}
@@ -93,14 +94,17 @@ public class ViewControl {
 	    }
     }
 	
-	public static void resetColor(Graph graph) {
+	public void resetColor(Graph graph) {
 		Collection<Node> gVertices = graph.getNodeSet();
     	Collection<Edge> gEdges = graph.getEdgeSet();
     	for(Node n : gVertices)
     	{
     		if(n.hasAttribute("ui.class"))
     		{
-    			n.setAttribute("ui.class");
+    			if(n.hasAttribute("old"))
+    			{
+    				n.setAttribute("ui.class", n.getAttribute("old"));
+    			}
     		}
     	}
     	for(Edge e : gEdges)
@@ -112,24 +116,7 @@ public class ViewControl {
     	}
 	}
 	
-	public static void showStationsName(boolean selected, Graph g) {
-		if(selected)
-		{
-			for(Node n : g.getNodeSet())
-			{
-				n.addAttribute("ui.class", "showName");
-			}
-		}
-		else
-		{
-			for(Node n : g.getNodeSet())
-			{
-				n.changeAttribute("ui.class", "node");
-			}
-		}
-	}
-	
-	public static void showDistances(boolean selected, Graph g) {
+	public void showDistances(boolean selected, Graph g) {
 		if(selected)
 		{
 			for(Edge e : g.getEdgeSet())
@@ -154,29 +141,47 @@ public class ViewControl {
 	}
 
 
-	public static void showDiameter(boolean selected, Graph g, Path diam) {
+	public void showDiameter(boolean selected, Graph g, Path diam) {
 		if(selected)
 		{
-			ViewControl.displayPath(g,diam,"diameter");
+			displayPath(g,diam,"diameter");
 		}
 		else
 		{
-			ViewControl.resetColor(g);
+			resetColor(g);
 		}
 	}
-
 	
-
-	public void showPathStationsName(boolean selected, Graph g) {
+	public void showStationsName(boolean selected, Graph g) {
 		if(selected)
 		{
 			for(Node n : g.getNodeSet())
 			{
-				if( n.hasAttribute("diameter") || n.getAttribute("ui.class").equals("path") )
+				n.addAttribute("ui.class", "showName");
+			}
+		}
+		else
+		{
+			for(Node n : g.getNodeSet())
+			{
+				n.addAttribute("ui.class", "nshowName");
+			}
+		}
+	}
+	
+	
+
+	
+
+	public void showPathStationsName(boolean selected, Graph g) {
+		this.resetColor(g);
+		if(selected)
+		{
+			for(Node n : g.getNodeSet())
+			{
+				if( n.hasAttribute("diameter") || (n.hasAttribute("ui.class") && "path".equals(n.getAttribute("ui.class"))) )
 				{
 					n.addAttribute("ui.class", "showName");
-//					n.addAttribute("ui.label");
-//					n.addAttribute("ui.style", "text-mode:normal;");
 				}
 			}
 		}
@@ -184,10 +189,9 @@ public class ViewControl {
 		{
 			for(Node n : g.getNodeSet())
 			{
-				if( n.hasAttribute("diameter") || n.getAttribute("ui.class").equals("path") )
+				if( n.hasAttribute("diameter") || (n.hasAttribute("ui.class") && "path".equals(n.getAttribute("ui.class"))) )
 				{
-					n.addAttribute("ui.class", "showName");
-//					n.removeAttribute("ui.style");
+					n.addAttribute("ui.class","nshowName");
 				}
 			}
 		}

@@ -309,12 +309,12 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 				diam = Back.getDiameter();
 			}
 			
-			vc.setShowComputation(chk_paths.isSelected());	
+//			vc.setShowComputation(chk_paths.isSelected());	
 	    	if(diam != null)
 	    	{
 	    		
-				vc.showDiameter(chk_diam.isSelected(), graph, diam);
-	    		vc.showPathStationsName(chk_diam.isSelected(), graph);
+//				vc.showDiameter(chk_diam.isSelected(), graph, diam);
+//	    		vc.showPathStationsName(chk_diam.isSelected(), graph);
 	//*/
 	//			AStar a = new AStar(graph);
 	//			a.compute("A_161468","B_1673");
@@ -337,13 +337,8 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		else if(source == chk_names || source == chk_dp_names)
 		{
 			App.logger.trace("Checkbox: names " + chk_names.isSelected());
-			vc.showStationsName(chk_names.isSelected(), graph);
-			vc.showPathStationsName(chk_dp_names.isSelected(), graph);
-		}
-		else if(source == chk_dp_names)
-		{
-			App.logger.trace("Checkbox: path names " + chk_dp_names.isSelected());
-			vc.showPathStationsName(chk_dp_names.isSelected(), graph);
+			vc.showStationsName(chk_names.isSelected(), graph);					
+			vc.showPathStationsName(chk_dp_names.isSelected(), graph);				
 		}
 		else if(source == chk_distances)
 		{
