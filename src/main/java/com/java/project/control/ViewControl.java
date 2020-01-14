@@ -213,12 +213,12 @@ public class ViewControl {
 	}
 	
 	
-//	public static void computationFinished(boolean isFinished)
-//	{
-////		Back.setResourceCanChange(isFinished);
-//		NetworkViewer.getComputeButton().setEnabled(isFinished);
-//		NetworkViewer.getClusterButton().setEnabled(isFinished);
-//	}
+	public static void computing(boolean computing)
+	{
+		computationFinished = !computing;
+		NetworkViewer.getComputeButton().setEnabled(!computing);
+		NetworkViewer.getClusterButton().setEnabled(!computing);
+	}
 	
 	public static boolean isComputationFinished()
 	{
@@ -232,6 +232,10 @@ public class ViewControl {
 
 	public static void addTitleToWindow(String string) {
 		NetworkViewer.setAdditionalTitle(string);
+	}
+
+	public static void deleteLogs() {
+		NetworkViewer.deleteLogs();	
 	}
 
 }

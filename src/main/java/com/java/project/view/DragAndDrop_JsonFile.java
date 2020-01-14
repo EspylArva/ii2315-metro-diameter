@@ -56,11 +56,8 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
                 true);
         try
         {
-//        	wait_json = ImageIO.read(getClass().getResource("/useJson.png"));
-        	wait_json = ImageIO.read((InputStream) Paths.get("src","main","resources","useJson.png").toAbsolutePath());
-        	
-//        	accept_json = ImageIO.read(getClass().getResource("/useJson_file.png"));
-        	accept_json = ImageIO.read((InputStream) Paths.get("src","main","resources","useJson_file.png").toAbsolutePath());
+        	wait_json = ImageIO.read(Paths.get("src","main","resources","useJson.png").toAbsolutePath().toUri().toURL());
+        	accept_json = ImageIO.read(Paths.get("src","main","resources","useJson_file.png").toAbsolutePath().toUri().toURL());
         }
         catch (Exception e)
         {
@@ -83,8 +80,8 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
                 true);
         try
         {
-        	wait_json = ImageIO.read(getClass().getResource("/useJson.png"));
-        	accept_json = ImageIO.read(getClass().getResource("/useJson_file.png"));
+        	wait_json = ImageIO.read(Paths.get("src","main","resources","useJson.png").toAbsolutePath().toUri().toURL());
+        	accept_json = ImageIO.read(Paths.get("src","main","resources","useJson_file.png").toAbsolutePath().toUri().toURL());
         }
         catch (Exception e)
         {

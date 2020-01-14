@@ -31,9 +31,8 @@ public class ClusterAndDiameter extends Thread {
 	
 	public void run() {
 		
-		ViewControl.setComputationFinished(false);
-		NetworkViewer.getComputeButton().setEnabled(false);
-		NetworkViewer.getClusterButton().setEnabled(false);
+		ViewControl.deleteLogs();
+		ViewControl.computing(true);
 		
 		HashMap<Edge,Integer> edgeList = new HashMap<Edge,Integer>();    	    	
     	Path diameter = null;
@@ -119,9 +118,7 @@ public class ClusterAndDiameter extends Thread {
     	logger.info("Cluster Nodes: " + Back.getCluster().getNodeCount() );
     	logger.info("Cluster Edges: " + Back.getCluster().getEdgeCount() );
   
-		ViewControl.setComputationFinished(true);
-		NetworkViewer.getComputeButton().setEnabled(true);
-		NetworkViewer.getClusterButton().setEnabled(true);
+		ViewControl.computing(false);
 	}
 	
 }

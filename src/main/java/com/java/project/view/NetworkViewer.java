@@ -309,6 +309,11 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		logs += s;
 		logConsole.setText(logs);
     }
+    public static void deleteLogs()
+    {
+    	logs = "";
+    }
+    
     
     private DefaultMouseManager getGraphMouseManager(final View vi)
     {
