@@ -73,11 +73,14 @@ public class ClusterAndDiameter extends Thread {
 							path.size(),start.getAttribute("nom"),end.getAttribute("nom")
 							));
 					if(nv.getVc().isShowComputation())
-					{						
+					{	
+						System.out.println("SHOULD SHOW COMP");
 						try
 						{
 							nv.getVc().displayPath(graph, path, "path");
 							Thread.sleep(nv.getVc().getDisplayDelay());
+//							Thread.sleep(1000);
+							nv.getVc().resetTag("path", graph);
 							nv.getVc().resetColor(graph);
 						}
 						catch (Exception e) {
@@ -99,7 +102,9 @@ public class ClusterAndDiameter extends Thread {
     	
     	for(Node n : diameter.getNodeSet())
     	{
+//    		n.
     		n.addAttribute("diameter", true);
+    		ViewControl.addTag(n, "diameter");
     	}
     	Back.setDiameter(diameter);
     	logger.info("Diamètre : " + Back.getDiameter().getNodeCount());

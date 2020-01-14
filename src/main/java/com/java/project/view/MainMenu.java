@@ -27,6 +27,7 @@ import com.java.project.model.World;
 
 public class MainMenu extends JFrame implements ActionListener, ChangeListener
 {	
+	private static String windowName;
 
 	private static final long serialVersionUID = 1L;
 	private GridBagConstraints gbc = new GridBagConstraints();
@@ -136,32 +137,25 @@ public class MainMenu extends JFrame implements ActionListener, ChangeListener
 		}		
 		else if(source == btn_useDefaultJson)
 		{
-			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau.json").toAbsolutePath(), "Default network");
-//			ViewControl.addTitleToWindow( );
-//			System.out.println(World.getInstance().getMap().size());
+			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau.json").toAbsolutePath());
+			windowName = "Default network";
 		}
 		else if(source == btn_useFullJson)
 		{
-			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau_RER.json").toAbsolutePath(), "Full network");
-//			ViewControl.addTitleToWindow();
-//			System.out.println(World.getInstance().getMap().size());
+			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau_RER.json").toAbsolutePath());
+			windowName = "Full network";
 		}
 		else if(source == btn_useSimpleJson)
 		{
-			dragAndDrop_image.setResource(Paths.get("src","main","resources","reducedNetwork.json").toAbsolutePath(), "Reduced network");
-//			ViewControl.addTitleToWindow();
-//			System.out.println(World.getInstance().getMap().size());
+			dragAndDrop_image.setResource(Paths.get("src","main","resources","reducedNetwork.json").toAbsolutePath());
+			windowName = "Reduced network";
 		}
 	}
 	
 	public void stateChanged(ChangeEvent e) {
-		App.logger.debug("StateChanged");
-        SpinnerModel dateModel = this.updown_frozenPicker.getModel();
+		App.logger.trace("StateChanged");
         // REFRESH VALUES HERE
-//        operationDuration = spinnerTime.getValue().toString();
-        
         generateFrozen = updown_frozenPicker.getValue().toString().equals("Keep geographic exactitude") ? true : false;
-//        ViewControl.setFreeze(generateFrozen);
     }
 	
 	
@@ -177,16 +171,13 @@ public class MainMenu extends JFrame implements ActionListener, ChangeListener
 	public static JSpinner getUpDown_Freeze() {
 		return updown_frozenPicker;
 	}
-//	public static java.nio.file.Path getpDefault() {
-//		return pDefault;
-//	}
-//	public static java.nio.file.Path getpReduced() {
-//		return pReduced;
-//	}
-//	public static java.nio.file.Path getpComplete() {
-//		return pComplete;
-//	}
-//	
 
+	public static void setWindowName(String string) {
+		windowName = string;
+	}
+	public static String getWindowName()
+	{
+		return windowName;
+	}
 
 }

@@ -1,9 +1,12 @@
 package com.java.project.control;
 
 import java.nio.file.Paths;
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Collection;
 
 import org.graphstream.graph.Edge;
+import org.graphstream.graph.Element;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
@@ -79,9 +82,11 @@ public class ViewControl {
 	    {
 	    	if(graph.getNode(vertex.getId()) != null)
 	    	{
-	    		graph.getNode(vertex.getId()).addAttribute("old", graph.getNode(vertex.getId()).getAttribute("ui.class"));
+//	    		graph.getNode(vertex.getId()).addAttribute("old", graph.getNode(vertex.getId()).getAttribute("ui.class"));
 	    		graph.getNode(vertex.getId()).addAttribute(label);
 	    		graph.getNode(vertex.getId()).addAttribute("ui.class", label);
+//	    		System.out.println("-" + graph.getNode(vertex.getId()).getAttribute("ui.class"));
+//	    		addTag(graph.getNode(vertex.getId()),label);
 	    	}
 	    }
 	    for(Edge edge : path.getEdgePath())
@@ -90,6 +95,7 @@ public class ViewControl {
 	    	{
 	    		graph.getEdge(edge.getId()).addAttribute(label);
 	    		graph.getEdge(edge.getId()).addAttribute("ui.class", label);
+//	    		addTag(graph.getEdge(edge.getId()),label);
 	    	}
 	    }
     }
@@ -138,50 +144,68 @@ public class ViewControl {
 				e.removeAttribute("ui.label");
 			}
 		}
-	}
+	}//OK
 
 
 	public void showDiameter(boolean selected, Graph g, Path diam) {
-		if(selected)
-		{
-			displayPath(g,diam,"diameter");
-		}
-		else
-		{
-			resetColor(g);
-		}
-	}
+//		if(selected)
+//		{
+////			displayPath(g , diam , "diameter");
+//			for(Node n : g.getNodeSet())
+//			{
+//				addTag(n,"diameter");
+////				addTag(n,"normal");
+//			}
+//			for(Edge e : g.getEdgeSet())
+//			{
+//				addTag(e, "diameter");
+//			}
+//		}
+//		else
+//		{
+//			resetColor(g);
+//			for(Node n : g.getNodeSet())
+//			{
+//				removeTag(n,"diameter");
+////				addTag(n,"normal");
+//			}
+//			for(Edge e : g.getEdgeSet())
+//			{
+//				removeTag(e, "diameter");
+//			}
+//		}
+		displayPath(g,diam,"diameter");
+	} 
 	
 	public void showStationsName(boolean selected, Graph g) {
 		if(selected)
 		{
 			for(Node n : g.getNodeSet())
 			{
-				n.addAttribute("ui.class", "showName");
+//				n.addAttribute("ui.class", "showName");
+				addTag(n, "showName");
 			}
 		}
 		else
 		{
 			for(Node n : g.getNodeSet())
 			{
-				n.addAttribute("ui.class", "nshowName");
+//				n.addAttribute("ui.class", "nshowName");
+//				removeTag(n,"showName");
+				addTag(n, "nshowName");
 			}
 		}
 	}
-	
-	
-
-	
 
 	public void showPathStationsName(boolean selected, Graph g) {
-		this.resetColor(g);
+//		this.resetColor(g);
 		if(selected)
 		{
 			for(Node n : g.getNodeSet())
 			{
-				if( n.hasAttribute("diameter") || (n.hasAttribute("ui.class") && "path".equals(n.getAttribute("ui.class"))) )
+				if(n.hasAttribute("diameter") || n.hasAttribute("path"))
 				{
-					n.addAttribute("ui.class", "showName");
+					addTag(n, "showName");
 				}
 			}
 		}
@@ -189,13 +213,100 @@ public class ViewControl {
 		{
 			for(Node n : g.getNodeSet())
 			{
-				if( n.hasAttribute("diameter") || (n.hasAttribute("ui.class") && "path".equals(n.getAttribute("ui.class"))) )
+				if(n.hasAttribute("diameter") || n.hasAttribute("path"))
 				{
-					n.addAttribute("ui.class","nshowName");
+					addTag(n, "nshowName");
 				}
 			}
 		}
 		
+	}
+	
+	public static void removeTag(Element e, String tag)
+	{
+		if(e.hasAttribute("ui.class"))
+		{
+			ArrayList<String> classes = new ArrayList<String>(Arrays.asList(e.getAttribute("ui.class").toString().split(",")));
+			if(classes.size() > 0)
+			{
+				switch(tag)
+				{
+					case "showName":
+					case "nshowName" :
+						classes.remove("nshowName");
+						classes.remove("showName");
+						break;
+					case "path":
+					case "diameter":
+						classes.remove("diameter");
+						classes.remove("path");
+						break;
+					default:
+						break;
+				}
+			}
+			if(classes.size() == 1)
+			{
+				e.setAttribute("ui.class", classes.get(0));
+			}
+		}
+		else
+		{
+			return;
+		}
+	}
+	
+	public static void addTag(Element n, String tag)
+	{
+		/**
+		 * Tags possibles :
+		 * showName
+		 * nshowName
+		 * path
+		 * diameter
+		 */
+		if(n.hasAttribute("ui.class"))
+		{
+			String[] ar = n.getAttribute("ui.class").toString().split(",");
+			ArrayList<String> classes;
+			if(ar.length > 1)
+			{				
+				classes = new ArrayList<String>(Arrays.asList(ar));
+			}
+			else
+			{
+				classes = new ArrayList<String>(); classes.add(ar[0]);
+			}
+			if(classes.size() > 0)
+			{
+				switch(tag)
+				{
+					case "normal":
+						if(classes.contains("diameter")){ classes.remove("diameter"); }	
+						if(classes.contains("path")){ classes.remove("path"); }
+						classes.add("normal"); break;
+					case "showName":
+						if(classes.contains("nshowName")){ classes.remove("nshowName"); }
+						classes.add("showName"); break;
+					case "nshowName" :
+						if(classes.contains("showName")){ classes.remove("showName"); }	
+						classes.add("nshowName"); break;
+					case "path":
+						if(classes.contains("diameter")){ classes.remove("diameter"); }	
+						classes.add("path"); break;
+					case "diameter":
+						if(classes.contains("path")){ classes.remove("path"); }
+						classes.add("diameter"); break;
+					default:
+						break;
+				}
+			}
+			n.addAttribute("ui.class", String.join(",", classes));
+		}
+		else
+		{
+			n.addAttribute("ui.class", tag);
+		}
 	}
 	
 	public void addLog(String s)
@@ -247,10 +358,6 @@ public class ViewControl {
 		computationFinished = b;
 	}
 
-	public void addTitleToWindow(String string) {
-		this.networkViewer.setAdditionalTitle(string);
-	}
-
 	public void deleteLogs() {
 		this.networkViewer.deleteLogs();	
 	}
@@ -261,6 +368,17 @@ public class ViewControl {
 
 	public void setThread(ClusterAndDiameter thread) {
 		this.thread = thread;
+	}
+
+	public void resetTag(String string, Graph g)
+	{
+		for(Node n : g.getNodeSet())
+		{
+			if(n.hasAttribute(string))
+			{
+				n.removeAttribute(string);
+			}
+		}
 	}
 
 }

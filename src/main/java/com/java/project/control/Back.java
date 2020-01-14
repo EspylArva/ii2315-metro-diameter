@@ -99,28 +99,18 @@ public class Back {
     	Collection<Edge> edges = graph.getEdgeSet();
     	for(Edge e : edges)
     	{
-    		Node s1 = e.getSourceNode();
-    		Node s2 = e.getTargetNode();
+    		Node s1 = e.getSourceNode();Node s2 = e.getTargetNode();
     			        		
-            double Xs1 = s1.getAttribute("latitude");
-            double Ys1 =s1.getAttribute("longitude");
+            double Xs1 = s1.getAttribute("latitude");double Ys1 =s1.getAttribute("longitude");
             
-            double Xs2 = s2.getAttribute("latitude");
-            double Ys2 =s2.getAttribute("longitude");
+            double Xs2 = s2.getAttribute("latitude");double Ys2 =s2.getAttribute("longitude");
             
-            
-            
-            double formula = Math.sqrt(Math.pow(Xs1-Xs2, 2)+Math.pow(Ys1-Ys2, 2));
-            logger.trace(formula);
-            
+            double formula = Math.sqrt(Math.pow(Xs1-Xs2, 2)+Math.pow(Ys1-Ys2, 2)); // Euclidian distance
+            logger.trace(String.format("Distance between %s et %s: %s", s1.getAttribute("nom"), s2.getAttribute("nom"), formula));
             
             e.addAttribute("distance",formula);
-//            e.addAttribute("ui.label",formula);
-    		
-            
     	}
     }
-
 	
 	/**
 	 * Building a simple transportation map, limited to parameters.

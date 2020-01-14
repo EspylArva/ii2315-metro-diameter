@@ -49,6 +49,11 @@ import com.java.project.ii2315.App;
 
 public class NetworkViewer extends JFrame implements ChangeListener, ActionListener, WindowListener
 {	
+	/**
+	 * 
+	 */
+	private static final long serialVersionUID = 1L;
+
 	private GridBagConstraints gbc = new GridBagConstraints();
 	
     private JSpinner spinnerTime;
@@ -64,7 +69,6 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     public Viewer viewer;
     
     private String logs = "";
-    private String additionalTitle;
     
     private Graph graph = null;
     private Path diam;
@@ -101,7 +105,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		JPanel content = new JPanel(new GridBagLayout());
     	
 		// Label
-		lbl_title = new JLabel(String.format("%s - %s", this.graph.getId(), additionalTitle));
+		lbl_title = new JLabel(String.format("%s - %s", this.graph.getId(), MainMenu.getWindowName()));
 		
 		// GraphStream visualizer : view
 		viewer = new Viewer(this.graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
@@ -135,7 +139,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		cluster.setEnabled(vc.isComputationFinished());
 		
 		// Spinner :
-		SpinnerListModel durationModel = new SpinnerListModel(new String[] {"1 ms", "5 ms" ,"10 ms"});
+		SpinnerListModel durationModel = new SpinnerListModel(new String[] {"1 ms", "5 ms" ,"10 ms", "1 s"});
     	spinnerTime = new JSpinner(durationModel);
     	spinnerTime.setValue("10 ms");
     	vc.setDisplayDelay(10);
@@ -226,20 +230,21 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
- 
 		if(source == compute)
 		{			
 			if(Back.getDiameter() != null)
 			{
 				diam = Back.getDiameter();
 			}
-			
-//			vc.setShowComputation(chk_paths.isSelected());	
+	
+			vc.setShowComputation(chk_paths.isSelected());
 	    	if(diam != null)
 	    	{
 	    		
-//				vc.showDiameter(chk_diam.isSelected(), graph, diam);
-//	    		vc.showPathStationsName(chk_diam.isSelected(), graph);
+				vc.showDiameter(chk_diam.isSelected(), graph, diam);
+				vc.showStationsName(chk_names.isSelected(), graph);					
+				vc.showPathStationsName(chk_dp_names.isSelected(), graph);
+				vc.showDistances(chk_distances.isSelected(), graph);
 	//*/
 	//			AStar a = new AStar(graph);
 	//			a.compute("A_161468","B_1673");
@@ -260,22 +265,26 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		}
 		else if(source == cluster)
 		{
+			App.logger.info("Button: clusters");
 			clusterDisplay = new ClusterDisplay(utilityCluster, degreeCluster, distanceCluster);
 		}
 		else if(source == chk_names || source == chk_dp_names)
 		{
-			App.logger.trace("Checkbox: names " + chk_names.isSelected());
+			App.logger.info("Checkbox: names " + chk_names.isSelected());
 			vc.showStationsName(chk_names.isSelected(), graph);					
-			vc.showPathStationsName(chk_dp_names.isSelected(), graph);				
+			if(!chk_names.isSelected())
+			{
+				vc.showPathStationsName(chk_dp_names.isSelected(), graph);				
+			}
 		}
 		else if(source == chk_distances)
 		{
-			App.logger.trace("Checkbox: distances " + chk_distances.isSelected());
+			App.logger.info("Checkbox: distances " + chk_distances.isSelected());
 			vc.showDistances(chk_distances.isSelected(), graph);
 		}
 		else if(source == chk_diam)
 		{
-			App.logger.trace("Checkbox: diameter " + chk_diam.isSelected());
+			App.logger.info("Checkbox: diameter " + chk_diam.isSelected());
 			if(diam != null)
 			{
 				vc.showDiameter(chk_diam.isSelected(), graph, diam);
@@ -283,7 +292,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		}
 		else if(source == chk_paths)
 		{
-			App.logger.trace("Checkbox: paths " + chk_paths.isSelected());
+			App.logger.info("Checkbox: paths " + chk_paths.isSelected());
 			vc.setShowComputation(chk_paths.isSelected());
 		}
 	}
@@ -312,6 +321,8 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
         	delay = 5;break;
         case "10 ms":
         	delay = 10;break;
+        case "1 s":
+        	delay = 1000;break;
     	default:
     		delay = 1;break;
         }
@@ -405,14 +416,6 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     {
     	return cluster;
     }
-
-	public String getAdditionalTitle() {
-		return additionalTitle;
-	}
-
-	public void setAdditionalTitle(String additionalTitle) {
-		this.additionalTitle = additionalTitle;
-	}
     
 	public ViewControl getVc() {
 		return vc;
