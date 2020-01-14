@@ -68,6 +68,11 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     
     private Graph graph = null;
     private Path diam;
+    private static Graph utilityCluster;
+	private static Graph DegreeCluster;
+	
+
+	private static Graph DistanceCluster;
     
     private ViewControl vc;
     
@@ -539,4 +544,27 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		
 	}
 
+	public static Graph getUtilityCluster() {
+		return utilityCluster;
+	}
+
+	public static void setUtilityCluster(Graph utilityCluster) {
+		NetworkViewer.utilityCluster = utilityCluster;
+	}
+
+	public static Graph getDegreeCluster() {
+		return DegreeCluster;
+	}
+
+	public static void setDegreeCluster(Graph degreeCluster) {
+		DegreeCluster = degreeCluster;
+	}
+
+	public static Graph getDistanceCluster() {
+		return DistanceCluster;
+	}
+
+	public static void setDistanceCluster(Graph distanceCluster) {
+		DistanceCluster = distanceCluster;
+	}
 }

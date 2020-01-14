@@ -2,7 +2,6 @@ package com.java.project.control;
 
 import java.io.FileNotFoundException;
 import java.io.FileReader;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.List;
@@ -27,7 +26,6 @@ import com.java.project.model.Ligne;
 import com.java.project.model.Route;
 import com.java.project.model.Station;
 import com.java.project.model.World;
-import com.java.project.view.MainMenu;
 import com.java.project.view.NetworkViewer;
 
 public class Back {
@@ -36,7 +34,7 @@ public class Back {
 	private static Logger logger = App.logger;
 	private static boolean run = false; 
 	private static Path diameter;
-	private static Graph cluster;
+	
 	
 	private static java.nio.file.Path pathToJson;
 	
@@ -77,7 +75,7 @@ public class Back {
 //    	if (Back.diameter == null) {
 //    		if(Back.run == false){
     			logger.info("Lancement du thread de calcul");
-    			ClusterAndDiameter t = new ClusterAndDiameter("Cluster",graph,graph.getEdgeCount()*10, networkViewer);
+    			ClusterAndDiameter t = new ClusterAndDiameter("Cluster",graph,graph.getNodeCount() * 4, networkViewer);
     			t.start();
         		
         		Back.run = true;
@@ -332,12 +330,29 @@ public class Back {
 			diameter = d;
 		}
 	}
-	public static void setCluster(Graph c) {
-		cluster = c;
-	}
 
-	public static Graph getCluster() {
-		return cluster;
-	}
-	
+//	public static Graph getUtilityCluster() {
+//		return utilityCluster;
+//	}
+//
+//	public static void setUtilityCluster(Graph utilityCluster) {
+//		Back.utilityCluster = utilityCluster;
+//	}
+//
+//	public static Graph getDegreeCluster() {
+//		return DegreeCluster;
+//	}
+//
+//	public static void setDegreeCluster(Graph degreeCluster) {
+//		DegreeCluster = degreeCluster;
+//	}
+//
+//	public static Graph getDistanceCluster() {
+//		return DistanceCluster;
+//	}
+//
+//	public static void setDistanceCluster(Graph distanceCluster) {
+//		DistanceCluster = distanceCluster;
+//	}
+//	
 }
