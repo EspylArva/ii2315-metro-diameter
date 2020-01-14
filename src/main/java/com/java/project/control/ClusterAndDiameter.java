@@ -37,7 +37,8 @@ public class ClusterAndDiameter extends Thread {
 
 	public ClusterAndDiameter(String name,Graph graph, int minimumCluster, NetworkViewer networkViewer) {
 		super(name);
-		this.graph = Graphs.clone(graph);
+//		this.graph = Graphs.clone(graph);
+		this.graph = graph;
 		this.minimumCluster = minimumCluster;
 		this.nv = networkViewer;
 	}
@@ -89,22 +90,12 @@ public class ClusterAndDiameter extends Thread {
 						try
 						{
 //							nv.getVc().displayPath(graph, path, "path");
-							for(Node n : path.getNodePath())
-					    	{
-					    		n.addAttribute("path");
-					    		n.addAttribute("ui.class", "path");
-					    	}
-					    	for(Edge e : path.getEdgePath())
-					    	{
-					    		e.addAttribute("path");
-					    		e.addAttribute("ui.class", "path");
-					    	}
-							System.out.println("SHOULD SHOW COMP");
-//							nv.getVc().dPath(graph, path, "path");
+//							System.out.println("SHOULD SHOW COMP");
+							nv.getVc().dPath(graph, path, "path");
 //							nv.getVc().dPath(graph, path, "diameter");
 							Thread.sleep(nv.getVc().getDisplayDelay());
 //							nv.getVc().returnToOld(graph, path);
-//							nv.getVc().resetColor(graph);
+							nv.getVc().resetColor(graph);
 						}
 						catch (Exception e) {
 							App.logger.error(e);

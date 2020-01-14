@@ -168,27 +168,31 @@ public class ViewControl {
 //	    }
 //    }
 	
-//	public void resetColor(Graph graph) {
-//		Collection<Node> gVertices = graph.getNodeSet();
-//    	Collection<Edge> gEdges = graph.getEdgeSet();
-//    	for(Node n : gVertices)
-//    	{
-//    		if(n.hasAttribute("ui.class"))
-//    		{
-//    			if(n.hasAttribute("old"))
-//    			{
-//    				n.setAttribute("ui.class", n.getAttribute("old"));
-//    			}
-//    		}
-//    	}
-//    	for(Edge e : gEdges)
-//    	{
-//    		if(e.hasAttribute("ui.class"))
-//    		{
-//    			e.setAttribute("ui.class", e.getAttribute("ligne"));
-//    		}
-//    	}
-//	}
+	public void resetColor(Graph graph) {
+		Collection<Node> gVertices = graph.getNodeSet();
+    	Collection<Edge> gEdges = graph.getEdgeSet();
+    	for(Node n : gVertices)
+    	{
+    		if(n.hasAttribute("ui.class"))
+    		{
+    			if(n.hasAttribute("old"))
+    			{
+    				n.setAttribute("ui.class", n.getAttribute("old"));
+    			}
+    			else
+    			{
+    				n.addAttribute("ui.class", "n");
+    			}
+    		}
+    	}
+    	for(Edge e : gEdges)
+    	{
+    		if(e.hasAttribute("ui.class"))
+    		{
+    			e.setAttribute("ui.class", e.getAttribute("ligne"));
+    		}
+    	}
+	}
 	
 	public void showDistances(boolean selected, Graph g) {
 		if(selected)
