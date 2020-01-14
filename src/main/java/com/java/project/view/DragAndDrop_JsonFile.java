@@ -17,6 +17,7 @@ import java.awt.event.MouseEvent;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.IOException;
+import java.io.InputStream;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -55,8 +56,11 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
                 true);
         try
         {
-        	wait_json = ImageIO.read(getClass().getResource("/useJson.png"));
-        	accept_json = ImageIO.read(getClass().getResource("/useJson_file.png"));
+//        	wait_json = ImageIO.read(getClass().getResource("/useJson.png"));
+        	wait_json = ImageIO.read((InputStream) Paths.get("src","main","resources","useJson.png").toAbsolutePath());
+        	
+//        	accept_json = ImageIO.read(getClass().getResource("/useJson_file.png"));
+        	accept_json = ImageIO.read((InputStream) Paths.get("src","main","resources","useJson_file.png").toAbsolutePath());
         }
         catch (Exception e)
         {
