@@ -204,18 +204,12 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 				diam = Back.getDiameter();
 			}
 			
+			ViewControl.setShowComputation(chk_paths.isSelected());	
 	    	if(diam != null)
 	    	{
 	    		
-	    		if(chk_diam.isSelected())
-				{
-					ViewControl.showDiameter(chk_diam.isSelected(), graph, diam);
-				}	
-		    	
-		    	if(chk_dp_names.isSelected())
-				{
-		    		ViewControl.showPathStationsName(chk_diam.isSelected(), graph);
-				}	
+				ViewControl.showDiameter(chk_diam.isSelected(), graph, diam);
+	    		ViewControl.showPathStationsName(chk_diam.isSelected(), graph);
 	//*/
 	//			AStar a = new AStar(graph);
 	//			a.compute("A_161468","B_1673");

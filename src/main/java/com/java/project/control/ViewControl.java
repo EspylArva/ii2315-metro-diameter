@@ -15,7 +15,7 @@ import com.java.project.view.NetworkViewer;
 public class ViewControl {
 	
 	private static boolean freeze = false;
-	private static boolean showComputation = true;
+	private static boolean showComputation = false;
 	private static long delay = 0;
 	private static boolean computationFinished = true;
 	
@@ -165,7 +165,7 @@ public class ViewControl {
 		{
 			for(Node n : g.getNodeSet())
 			{
-				if( n.hasAttribute("diameter") )
+				if( n.hasAttribute("diameter") || n.hasAttribute("path") )
 				{
 					n.addAttribute("ui.class", "showName");
 				}
