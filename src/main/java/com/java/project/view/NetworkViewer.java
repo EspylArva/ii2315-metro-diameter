@@ -68,13 +68,12 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
     
     private Graph graph = null;
     private Path diam;
-    private static Graph utilityCluster;
-	private static Graph DegreeCluster;
-	
-
-	private static Graph DistanceCluster;
+    private Graph utilityCluster;
+	private Graph degreeCluster;
+	private Graph distanceCluster;
     
     private ViewControl vc;
+    private ClusterDisplay clusterDisplay;
     
     public NetworkViewer()
     {
@@ -91,10 +90,14 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 //		initialize();
 		
     	this.setVisible(true);
-//    	Back.computeDiameter(this.graph, this);
 	}
 
 	public void initialize() {
+		if(this.graph == null)
+		{
+			return;
+		}
+		
 		JPanel content = new JPanel(new GridBagLayout());
     	
 		// Label
@@ -106,8 +109,6 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		final DefaultView vi = (DefaultView) viewer.addDefaultView(false);
 		vi.setPreferredSize(new Dimension(600, 600));
 		addZoomControl(vi);
-		
-		
 		
 		// CheckBox : 
 		chk_names = new JCheckBox("Show names of stations");
@@ -179,105 +180,24 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		
 	}
 
-//	public NetworkViewer(Graph graph)
-//	{
-//		this.graph = graph;
-//		vc = new ViewControl(this);
-//		
-//		this.setTitle("Diameter Calculator");
-//		
-////		graph.display();
-//		
-//		this.setSize(800,800);
-//		this.setLocationRelativeTo(null);
-//		this.setLayout(new GridBagLayout());
-//		
-//		initialize();
-//		JPanel content = new JPanel(new GridBagLayout());
-//    	
-//		// Label
-//		lbl_title = new JLabel(String.format("%s - %s", this.graph.getId(), additionalTitle));
-//		
-//		// GraphStream visualizer : view
-//		viewer = new Viewer(this.graph, Viewer.ThreadingModel.GRAPH_IN_ANOTHER_THREAD);
-//		viewer.enableAutoLayout();
-//		final DefaultView vi = (DefaultView) viewer.addDefaultView(false);
-//		vi.setPreferredSize(new Dimension(600, 600));
-//		addZoomControl(vi);
-//		
-//		
-//		
-//		// CheckBox : 
-//		chk_names = new JCheckBox("Show names of stations");
-//		chk_names.addActionListener(this);
-//		chk_dp_names = new JCheckBox("Show names of paths");
-//		chk_dp_names.addActionListener(this);
-//		chk_distances = new JCheckBox("Show distances between stations");
-//		chk_distances.addActionListener(this);
-//		chk_paths = new JCheckBox("Show path computing");
-//		chk_paths.addActionListener(this);
-//		chk_diam = new JCheckBox("Show diameters");
-//		chk_diam.addActionListener(this);
-//		
-//		chk_diam.setSelected(true);
-//		chk_dp_names.setSelected(true);
-//		chk_paths.setSelected(false);
-//		
-//		// Button : 
-//		compute = new JButton("Compute diameter");
-//		compute.addActionListener(this);
-//		compute.setEnabled(vc.isComputationFinished());
-//		cluster = new JButton("Compute clusters");
-//		cluster.addActionListener(this);
-//		cluster.setEnabled(vc.isComputationFinished());
-//		
-//		// Spinner :
-//		SpinnerListModel durationModel = new SpinnerListModel(new String[] {"1 ms", "5 ms" ,"10 ms"});
-//    	spinnerTime = new JSpinner(durationModel);
-//    	spinnerTime.setValue("10 ms");
-//    	vc.setDisplayDelay(10);
-//    	spinnerTime.addChangeListener(this);
-//    	
-//    	// Log console :
-//    	logConsole = new JTextArea(5, 20);
-//    	logConsole.setSize(new Dimension(200,600));
-//    	JScrollPane logs = new JScrollPane(logConsole);
-//    	logConsole.setEditable(false);
-//    	logConsole.setBorder(BorderFactory.createLineBorder(Color.black));
-//    	
-////    	addElementsInGrid(lbl_title, vi, logs, spinnerTime , compute,chk_names, chk_dp_names, chk_distances, chk_paths, chk_diam);
-//    	
-//    	JPanel visu = new JPanel(new GridBagLayout());
-//		visu.setBorder(BorderFactory.createTitledBorder("Graph Visualizer"));	
-//		addComp(visu, lbl_title, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, 0.01);
-//		addComp(visu, vi, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, 0.99);
-//	
-//		JPanel options = new JPanel(new GridBagLayout());int nOptions = 8; 
-//		options.setBorder(BorderFactory.createTitledBorder("Visualization options"));		
-//		addComp(options, new JLabel("Duration of step: "), 0, 0, 1, 1, GridBagConstraints.BOTH, 0.5, (1/nOptions));
-//		addComp(options, spinnerTime, 1, 0, 1, 1, GridBagConstraints.BOTH, 0.5, (1/nOptions));
-//		addComp(options, chk_distances, 0, 1, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
-//		addComp(options, chk_names, 	0, 2, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
-//		addComp(options, chk_dp_names, 	0, 3, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
-//		addComp(options, chk_diam, 		0, 4, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
-//		addComp(options, chk_paths, 	0, 5, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
-//		addComp(options, compute, 		0, 6, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
-//		addComp(options, cluster, 		0, 7, 1, 1, GridBagConstraints.BOTH, 1, (1/nOptions));
-//		
-//		
-//		JPanel logger = new JPanel(new GridBagLayout());
-//		logger.setBorder(BorderFactory.createTitledBorder("Operation logs"));
-//		addComp(logger, logs, 0, 0, 1, 1, GridBagConstraints.BOTH, 1, 1);
-//		
-//		addComp(content, options, 1, 0, 1, 1, GridBagConstraints.BOTH, 0.02, 0.8);
-//		addComp(content, visu, 0, 0, 1, 1, GridBagConstraints.BOTH, 0.98, 0.8);
-//		addComp(content, logger, 0, 1, 3, 1, GridBagConstraints.BOTH, 1, 0.2);
-//    	
-//    	this.setContentPane(content);
-//    	this.setVisible(true);
-//    	Back.computeDiameter(this.graph, this);
-//	}
-//	
+	public NetworkViewer(Graph graph)
+	{
+		this.graph = graph;
+		vc = new ViewControl(this);
+		
+		this.setTitle("Diameter Calculator");
+		
+//		graph.display();
+		
+		this.setSize(800,800);
+		this.setLocationRelativeTo(null);
+		this.setLayout(new GridBagLayout());
+		
+		initialize();
+
+    	this.setVisible(true);
+	}
+	
 	private void addZoomControl(final DefaultView vi) {
 		((Component) vi).addMouseWheelListener(new MouseWheelListener() {
 		    @Override
@@ -338,7 +258,10 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 				addLogConsoleLine("Diameter path: " + diamString);
 	    	}
 		}
-		else if(source == cluster) {}
+		else if(source == cluster)
+		{
+			clusterDisplay = new ClusterDisplay(utilityCluster, degreeCluster, distanceCluster);
+		}
 		else if(source == chk_names || source == chk_dp_names)
 		{
 			App.logger.trace("Checkbox: names " + chk_names.isSelected());
@@ -544,27 +467,27 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		
 	}
 
-	public static Graph getUtilityCluster() {
-		return utilityCluster;
+	public Graph getUtilityCluster() {
+		return this.utilityCluster;
 	}
 
-	public static void setUtilityCluster(Graph utilityCluster) {
-		NetworkViewer.utilityCluster = utilityCluster;
+	public void setUtilityCluster(Graph utilityCluster) {
+		this.utilityCluster = utilityCluster;
 	}
 
-	public static Graph getDegreeCluster() {
-		return DegreeCluster;
+	public Graph getDegreeCluster() {
+		return degreeCluster;
 	}
 
-	public static void setDegreeCluster(Graph degreeCluster) {
-		DegreeCluster = degreeCluster;
+	public void setDegreeCluster(Graph degreeCluster) {
+		this.degreeCluster = degreeCluster;
 	}
 
-	public static Graph getDistanceCluster() {
-		return DistanceCluster;
+	public Graph getDistanceCluster() {
+		return distanceCluster;
 	}
 
-	public static void setDistanceCluster(Graph distanceCluster) {
-		DistanceCluster = distanceCluster;
+	public void setDistanceCluster(Graph distanceCluster) {
+		this.distanceCluster = distanceCluster;
 	}
 }

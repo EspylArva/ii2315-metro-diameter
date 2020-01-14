@@ -119,7 +119,7 @@ public class ClusterAndDiameter extends Thread {
     	}
     	logger.info("| - Cluster Nodes: " + this.cluster.getNodeCount() );
     	logger.info("| - Cluster Edges: " + this.cluster.getEdgeCount() + "/" + this.graph.getEdgeCount());
-    	Back.setUtilityCluster(this.cluster);
+    	nv.setUtilityCluster(this.cluster);
     	
     	
     	// -------------- Distance cluster with Corentin Celton
@@ -156,7 +156,7 @@ public class ClusterAndDiameter extends Thread {
     		logger.info("| - Create cluster for distance : " + key + " with " + distances.get(key).size() + " node(s)");
     		
     	}
-    	Back.setDistanceCluster(this.cluster);
+    	nv.setDistanceCluster(this.cluster);
     	
     	// -------------- Degree cluster
     	logger.info("Create degree cluster :");
@@ -187,7 +187,7 @@ public class ClusterAndDiameter extends Thread {
     		}
     		logger.info("| - Create cluster for degree : " + key + " with " + degrees.get(key).size() + " node(s)");
     	}
-    	Back.setDegreeCluster(this.cluster);
+    	nv.setDegreeCluster(this.cluster);
     		
     	
 		nv.getVc().computing(false);
