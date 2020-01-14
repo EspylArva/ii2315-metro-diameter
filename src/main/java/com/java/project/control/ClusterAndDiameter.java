@@ -23,6 +23,18 @@ public class ClusterAndDiameter extends Thread {
 	private Graph graph;
 	private int minimumCluster;
 	
+	private Path diameter;
+	
+	public Path getDiameter() {
+		return diameter;
+	}
+
+
+	public void setDiameter(Path diameter) {
+		this.diameter = diameter;
+	}
+
+
 	public ClusterAndDiameter(String name,Graph graph, int minimumCluster, NetworkViewer networkViewer) {
 		super(name);
 		this.graph = Graphs.clone(graph);
@@ -38,7 +50,7 @@ public class ClusterAndDiameter extends Thread {
 		this.cluster = Graphs.clone(this.graph);
 		
 		HashMap<Edge,Integer> edgeList = new HashMap<Edge,Integer>();    	    	
-    	Path diameter = null;
+    	diameter = null;
     	int iteration = 0;
     	
     	AStar astar = new AStar(this.graph);
@@ -74,22 +86,32 @@ public class ClusterAndDiameter extends Thread {
 							));
 					if(nv.getVc().isShowComputation())
 					{	
-						System.out.println("SHOULD SHOW COMP");
 						try
 						{
-							nv.getVc().displayPath(graph, path, "path");
+//							nv.getVc().displayPath(graph, path, "path");
+							for(Node n : path.getNodePath())
+					    	{
+					    		n.addAttribute("path");
+					    		n.addAttribute("ui.class", "path");
+					    	}
+					    	for(Edge e : path.getEdgePath())
+					    	{
+					    		e.addAttribute("path");
+					    		e.addAttribute("ui.class", "path");
+					    	}
+							System.out.println("SHOULD SHOW COMP");
+//							nv.getVc().dPath(graph, path, "path");
+//							nv.getVc().dPath(graph, path, "diameter");
 							Thread.sleep(nv.getVc().getDisplayDelay());
-//							Thread.sleep(1000);
-							nv.getVc().resetTag("path", graph);
-							nv.getVc().resetColor(graph);
+//							nv.getVc().returnToOld(graph, path);
+//							nv.getVc().resetColor(graph);
 						}
 						catch (Exception e) {
 							App.logger.error(e);
-							nv.getVc().resetColor(graph);
+//							nv.getVc().resetColor(graph);
 						}
 					}
-					
-					
+
 					if(diameter == null || path.getNodeCount() > diameter.getNodeCount()) {
 						diameter = path;
 						
@@ -100,15 +122,20 @@ public class ClusterAndDiameter extends Thread {
     		
     	}
     	
-    	for(Node n : diameter.getNodeSet())
+    	for(Node n : diameter.getNodePath())
     	{
-//    		n.
-    		n.addAttribute("diameter", true);
-    		ViewControl.addTag(n, "diameter");
+    		n.addAttribute("diameter");
+    		n.addAttribute("ui.class", "diameter");
     	}
-    	Back.setDiameter(diameter);
-    	logger.info("Diamètre : " + Back.getDiameter().getNodeCount());
-    	logger.info("Diamètre : " + Back.getDiameter());
+    	for(Edge e : diameter.getEdgePath())
+    	{
+    		e.addAttribute("diameter");
+    		e.addAttribute("ui.class", "diameter");
+    	}
+    	
+//    	Back.setDiameter(diameter);
+    	logger.info("Diamètre : " + diameter.getNodeCount());
+    	logger.info("Diamètre : " + diameter);
     	
     	
     	
@@ -194,8 +221,9 @@ public class ClusterAndDiameter extends Thread {
     	}
     	nv.setDegreeCluster(this.cluster);
     		
-    	
+//    	nv.setGraph(graph);
 		nv.getVc().computing(false);
+		
 	}
 	
 }

@@ -75,52 +75,120 @@ public class ViewControl {
 		MainMenu.getUpDown_Freeze().setEnabled(bool);
 	}
 	
-	
-	public void displayPath(Graph graph, Path path, String label)
-    {	
-	    for(Node vertex : path.getNodePath())
-	    {
-	    	if(graph.getNode(vertex.getId()) != null)
-	    	{
-//	    		graph.getNode(vertex.getId()).addAttribute("old", graph.getNode(vertex.getId()).getAttribute("ui.class"));
-	    		graph.getNode(vertex.getId()).addAttribute(label);
-	    		graph.getNode(vertex.getId()).addAttribute("ui.class", label);
-//	    		System.out.println("-" + graph.getNode(vertex.getId()).getAttribute("ui.class"));
-//	    		addTag(graph.getNode(vertex.getId()),label);
-	    	}
-	    }
-	    for(Edge edge : path.getEdgePath())
-	    {
-	    	if(graph.getEdge(edge.getId()) != null)
-	    	{
-	    		graph.getEdge(edge.getId()).addAttribute(label);
-	    		graph.getEdge(edge.getId()).addAttribute("ui.class", label);
-//	    		addTag(graph.getEdge(edge.getId()),label);
-	    	}
-	    }
-    }
-	
-	public void resetColor(Graph graph) {
-		Collection<Node> gVertices = graph.getNodeSet();
-    	Collection<Edge> gEdges = graph.getEdgeSet();
-    	for(Node n : gVertices)
-    	{
-    		if(n.hasAttribute("ui.class"))
-    		{
-    			if(n.hasAttribute("old"))
-    			{
-    				n.setAttribute("ui.class", n.getAttribute("old"));
-    			}
-    		}
-    	}
-    	for(Edge e : gEdges)
-    	{
-    		if(e.hasAttribute("ui.class"))
-    		{
-    			e.setAttribute("ui.class", e.getAttribute("ligne"));
-    		}
-    	}
+	public void returnToOld(Graph g, Path p)
+	{
+		for(Node n : p.getNodeSet()) // REMOVE ALL LABEL X
+		{
+			Node node = g.getNode(n.getId());
+			node.addAttribute("ui.class", n.getAttribute("oldClass"));
+		}
+		for(Edge e : p.getEdgeSet()) // REMOVE ALL LABEL X
+		{
+			Edge edge = g.getEdge(e.getId());
+			if(!e.getAttribute("oldClass").equals("diameter"))
+			{
+				edge.addAttribute("ui.class", e.getAttribute("ligne"));
+			}
+			else
+			{
+				edge.addAttribute("ui.class", e.getAttribute("oldClass"));
+			}
+		}
 	}
+	
+	public void dPath(Graph g, Path p, String l)
+	{
+		if(l.equals("path"))
+		{
+			for(Node n : p.getNodeSet()) // REMOVE ALL LABEL X
+			{
+				if(n.hasAttribute("ui.class"))
+				{
+					Node node = g.getNode(n.getId());
+					node.addAttribute("oldClass", n.getAttribute("ui.class"));
+					node.addAttribute("ui.class", "path");
+				}
+			}
+			for(Edge e : p.getEdgeSet()) // REMOVE ALL LABEL X
+			{
+				if(e.hasAttribute("ui.class"))
+				{
+					Edge edge = g.getEdge(e.getId());
+					edge.addAttribute("oldClass", e.getAttribute("ligne"));
+					edge.addAttribute("ui.class", "path");
+				}
+			}
+		}
+		else // Cas "normal" et "diameter"
+		{
+			for(Node n : p.getNodeSet()) 
+			{
+				Node node = g.getNode(n.getId());
+				node.addAttribute("ui.class", l);
+				node.addAttribute(l);
+			}
+			for(Edge e : p.getEdgeSet()) 
+			{
+				Edge edge = g.getEdge(e.getId());
+				if(l.equals("n"))
+				{
+					edge.addAttribute("ui.class", e.getAttribute("ligne"));
+				}
+				else
+				{
+					edge.addAttribute("ui.class", l);
+				}
+			}
+		}
+	}
+	
+//	public void displayPath(Graph graph, Path path, String label)
+//    {
+//		
+//			
+//	    for(Node vertex : path.getNodePath())
+//	    {
+//	    	if(graph.getNode(vertex.getId()) != null)
+//	    	{
+////	    		graph.getNode(vertex.getId()).addAttribute("old", graph.getNode(vertex.getId()).getAttribute("ui.class"));
+//	    		graph.getNode(vertex.getId()).addAttribute(label);
+//	    		graph.getNode(vertex.getId()).addAttribute("ui.class", label);
+////	    		System.out.println("-" + graph.getNode(vertex.getId()).getAttribute("ui.class"));
+////	    		addTag(graph.getNode(vertex.getId()),label);
+//	    	}
+//	    }
+//	    for(Edge edge : path.getEdgePath())
+//	    {
+//	    	if(graph.getEdge(edge.getId()) != null)
+//	    	{
+//	    		graph.getEdge(edge.getId()).addAttribute(label);
+//	    		graph.getEdge(edge.getId()).addAttribute("ui.class", label);
+////	    		addTag(graph.getEdge(edge.getId()),label);
+//	    	}
+//	    }
+//    }
+	
+//	public void resetColor(Graph graph) {
+//		Collection<Node> gVertices = graph.getNodeSet();
+//    	Collection<Edge> gEdges = graph.getEdgeSet();
+//    	for(Node n : gVertices)
+//    	{
+//    		if(n.hasAttribute("ui.class"))
+//    		{
+//    			if(n.hasAttribute("old"))
+//    			{
+//    				n.setAttribute("ui.class", n.getAttribute("old"));
+//    			}
+//    		}
+//    	}
+//    	for(Edge e : gEdges)
+//    	{
+//    		if(e.hasAttribute("ui.class"))
+//    		{
+//    			e.setAttribute("ui.class", e.getAttribute("ligne"));
+//    		}
+//    	}
+//	}
 	
 	public void showDistances(boolean selected, Graph g) {
 		if(selected)
@@ -148,64 +216,57 @@ public class ViewControl {
 
 
 	public void showDiameter(boolean selected, Graph g, Path diam) {
-//		if(selected)
-//		{
-////			displayPath(g , diam , "diameter");
-//			for(Node n : g.getNodeSet())
-//			{
-//				addTag(n,"diameter");
-////				addTag(n,"normal");
-//			}
-//			for(Edge e : g.getEdgeSet())
-//			{
-//				addTag(e, "diameter");
-//			}
-//		}
-//		else
-//		{
-//			resetColor(g);
-//			for(Node n : g.getNodeSet())
-//			{
-//				removeTag(n,"diameter");
-////				addTag(n,"normal");
-//			}
-//			for(Edge e : g.getEdgeSet())
-//			{
-//				removeTag(e, "diameter");
-//			}
-//		}
-		displayPath(g,diam,"diameter");
-	} 
+		if(selected)
+		{
+			dPath(g, diam, "diameter");
+		}
+		else
+		{
+			dPath(g, diam, "n");
+		}
+	} //OK
+	
+	
+
 	
 	public void showStationsName(boolean selected, Graph g) {
 		if(selected)
 		{
 			for(Node n : g.getNodeSet())
 			{
-//				n.addAttribute("ui.class", "showName");
-				addTag(n, "showName");
+				if(n.hasAttribute("nom"))
+				{
+					n.addAttribute("ui.label", n.getAttribute("nom"));
+				}
+				else
+				{
+					n.addAttribute("ui.label", "null");
+				}
 			}
 		}
 		else
 		{
 			for(Node n : g.getNodeSet())
 			{
-//				n.addAttribute("ui.class", "nshowName");
-//				removeTag(n,"showName");
-				addTag(n, "nshowName");
+				n.removeAttribute("ui.label");
 			}
 		}
-	}
+	}//OK
 
-	public void showPathStationsName(boolean selected, Graph g) {
-//		this.resetColor(g);
+	public void showPathStationsName(boolean selected, Graph g)
+	{
 		if(selected)
 		{
 			for(Node n : g.getNodeSet())
 			{
-				if(n.hasAttribute("diameter") || n.hasAttribute("path"))
+//				System.out.println(n.hasAttribute("diameter"));
+//				System.out.println(n.getAttributeKeySet());
+				if(n.hasAttribute("diameter") ||  n.hasAttribute("path") || 
+				n.getAttribute("ui.class").equals("diameter") || n.getAttribute("ui.class").equals("path"))
 				{
-					addTag(n, "showName");
+					System.out.println("GOT A DIAMETER !!!");
+					if(n.hasAttribute("nom")) { n.addAttribute("ui.label", n.getAttribute("nom")); }
+					else { n.addAttribute("ui.label", "null"); }
 				}
 			}
 		}
@@ -213,101 +274,97 @@ public class ViewControl {
 		{
 			for(Node n : g.getNodeSet())
 			{
-				if(n.hasAttribute("diameter") || n.hasAttribute("path"))
-				{
-					addTag(n, "nshowName");
-				}
+				n.removeAttribute("ui.label");
 			}
 		}
-		
-	}
+	} //TODO
 	
-	public static void removeTag(Element e, String tag)
-	{
-		if(e.hasAttribute("ui.class"))
-		{
-			ArrayList<String> classes = new ArrayList<String>(Arrays.asList(e.getAttribute("ui.class").toString().split(",")));
-			if(classes.size() > 0)
-			{
-				switch(tag)
-				{
-					case "showName":
-					case "nshowName" :
-						classes.remove("nshowName");
-						classes.remove("showName");
-						break;
-					case "path":
-					case "diameter":
-						classes.remove("diameter");
-						classes.remove("path");
-						break;
-					default:
-						break;
-				}
-			}
-			if(classes.size() == 1)
-			{
-				e.setAttribute("ui.class", classes.get(0));
-			}
-		}
-		else
-		{
-			return;
-		}
-	}
-	
-	public static void addTag(Element n, String tag)
-	{
-		/**
-		 * Tags possibles :
-		 * showName
-		 * nshowName
-		 * path
-		 * diameter
-		 */
-		if(n.hasAttribute("ui.class"))
-		{
-			String[] ar = n.getAttribute("ui.class").toString().split(",");
-			ArrayList<String> classes;
-			if(ar.length > 1)
-			{				
-				classes = new ArrayList<String>(Arrays.asList(ar));
-			}
-			else
-			{
-				classes = new ArrayList<String>(); classes.add(ar[0]);
-			}
-			if(classes.size() > 0)
-			{
-				switch(tag)
-				{
-					case "normal":
-						if(classes.contains("diameter")){ classes.remove("diameter"); }	
-						if(classes.contains("path")){ classes.remove("path"); }
-						classes.add("normal"); break;
-					case "showName":
-						if(classes.contains("nshowName")){ classes.remove("nshowName"); }
-						classes.add("showName"); break;
-					case "nshowName" :
-						if(classes.contains("showName")){ classes.remove("showName"); }	
-						classes.add("nshowName"); break;
-					case "path":
-						if(classes.contains("diameter")){ classes.remove("diameter"); }	
-						classes.add("path"); break;
-					case "diameter":
-						if(classes.contains("path")){ classes.remove("path"); }
-						classes.add("diameter"); break;
-					default:
-						break;
-				}
-			}
-			n.addAttribute("ui.class", String.join(",", classes));
-		}
-		else
-		{
-			n.addAttribute("ui.class", tag);
-		}
-	}
+//	public static void removeTag(Element e, String tag)
+//	{
+//		if(e.hasAttribute("ui.class"))
+//		{
+//			ArrayList<String> classes = new ArrayList<String>(Arrays.asList(e.getAttribute("ui.class").toString().split(",")));
+//			if(classes.size() > 0)
+//			{
+//				switch(tag)
+//				{
+//					case "showName":
+//					case "nshowName" :
+//						classes.remove("nshowName");
+//						classes.remove("showName");
+//						break;
+//					case "path":
+//					case "diameter":
+//						classes.remove("diameter");
+//						classes.remove("path");
+//						break;
+//					default:
+//						break;
+//				}
+//			}
+//			if(classes.size() == 1)
+//			{
+//				e.setAttribute("ui.class", classes.get(0));
+//			}
+//		}
+//		else
+//		{
+//			return;
+//		}
+//	}
+//	
+//	public static void addTag(Element n, String tag)
+//	{
+//		/**
+//		 * Tags possibles :
+//		 * showName
+//		 * nshowName
+//		 * path
+//		 * diameter
+//		 */
+//		if(n.hasAttribute("ui.class"))
+//		{
+//			String[] ar = n.getAttribute("ui.class").toString().split(",");
+//			ArrayList<String> classes;
+//			if(ar.length > 1)
+//			{				
+//				classes = new ArrayList<String>(Arrays.asList(ar));
+//			}
+//			else
+//			{
+//				classes = new ArrayList<String>(); classes.add(ar[0]);
+//			}
+//			if(classes.size() > 0)
+//			{
+//				switch(tag)
+//				{
+//					case "normal":
+//						if(classes.contains("diameter")){ classes.remove("diameter"); }	
+//						if(classes.contains("path")){ classes.remove("path"); }
+//						classes.add("normal"); break;
+//					case "showName":
+//						if(classes.contains("nshowName")){ classes.remove("nshowName"); }
+//						classes.add("showName"); break;
+//					case "nshowName" :
+//						if(classes.contains("showName")){ classes.remove("showName"); }	
+//						classes.add("nshowName"); break;
+//					case "path":
+//						if(classes.contains("diameter")){ classes.remove("diameter"); }	
+//						classes.add("path"); break;
+//					case "diameter":
+//						if(classes.contains("path")){ classes.remove("path"); }
+//						classes.add("diameter"); break;
+//					default:
+//						break;
+//				}
+//			}
+//			n.addAttribute("ui.class", String.join(",", classes));
+//		}
+//		else
+//		{
+//			n.addAttribute("ui.class", tag);
+//		}
+//	}
 	
 	public void addLog(String s)
 	{

@@ -1,14 +1,15 @@
 graph { fill-color: white; }
 
-node
+node.n
 {
 	size: 3px;
 	fill-color: #777;
-	text-mode: hidden;
+	text-mode: normal;
 	text-size: 15;
 	z-index: 0;
 }
-edge {
+edge.n
+{
 	shape: line;
 	fill-color: #222;
 	arrow-size: 3px, 2px;
@@ -25,6 +26,8 @@ node.nshowName{
 
 node.path{
 	size: 5px;
+	text-mode:normal;
+	text-size: 15;
     fill-color: red;
 }
 
@@ -35,14 +38,18 @@ edge.path
 }
 
 
-node.diameter{
+node.diameter
+{
 	size: 5px;
 	fill-color: #BBBBBB;
 	stroke-mode: plain;
+	text-size: 15;
+	text-mode:normal;
 	stroke-color: #FF0000; stroke-width: 1px; }
 
 edge.diameter
 {
+	shape: line;
 	fill-color: #FF0000;
 	size : 2px;
 }

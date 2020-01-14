@@ -33,7 +33,7 @@ public class Back {
 	private static final Gson g = new Gson();
 	private static Logger logger = App.logger;
 	private static boolean run = false; 
-	private static Path diameter;
+//	private static Path diameter;
 	
 	
 	private static java.nio.file.Path pathToJson;
@@ -311,15 +311,15 @@ public class Back {
 	public static void setPathToJson(java.nio.file.Path pathToJson) {
 		Back.pathToJson = pathToJson;
 	}
-	public static Path getDiameter() {
-		return diameter;
-	}
-	public static void setDiameter(Path d) {
-		if(d != null)
-		{
-			diameter = d;
-		}
-	}
+//	public static Path getDiameter() {
+//		return diameter;
+//	}
+//	public static void setDiameter(Path d) {
+//		if(d != null)
+//		{
+//			diameter = d;
+//		}
+//	}
 
 //	public static Graph getUtilityCluster() {
 //		return utilityCluster;

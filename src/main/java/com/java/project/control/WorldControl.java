@@ -53,11 +53,9 @@ public class WorldControl {
     			Node n = graph.addNode(station.getNum());
     			n.addAttribute("nom", station.getNom());
     			n.addAttribute("ui.label", station.getNom());
-//    			n.addAttribute("ui.label", station.num);
+    			n.addAttribute("ui.class", "n");
     			n.addAttribute("latitude", station.getLat());
     			n.addAttribute("longitude", station.getLng());
-    			
-//    			n.addAttribute("layout.frozen");
     			n.addAttribute("xy", station.getLng(),station.getLat());
     			
     			}

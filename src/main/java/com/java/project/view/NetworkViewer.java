@@ -31,6 +31,7 @@ import javax.swing.SpinnerModel;
 import javax.swing.event.ChangeEvent;
 import javax.swing.event.ChangeListener;
 
+import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
@@ -232,10 +233,11 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		Object source = e.getSource();
 		if(source == compute)
 		{			
-			if(Back.getDiameter() != null)
-			{
-				diam = Back.getDiameter();
-			}
+//			if(Back.getDiameter() != null)
+//			{
+//				diam = Back.getDiameter();
+//			}
+			diam = this.vc.getThread().getDiameter();
 	
 			vc.setShowComputation(chk_paths.isSelected());
 	    	if(diam != null)
@@ -243,7 +245,10 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 	    		
 				vc.showDiameter(chk_diam.isSelected(), graph, diam);
 				vc.showStationsName(chk_names.isSelected(), graph);					
-				vc.showPathStationsName(chk_dp_names.isSelected(), graph);
+				if(!chk_names.isSelected())
+				{
+					vc.showPathStationsName(chk_dp_names.isSelected(), graph);
+				}
 				vc.showDistances(chk_distances.isSelected(), graph);
 	//*/
 	//			AStar a = new AStar(graph);
@@ -257,10 +262,16 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 		    	String diamString = "[";
 		    	for(Node n : diam.getNodePath())
 		    	{
-		    		diamString += n.getAttribute("nom") + ", ";
+		    		diamString += n.getAttribute("nom")+ ", ";
 		    	}
 		    	diamString = diamString.substring(0, diamString.length()-2) + "]";
 				addLogConsoleLine("Diameter path: " + diamString);
+//				for(Edge ed : diam.getEdgePath())
+//				{
+//					System.out.println(ed.getNode0().getAttribute("ui.class") + "--" + ed.getNode1().getAttribute("ui.class"));
+//					System.out.print(ed.getAttribute("ui.class") + " -- ");
+//					System.out.println(ed.hasAttribute("diameter") + "/" + ed.getNode0().hasAttribute("diameter") + "-"+ed.getNode1().hasAttribute("diameter"));
+//				}
 	    	}
 		}
 		else if(source == cluster)
@@ -274,6 +285,7 @@ public class NetworkViewer extends JFrame implements ChangeListener, ActionListe
 			vc.showStationsName(chk_names.isSelected(), graph);					
 			if(!chk_names.isSelected())
 			{
+				App.logger.info("Checkbox: dp_names " + chk_dp_names.isSelected());
 				vc.showPathStationsName(chk_dp_names.isSelected(), graph);				
 			}
 		}
