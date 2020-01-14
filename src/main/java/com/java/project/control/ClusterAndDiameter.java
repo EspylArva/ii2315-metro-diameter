@@ -1,6 +1,7 @@
 package com.java.project.control;
 
 
+import java.util.ArrayList;
 import java.util.HashMap;
 
 import org.apache.log4j.Logger;
@@ -9,9 +10,9 @@ import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
 import org.graphstream.graph.Node;
 import org.graphstream.graph.Path;
+import org.graphstream.graph.implementations.Graphs;
 
 import com.java.project.ii2315.App;
-import com.java.project.view.DragAndDrop_JsonFile;
 import com.java.project.view.NetworkViewer;
 
 public class ClusterAndDiameter extends Thread {
@@ -24,8 +25,7 @@ public class ClusterAndDiameter extends Thread {
 	
 	public ClusterAndDiameter(String name,Graph graph, int minimumCluster, NetworkViewer networkViewer) {
 		super(name);
-		this.cluster = graph; // should get a clone
-		this.graph = graph;
+		this.graph = Graphs.clone(graph);
 		this.minimumCluster = minimumCluster;
 		this.nv = networkViewer;
 	}
@@ -35,12 +35,13 @@ public class ClusterAndDiameter extends Thread {
 		
 		this.nv.getVc().deleteLogs();
 		nv.getVc().computing(true);
+		this.cluster = Graphs.clone(this.graph);
 		
 		HashMap<Edge,Integer> edgeList = new HashMap<Edge,Integer>();    	    	
     	Path diameter = null;
     	int iteration = 0;
     	
-    	AStar astar = new AStar(this.cluster);
+    	AStar astar = new AStar(this.graph);
     	astar.setCosts(new AStar.DefaultCosts("distance"));
     	
     	for(Node start : this.cluster.getEachNode()) {
@@ -95,6 +96,7 @@ public class ClusterAndDiameter extends Thread {
     		}
     		
     	}
+    	
     	for(Node n : diameter.getNodeSet())
     	{
     		n.addAttribute("diameter", true);
@@ -103,23 +105,91 @@ public class ClusterAndDiameter extends Thread {
     	logger.info("Diamètre : " + Back.getDiameter().getNodeCount());
     	logger.info("Diamètre : " + Back.getDiameter());
     	
-    	logger.info("Graph Nodes: " + this.cluster.getNodeCount() );
-    	logger.info("Graph Edges: " + this.cluster.getEdgeCount() );
-    	logger.info("Nombre d'AStar : " + iteration);
     	
+    	
+    	// -------------- Utility cluster
+    	logger.info("Create utility cluster : ");
+    	logger.info("| - Cluster minimum Edge value : " + this.minimumCluster );
+    	this.cluster = Graphs.clone(this.graph);
     	for(Edge e : edgeList.keySet()) {
-    		if(edgeList.get(e) < this.minimumCluster) {
-//    			this.cluster.removeEdge(e);
-//    			this.cluster.getEdge(e.getId()).addAttribute("ui.class", "ClusterCut");
+    		if(edgeList.get(e) < this.minimumCluster && e.getNode0().getDegree() > 1 && e.getNode1().getDegree() > 1 ) {
+    			this.cluster.removeEdge(e.getId());
+    			//this.cluster.getEdge(e.getId()).addAttribute("ui.class", "ClusterCut");
     		}
     	}
+    	logger.info("| - Cluster Nodes: " + this.cluster.getNodeCount() );
+    	logger.info("| - Cluster Edges: " + this.cluster.getEdgeCount() + "/" + this.graph.getEdgeCount());
+    	Back.setUtilityCluster(this.cluster);
     	
     	
-    	Back.setCluster(this.cluster);
-    	logger.info("Cluster minimum Edge value : " + this.minimumCluster );
-    	logger.info("Cluster Nodes: " + Back.getCluster().getNodeCount() );
-    	logger.info("Cluster Edges: " + Back.getCluster().getEdgeCount() );
-  
+    	// -------------- Distance cluster with Corentin Celton
+    	logger.info("Create distance cluster to Corentin Celton:");
+    	this.cluster = Graphs.clone(graph);
+    	Node cible = this.graph.getNode("1889");
+    	HashMap<Integer,ArrayList<Node>> distances = new HashMap<Integer,ArrayList<Node>>();
+    	ArrayList<Node> list;
+    	for(Node n : this.cluster.getNodeSet() ) {
+    		astar.compute(n.getId(), cible.getId());
+    		Path p = astar.getShortestPath();
+    		if(p != null) {
+    			if(distances.containsKey(p.getNodeCount())) {
+        			list = distances.get(p.getNodeCount());
+        		}
+        		else {
+        			list = new ArrayList<Node>();
+        		}
+        		list.add(n);
+    			distances.put(p.getNodeCount(),list);
+    		}
+    	}
+    	for(Edge e : this.cluster.getEachEdge()){
+    		this.cluster.removeEdge(e);
+    	}
+    	for(Integer key : distances.keySet()) {
+    		for(Node n : distances.get(key)) {
+    			for(Node n2 : distances.get(key)) {
+    				if(this.cluster.getEdge("distance_" + key + "_" + n2.getId() +"_" + n.getId()) == null) {
+        				this.cluster.addEdge("distance_" + key + "_" + n.getId() +"_" + n2.getId(), n, n2);
+    				}
+    			}
+    		}
+    		logger.info("| - Create cluster for distance : " + key + " with " + distances.get(key).size() + " node(s)");
+    		
+    	}
+    	Back.setDistanceCluster(this.cluster);
+    	
+    	// -------------- Degree cluster
+    	logger.info("Create degree cluster :");
+    	this.cluster = Graphs.clone(graph);
+    	HashMap<Integer,ArrayList<Node>> degrees = new HashMap<Integer,ArrayList<Node>>();
+    	for(Node n : this.cluster.getNodeSet() ) {
+    		int degree = n.getOutDegree();
+			if(degrees.containsKey(degree)) {
+    			list = degrees.get(degree);
+    		}
+    		else {
+    			list = new ArrayList<Node>();
+    		}
+    		list.add(n);
+    		degrees.put(degree,list);
+		}
+    	for(Edge e : this.cluster.getEachEdge()){
+    		this.cluster.removeEdge(e);
+    	}
+    	for(Integer key : degrees.keySet()) {
+    		for(Node n : degrees.get(key)) {
+    			for(Node n2 : degrees.get(key)) {
+    				if(this.cluster.getEdge("degree_" + key + "_" + n2.getId() +"_" + n.getId()) == null) {
+    					this.cluster.addEdge("degree_" + key + "_" + n.getId() +"_" + n2.getId(), n, n2);
+    				}
+        				
+    			}
+    		}
+    		logger.info("| - Create cluster for degree : " + key + " with " + degrees.get(key).size() + " node(s)");
+    	}
+    	Back.setDegreeCluster(this.cluster);
+    		
+    	
 		nv.getVc().computing(false);
 	}
 	

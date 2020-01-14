@@ -172,7 +172,7 @@ public class ViewControl {
 		{
 			for(Node n : g.getNodeSet())
 			{
-				if( n.hasAttribute("diameter") || n.getAttribute("ui.class").equals("path") )
+				if( n.hasAttribute("diameter") || (n.getAttribute("ui.class") != null  && n.getAttribute("ui.class").equals("path")) )
 				{
 					n.addAttribute("ui.class", "showName");
 //					n.addAttribute("ui.label");
@@ -184,7 +184,7 @@ public class ViewControl {
 		{
 			for(Node n : g.getNodeSet())
 			{
-				if( n.hasAttribute("diameter") || n.getAttribute("ui.class").equals("path") )
+				if( n.hasAttribute("diameter") || (n.getAttribute("ui.class") != null  && n.getAttribute("ui.class").equals("path")) )
 				{
 					n.addAttribute("ui.class", "showName");
 //					n.removeAttribute("ui.style");
