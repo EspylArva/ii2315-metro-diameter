@@ -8,6 +8,7 @@ node.showName{
 node.path{
 	size: 5px;
     fill-color: red;
+    text-mode:normal;
 }
 
 node {

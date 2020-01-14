@@ -100,7 +100,7 @@ public class ViewControl {
     	{
     		if(n.hasAttribute("ui.class"))
     		{
-    			n.setAttribute("ui.class", "node");
+    			n.setAttribute("ui.class");
     		}
     	}
     	for(Edge e : gEdges)
@@ -172,9 +172,11 @@ public class ViewControl {
 		{
 			for(Node n : g.getNodeSet())
 			{
-				if( n.hasAttribute("diameter") || n.hasAttribute("path") )
+				if( n.hasAttribute("diameter") || n.getAttribute("ui.class").equals("path") )
 				{
 					n.addAttribute("ui.class", "showName");
+//					n.addAttribute("ui.label");
+//					n.addAttribute("ui.style", "text-mode:normal;");
 				}
 			}
 		}
@@ -182,7 +184,11 @@ public class ViewControl {
 		{
 			for(Node n : g.getNodeSet())
 			{
-				n.changeAttribute("ui.class", "node");
+				if( n.hasAttribute("diameter") || n.getAttribute("ui.class").equals("path") )
+				{
+					n.addAttribute("ui.class", "showName");
+//					n.removeAttribute("ui.style");
+				}
 			}
 		}
 		
