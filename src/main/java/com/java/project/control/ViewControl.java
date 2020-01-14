@@ -14,11 +14,18 @@ import com.java.project.view.NetworkViewer;
 
 public class ViewControl {
 	
-	private static boolean freeze = false;
-	private static boolean showComputation = false;
-	private static long delay = 0;
-	private static boolean computationFinished = true;
+	private boolean freeze = false;
+	private boolean showComputation = false;
+	private long delay = 0;
+	private boolean computationFinished = true;
 	
+	private NetworkViewer networkViewer;
+	private ClusterAndDiameter thread;
+	
+	public ViewControl(NetworkViewer networkViewer) {
+		this.networkViewer = networkViewer;
+	}
+
 	/**
      * Using better setups for the graphical display of the graph.
      * See <a href="http://graphstream-project.org/doc/FAQ/Attributes/Is-there-a-list-of-attributes-with-a-predefined-meaning-for-the-layout-algorithms/"> GraphStream documentation</a> for more informations.
@@ -26,7 +33,7 @@ public class ViewControl {
      * @param graph Graph to work on
      * @author Tchong-Kite Huam
      */
-	public static void configureGraphUI(Graph graph) {
+	public void configureGraphUI(Graph graph) {
 		// Setting up the .css file for GraphStream implementation
 		// Necessary for dynamic coloring	
 		System.setProperty("org.graphstream.ui.renderer", "org.graphstream.ui.j2dviewer.J2DGraphRenderer");
@@ -39,7 +46,7 @@ public class ViewControl {
     	App.logger.info("Successfully upgraded graphical display of the map");
 	}
 	
-	public static void freezeWorld(Graph g)
+	public void freezeWorld(Graph g)
 	{
 		if(freeze)
 		{	
@@ -160,7 +167,7 @@ public class ViewControl {
 
 	
 
-	public static void showPathStationsName(boolean selected, Graph g) {
+	public void showPathStationsName(boolean selected, Graph g) {
 		if(selected)
 		{
 			for(Node n : g.getNodeSet())
@@ -181,61 +188,69 @@ public class ViewControl {
 		
 	}
 	
-	public static void addLog(String s)
+	public void addLog(String s)
 	{
-		NetworkViewer.addLogConsoleLine(s);
+		this.networkViewer.addLogConsoleLine(s);
 	}
 
 
 	// *** GETTERS & SETTERS *** //
 	
-	public static boolean isFreeze() {
+	public  boolean isFreeze() {
 		return freeze;
 	}
-	public static void setFreeze(boolean freeze) {
-		ViewControl.freeze = freeze;
+	public  void setFreeze(boolean freeze) {
+		this.freeze = freeze;
 	}
 
-	public static boolean isShowComputation() {
+	public  boolean isShowComputation() {
 		return showComputation;
 	}
 
-	public static void setShowComputation(boolean showComputation) {
-		ViewControl.showComputation = showComputation;
+	public  void setShowComputation(boolean showComputation) {
+		this.showComputation = showComputation;
 	}
 
-	public static long getDisplayDelay() {
+	public long getDisplayDelay() {
 		return delay;
 	}	
-	public static void setDisplayDelay(long d)
+	public void setDisplayDelay(long d)
 	{
 		delay = d;
 	}
 	
 	
-	public static void computing(boolean computing)
+	public void computing(boolean computing)
 	{
 		computationFinished = !computing;
-		NetworkViewer.getComputeButton().setEnabled(!computing);
-		NetworkViewer.getClusterButton().setEnabled(!computing);
+		networkViewer.getComputeButton().setEnabled(!computing);
+		networkViewer.getClusterButton().setEnabled(!computing);
 	}
 	
-	public static boolean isComputationFinished()
+	public boolean isComputationFinished()
 	{
 		return computationFinished;
 	}
 	
-	public static void setComputationFinished(boolean b)
+	public void setComputationFinished(boolean b)
 	{
 		computationFinished = b;
 	}
 
-	public static void addTitleToWindow(String string) {
-		NetworkViewer.setAdditionalTitle(string);
+	public void addTitleToWindow(String string) {
+		this.networkViewer.setAdditionalTitle(string);
 	}
 
-	public static void deleteLogs() {
-		NetworkViewer.deleteLogs();	
+	public void deleteLogs() {
+		this.networkViewer.deleteLogs();	
+	}
+
+	public ClusterAndDiameter getThread() {
+		return thread;
+	}
+
+	public void setThread(ClusterAndDiameter thread) {
+		this.thread = thread;
 	}
 
 }

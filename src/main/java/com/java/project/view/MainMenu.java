@@ -23,6 +23,7 @@ import org.graphstream.graph.Graph;
 import com.java.project.control.Back;
 import com.java.project.control.ViewControl;
 import com.java.project.ii2315.App;
+import com.java.project.model.World;
 
 public class MainMenu extends JFrame implements ActionListener, ChangeListener
 {	
@@ -36,10 +37,7 @@ public class MainMenu extends JFrame implements ActionListener, ChangeListener
 	private JButton btn_useSimpleJson;
 	private static JSpinner updown_frozenPicker;
 	private DragAndDrop_JsonFile dragAndDrop_image;
-	
-//	private final static java.nio.file.Path pDefault = Paths.get("src","main","resources","reseau.json").toAbsolutePath();
-//	private final static java.nio.file.Path pReduced = Paths.get("src","main","resources","reducedNetwork.json").toAbsolutePath();
-//	private final static java.nio.file.Path pComplete = Paths.get("src","main","resources","reseau_RER.json").toAbsolutePath();
+	private boolean generateFrozen;
 	
 	public MainMenu(String title)
 	{
@@ -118,34 +116,41 @@ public class MainMenu extends JFrame implements ActionListener, ChangeListener
 	public void actionPerformed(ActionEvent e) {
 		Object source = e.getSource();
  
-		if(source == btn_SimpleWorld)
+		if(source == btn_SimpleWorld || source == btn_WeightedWorld)
 		{			
-			NetworkViewer newWindow = new NetworkViewer(Back.computeWeightlessGraph());
-			newWindow.setVisible(true);
-		}
-		else if(source == btn_WeightedWorld)
-		{
-			// load complex world
+			NetworkViewer newWindow = new NetworkViewer();
 			Graph g = Back.computeWeightlessGraph();
-			Back.addWeights(g);
-			NetworkViewer newWindow = new NetworkViewer(g);
+			World.linkGraphWindow(g,newWindow);
+			newWindow.getVc().setFreeze(generateFrozen);
+			newWindow.getVc().freezeWorld(g);
+			newWindow.initialize();
+			newWindow.getVc().setThread(Back.computeDiameter(g, newWindow));
+			if(source == btn_WeightedWorld)
+			{
+				Back.addWeights(g);
+			}
+			newWindow.getVc().configureGraphUI(g);
+			
+//			NetworkViewer newWindow = new NetworkViewer(Back.computeWeightlessGraph());
 			newWindow.setVisible(true);
-//			App.logger.error("Not yet implemented!");
-		}
+		}		
 		else if(source == btn_useDefaultJson)
 		{
-			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau.json").toAbsolutePath());
-			ViewControl.addTitleToWindow("Default network");
+			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau.json").toAbsolutePath(), "Default network");
+//			ViewControl.addTitleToWindow( );
+//			System.out.println(World.getInstance().getMap().size());
 		}
 		else if(source == btn_useFullJson)
 		{
-			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau_RER.json").toAbsolutePath());
-			ViewControl.addTitleToWindow("Full network");
+			dragAndDrop_image.setResource(Paths.get("src","main","resources","reseau_RER.json").toAbsolutePath(), "Full network");
+//			ViewControl.addTitleToWindow();
+//			System.out.println(World.getInstance().getMap().size());
 		}
 		else if(source == btn_useSimpleJson)
 		{
-			dragAndDrop_image.setResource(Paths.get("src","main","resources","reducedNetwork.json").toAbsolutePath());
-			ViewControl.addTitleToWindow("Reduced network");
+			dragAndDrop_image.setResource(Paths.get("src","main","resources","reducedNetwork.json").toAbsolutePath(), "Reduced network");
+//			ViewControl.addTitleToWindow();
+//			System.out.println(World.getInstance().getMap().size());
 		}
 	}
 	
@@ -155,8 +160,8 @@ public class MainMenu extends JFrame implements ActionListener, ChangeListener
         // REFRESH VALUES HERE
 //        operationDuration = spinnerTime.getValue().toString();
         
-        boolean freeze = updown_frozenPicker.getValue().toString().equals("Keep geographic exactitude") ? true : false;
-        ViewControl.setFreeze(freeze);
+        generateFrozen = updown_frozenPicker.getValue().toString().equals("Keep geographic exactitude") ? true : false;
+//        ViewControl.setFreeze(generateFrozen);
     }
 	
 	

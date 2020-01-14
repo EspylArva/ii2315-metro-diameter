@@ -28,6 +28,7 @@ import com.java.project.model.Route;
 import com.java.project.model.Station;
 import com.java.project.model.World;
 import com.java.project.view.MainMenu;
+import com.java.project.view.NetworkViewer;
 
 public class Back {
 	
@@ -54,39 +55,44 @@ public class Back {
     		parseWorld(getPathToJson());
 	    	World.setBuilt(true);
     	}
-    	World.getInstance().setGraph(buildSimpleWorld());
+    	Graph g = buildSimpleWorld();
+//    	World.getInstance().addGraph(g);
+//    	World.getInstance().setGraph(buildSimpleWorld());
 //      Graph graph = buildSimplePartialWorld("B", "A");
       
     	// *** GRAPHICAL CONFIGURATION *** //
-		ViewControl.configureGraphUI(World.getInstance().getGraph());
-		ViewControl.freezeWorld(World.getInstance().getGraph());
+//		ViewControl.configureGraphUI(World.getInstance().getGraph());
+//		ViewControl.freezeWorld(World.getInstance().getGraph());
       
 		// *** DISPLAY GRAPH *** //
 		logger.info("Displaying graph");
 //		addWeights(graph);
 //    	org.graphstream.ui.view.Viewer viewer = graph.display();
-    	return World.getInstance().getGraph();
+    	return g;
     }
     
-     public static void computeDiameter(Graph graph)
+	public static ClusterAndDiameter computeDiameter(Graph graph, NetworkViewer networkViewer)
     {
   
-    	if (Back.diameter == null) {
-    		if(Back.run == false){
+//    	if (Back.diameter == null) {
+//    		if(Back.run == false){
     			logger.info("Lancement du thread de calcul");
-        		new ClusterAndDiameter("Cluster",graph,graph.getEdgeCount()*10).start();;
+    			ClusterAndDiameter t = new ClusterAndDiameter("Cluster",graph,graph.getEdgeCount()*10, networkViewer);
+    			t.start();
         		
         		Back.run = true;
-    		}
-    		else {
+        		
+//    		}
+//    		else {
     			logger.info("En attente du thread qui le calcul");
-    		}
-    		
-    	}
-    	else {
-    		logger.info("Diamètre : " + Back.diameter.getNodeCount());
-        	logger.info("Diamètre : " + Back.diameter);
-    	}
+//    		}
+//    		
+//    	}
+//    	else {
+//    		logger.info("Diamètre : " + Back.diameter.getNodeCount());
+//        	logger.info("Diamètre : " + Back.diameter);
+//    	}
+    			return t;
     }
     
     
@@ -130,21 +136,23 @@ public class Back {
 	 * @return graph Graph built according to the model and limited to the parameters
 	 * @author Tchong-Kite Huam
 	 */
-    private static Graph buildSimplePartialWorld(String... args )
+    private static Graph buildSimpleWorld(String... args )
     {
     	// Liste des lignes à mettre
     	
-    	World.getInstance().setGraph(new MultiGraph("Plan du Métro"));
+//    	World.getInstance().setGraph(new MultiGraph("Plan du Métro"));
+    	Graph g = new MultiGraph("Paris' transportation map");
     	
-    	WorldControl.buildStations(World.getInstance().getGraph());
-		WorldControl.buildCorrespondances(World.getInstance().getGraph());
+    	WorldControl.buildStations(g);
+		WorldControl.buildCorrespondances(g);
 		
 		ArrayList<String> partialWorldSetup = new ArrayList<String>(); for(String s : args)partialWorldSetup.add(s);
         
-		WorldControl.buildLignes(World.getInstance().getGraph(), partialWorldSetup);
+		WorldControl.buildLignes(g, partialWorldSetup);
 		
         // Clean the graph of useless stations
-        return removeLoneNode(World.getInstance().getGraph());
+//        return removeLoneNode(World.getInstance().getGraph());
+        return removeLoneNode(g);
 	}
 
 
@@ -160,11 +168,13 @@ public class Back {
 	 */
 	private static Graph buildSimpleWorld()
 	{		
-        World.getInstance().setGraph(new MultiGraph("Paris' transportation map"));
-        WorldControl.buildStations(World.getInstance().getGraph());
-        WorldControl.buildCorrespondances(World.getInstance().getGraph());
-        WorldControl.buildLignes(World.getInstance().getGraph(), null);   
-        return removeLoneNode(World.getInstance().getGraph());
+		Graph g = new MultiGraph("Paris' transportation map");
+//        World.getInstance().setGraph(new MultiGraph("Paris' transportation map"));
+        WorldControl.buildStations(g);
+        WorldControl.buildCorrespondances(g);
+        WorldControl.buildLignes(g, null);   
+//        return removeLoneNode(World.getInstance().getGraph());
+        return removeLoneNode(g);
 		
 	}
 	

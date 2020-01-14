@@ -17,22 +17,24 @@ import com.java.project.view.NetworkViewer;
 public class ClusterAndDiameter extends Thread {
 
 	private static Logger logger = App.logger;
+	NetworkViewer nv;
 	private Graph cluster;
 	private Graph graph;
 	private int minimumCluster;
 	
-	public ClusterAndDiameter(String name,Graph graph, int minimumCluster) {
+	public ClusterAndDiameter(String name,Graph graph, int minimumCluster, NetworkViewer networkViewer) {
 		super(name);
 		this.cluster = graph; // should get a clone
 		this.graph = graph;
 		this.minimumCluster = minimumCluster;
+		this.nv = networkViewer;
 	}
 	
 	
 	public void run() {
 		
-		ViewControl.deleteLogs();
-		ViewControl.computing(true);
+		this.nv.getVc().deleteLogs();
+		nv.getVc().computing(true);
 		
 		HashMap<Edge,Integer> edgeList = new HashMap<Edge,Integer>();    	    	
     	Path diameter = null;
@@ -65,16 +67,16 @@ public class ClusterAndDiameter extends Thread {
 					}
 	
 //					NetworkViewer.addLogConsoleLine("a");
-					NetworkViewer.addLogConsoleLine(String.format("(%s) Computing path between %s and %s",
+					nv.getVc().addLog(String.format("(%s) Computing path between %s and %s",
 //							String.valueOf(0),"a","b"							
 							path.size(),start.getAttribute("nom"),end.getAttribute("nom")
 							));
-					if(ViewControl.isShowComputation())
+					if(nv.getVc().isShowComputation())
 					{						
 						try
 						{
 							ViewControl.displayPath(graph, path, "path");
-							Thread.sleep(ViewControl.getDisplayDelay());
+							Thread.sleep(nv.getVc().getDisplayDelay());
 							ViewControl.resetColor(graph);
 						}
 						catch (Exception e) {
@@ -118,7 +120,7 @@ public class ClusterAndDiameter extends Thread {
     	logger.info("Cluster Nodes: " + Back.getCluster().getNodeCount() );
     	logger.info("Cluster Edges: " + Back.getCluster().getEdgeCount() );
   
-		ViewControl.computing(false);
+		nv.getVc().computing(false);
 	}
 	
 }

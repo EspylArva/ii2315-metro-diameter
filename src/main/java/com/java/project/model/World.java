@@ -1,13 +1,13 @@
 package com.java.project.model;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.HashSet;
+import java.util.Map;
 
-import org.graphstream.graph.Edge;
 import org.graphstream.graph.Graph;
-import org.graphstream.graph.Node;
 
-import com.java.project.ii2315.App;
+import com.java.project.view.NetworkViewer;
 
 
 public class World //Info: Singleton
@@ -90,6 +90,20 @@ public class World //Info: Singleton
 	public static void destroy() {
 		WORLD_INSTANCE = new World();
 	}
+	public static void linkGraphWindow(Graph g, NetworkViewer newWindow) {
+		map.put(g,newWindow);
+		newWindow.setGraph(g);
+	}
+	
+	public static Map<Graph, NetworkViewer> getMap() {
+		return map;
+	}
+	public static void setMap(Map<Graph, NetworkViewer> map) {
+		World.map = map;
+	}
+
+	private static Map<Graph, NetworkViewer> map = new HashMap<Graph,NetworkViewer>();
+	
 	
 	
 

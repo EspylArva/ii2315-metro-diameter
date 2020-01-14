@@ -189,9 +189,7 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
         			java.util.List list = (java.util.List) tr.getTransferData(flavors[i]);
         			for (int j = 0; j < list.size(); j++) {
         				App.logger.debug(Paths.get(list.get(j).toString()));
-        				setResource(
-        						Paths.get(list.get(j).toString())
-        						);
+        				setResource(Paths.get(list.get(j).toString()), "Custom network");
         			}
         			dtde.dropComplete(true);
         			return;
@@ -208,20 +206,16 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
         
     }
 
-	public void setResource(Path path) {
-		if(ViewControl.isComputationFinished())
-		{
+	public void setResource(Path path, String s) {
+//		if(ViewControl.isComputationFinished())
+//		{
 			App.logger.info(String.format("Selected a .JSON file at %s. Setting this file as configuration file.", path.toString()));
 			lbl_JsonPath.setText(path.toString());
 			Back.setPathToJson(path);
-			if(NetworkViewer.getAdditionalTitle() == null || NetworkViewer.getAdditionalTitle().equals(""))
-			{
-				ViewControl.addTitleToWindow("Custom network");
-			}
 			ViewControl.setEnabledButtons(true);
 			state = DragState.Accept;
 			repaint();
-		}
+//		}
 	}
 	
 	private boolean isJson(String file)
@@ -239,7 +233,7 @@ public class DragAndDrop_JsonFile extends JPanel implements DropTargetListener
         		int returnValue = jfc.showOpenDialog(null);
         		File selectedFile = jfc.getSelectedFile();
         		if (returnValue == JFileChooser.APPROVE_OPTION && isJson(selectedFile.getAbsolutePath()) ) {
-        			setResource(Paths.get(selectedFile.getAbsolutePath().toString()));
+        			setResource(Paths.get(selectedFile.getAbsolutePath().toString()), "Custom network");
         		}
             }
         };
