@@ -142,32 +142,7 @@ public class ViewControl {
 		}
 	}
 	
-//	public void displayPath(Graph graph, Path path, String label)
-//    {
-//		
-//			
-//	    for(Node vertex : path.getNodePath())
-//	    {
-//	    	if(graph.getNode(vertex.getId()) != null)
-//	    	{
-////	    		graph.getNode(vertex.getId()).addAttribute("old", graph.getNode(vertex.getId()).getAttribute("ui.class"));
-//	    		graph.getNode(vertex.getId()).addAttribute(label);
-//	    		graph.getNode(vertex.getId()).addAttribute("ui.class", label);
-////	    		System.out.println("-" + graph.getNode(vertex.getId()).getAttribute("ui.class"));
-////	    		addTag(graph.getNode(vertex.getId()),label);
-//	    	}
-//	    }
-//	    for(Edge edge : path.getEdgePath())
-//	    {
-//	    	if(graph.getEdge(edge.getId()) != null)
-//	    	{
-//	    		graph.getEdge(edge.getId()).addAttribute(label);
-//	    		graph.getEdge(edge.getId()).addAttribute("ui.class", label);
-////	    		addTag(graph.getEdge(edge.getId()),label);
-//	    	}
-//	    }
-//    }
-	
+
 	public void resetColor(Graph graph) {
 		Collection<Node> gVertices = graph.getNodeSet();
     	Collection<Edge> gEdges = graph.getEdgeSet();
@@ -263,12 +238,9 @@ public class ViewControl {
 		{
 			for(Node n : g.getNodeSet())
 			{
-//				System.out.println(n.hasAttribute("diameter"));
-//				System.out.println(n.getAttributeKeySet());
 				if(n.hasAttribute("diameter") ||  n.hasAttribute("path") || 
 				n.getAttribute("ui.class").equals("diameter") || n.getAttribute("ui.class").equals("path"))
 				{
-					System.out.println("GOT A DIAMETER !!!");
 					if(n.hasAttribute("nom")) { n.addAttribute("ui.label", n.getAttribute("nom")); }
 					else { n.addAttribute("ui.label", "null"); }
 				}
@@ -281,94 +253,7 @@ public class ViewControl {
 				n.removeAttribute("ui.label");
 			}
 		}
-	} //TODO
-	
-//	public static void removeTag(Element e, String tag)
-//	{
-//		if(e.hasAttribute("ui.class"))
-//		{
-//			ArrayList<String> classes = new ArrayList<String>(Arrays.asList(e.getAttribute("ui.class").toString().split(",")));
-//			if(classes.size() > 0)
-//			{
-//				switch(tag)
-//				{
-//					case "showName":
-//					case "nshowName" :
-//						classes.remove("nshowName");
-//						classes.remove("showName");
-//						break;
-//					case "path":
-//					case "diameter":
-//						classes.remove("diameter");
-//						classes.remove("path");
-//						break;
-//					default:
-//						break;
-//				}
-//			}
-//			if(classes.size() == 1)
-//			{
-//				e.setAttribute("ui.class", classes.get(0));
-//			}
-//		}
-//		else
-//		{
-//			return;
-//		}
-//	}
-//	
-//	public static void addTag(Element n, String tag)
-//	{
-//		/**
-//		 * Tags possibles :
-//		 * showName
-//		 * nshowName
-//		 * path
-//		 * diameter
-//		 */
-//		if(n.hasAttribute("ui.class"))
-//		{
-//			String[] ar = n.getAttribute("ui.class").toString().split(",");
-//			ArrayList<String> classes;
-//			if(ar.length > 1)
-//			{				
-//				classes = new ArrayList<String>(Arrays.asList(ar));
-//			}
-//			else
-//			{
-//				classes = new ArrayList<String>(); classes.add(ar[0]);
-//			}
-//			if(classes.size() > 0)
-//			{
-//				switch(tag)
-//				{
-//					case "normal":
-//						if(classes.contains("diameter")){ classes.remove("diameter"); }	
-//						if(classes.contains("path")){ classes.remove("path"); }
-//						classes.add("normal"); break;
-//					case "showName":
-//						if(classes.contains("nshowName")){ classes.remove("nshowName"); }
-//						classes.add("showName"); break;
-//					case "nshowName" :
-//						if(classes.contains("showName")){ classes.remove("showName"); }	
-//						classes.add("nshowName"); break;
-//					case "path":
-//						if(classes.contains("diameter")){ classes.remove("diameter"); }	
-//						classes.add("path"); break;
-//					case "diameter":
-//						if(classes.contains("path")){ classes.remove("path"); }
-//						classes.add("diameter"); break;
-//					default:
-//						break;
-//				}
-//			}
-//			n.addAttribute("ui.class", String.join(",", classes));
-//		}
-//		else
-//		{
-//			n.addAttribute("ui.class", tag);
-//		}
-//	}
+	} 
 	
 	public void addLog(String s)
 	{

@@ -54,14 +54,7 @@ public class Back {
 	    	World.setBuilt(true);
     	}
     	Graph g = buildSimpleWorld();
-//    	World.getInstance().addGraph(g);
-//    	World.getInstance().setGraph(buildSimpleWorld());
-//      Graph graph = buildSimplePartialWorld("B", "A");
-      
-    	// *** GRAPHICAL CONFIGURATION *** //
-//		ViewControl.configureGraphUI(World.getInstance().getGraph());
-//		ViewControl.freezeWorld(World.getInstance().getGraph());
-      
+
 		// *** DISPLAY GRAPH *** //
 		logger.info("Displaying graph");
 //		addWeights(graph);
@@ -311,38 +304,5 @@ public class Back {
 	public static void setPathToJson(java.nio.file.Path pathToJson) {
 		Back.pathToJson = pathToJson;
 	}
-//	public static Path getDiameter() {
-//		return diameter;
-//	}
-//	public static void setDiameter(Path d) {
-//		if(d != null)
-//		{
-//			diameter = d;
-//		}
-//	}
 
-//	public static Graph getUtilityCluster() {
-//		return utilityCluster;
-//	}
-//
-//	public static void setUtilityCluster(Graph utilityCluster) {
-//		Back.utilityCluster = utilityCluster;
-//	}
-//
-//	public static Graph getDegreeCluster() {
-//		return DegreeCluster;
-//	}
-//
-//	public static void setDegreeCluster(Graph degreeCluster) {
-//		DegreeCluster = degreeCluster;
-//	}
-//
-//	public static Graph getDistanceCluster() {
-//		return DistanceCluster;
-//	}
-//
-//	public static void setDistanceCluster(Graph distanceCluster) {
-//		DistanceCluster = distanceCluster;
-//	}
-//	
 }
